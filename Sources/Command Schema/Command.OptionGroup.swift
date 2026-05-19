@@ -28,7 +28,7 @@ extension Command {
     ///     static let schema: Command.Schema.Definition<SharedOptions> = .init {
     ///         Command.Option(
     ///             \.root,
-    ///             name: .longLiteral("root"),
+    ///             name: .long(.literal("root")),
     ///             help: .init(abstract: "Repository root directory.")
     ///         )
     ///     }

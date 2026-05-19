@@ -50,7 +50,7 @@ extension Command.Subcommand.Help {
             rows.append(
                 .positional(
                     name: positional.declaration.name,
-                    valueName: positional.declaration.valueName,
+                    placeholder: positional.declaration.placeholder,
                     help: help,
                     visibility: positional.declaration.visibility
                 )
@@ -69,7 +69,7 @@ extension Command.Subcommand.Help {
             rows.append(
                 .positionalMany(
                     name: positionalMany.declaration.name,
-                    valueName: positionalMany.declaration.valueName,
+                    placeholder: positionalMany.declaration.placeholder,
                     help: help,
                     visibility: positionalMany.declaration.visibility
                 )
@@ -88,7 +88,7 @@ extension Command.Subcommand.Help {
             rows.append(
                 .option(
                     name: option.declaration.name,
-                    valueName: option.declaration.valueName,
+                    placeholder: option.declaration.placeholder,
                     help: help,
                     visibility: option.declaration.visibility
                 )
@@ -107,7 +107,7 @@ extension Command.Subcommand.Help {
             rows.append(
                 .optionMany(
                     name: optionMany.declaration.name,
-                    valueName: optionMany.declaration.valueName,
+                    placeholder: optionMany.declaration.placeholder,
                     help: help,
                     visibility: optionMany.declaration.visibility
                 )
@@ -148,14 +148,14 @@ extension Command.Subcommand.Help {
             flagInverted: Command.Flag<G>.Inverted
         ) throws(Never) {
             var help = flagInverted.help
-            if help.defaultDescription == nil, let initial {
+            if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagInverted.keyPath]
                 let renderedName = value ? flagInverted.trueName : flagInverted.falseName
                 help = Argument.Help(
                     abstract: help.abstract,
                     discussion: help.discussion,
-                    valueDescription: help.valueDescription,
-                    defaultDescription: "--" + renderedName
+                    placeholder: help.placeholder,
+                    defaults: "--" + renderedName
                 )
             }
             rows.append(
@@ -173,19 +173,19 @@ extension Command.Subcommand.Help {
             flagEnumerable: Command.Flag<G>.Enumerable<E>
         ) throws(Never) {
             var help = flagEnumerable.help
-            if help.defaultDescription == nil, let initial {
+            if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagEnumerable.keyPath]
-                let renderedName = E.flagName(for: value).string
+                let renderedName = E.name(for: value).string
                 help = Argument.Help(
                     abstract: help.abstract,
                     discussion: help.discussion,
-                    valueDescription: help.valueDescription,
-                    defaultDescription: "--" + renderedName
+                    placeholder: help.placeholder,
+                    defaults: "--" + renderedName
                 )
             }
             let cases: [Command.Subcommand.Help.EnumerableCase] = E.allCases.map { value in
                 Command.Subcommand.Help.EnumerableCase(
-                    name: E.flagName(for: value).string,
+                    name: E.name(for: value).string,
                     help: E.help(for: value)
                 )
             }

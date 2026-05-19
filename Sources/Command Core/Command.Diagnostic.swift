@@ -92,9 +92,9 @@ extension Command {
             case let .invalidValue(name, value, _):
                 return "Error: Invalid value '\(value)' for '\(name)'."
 
-            case let .invalidEnvironmentValue(name, environmentVariable, value):
+            case let .invalidEnvironmentValue(name, environment, value):
                 return "Error: Invalid value '\(value)' for '\(name)' from environment variable "
-                    + "'\(environmentVariable.underlying)'."
+                    + "'\(environment.underlying)'."
 
             case let .missingPositional(name, _):
                 return "Error: Missing expected argument '<\(name)>'."

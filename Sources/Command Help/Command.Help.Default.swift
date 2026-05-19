@@ -28,20 +28,20 @@ extension Command {
     internal enum HelpDefault {
         /// Derives a default-value description from `initial` against
         /// the supplied `keyPath`, swapping it into
-        /// `help.defaultDescription` only when (a) the user did not
+        /// `help.defaults` only when (a) the user did not
         /// declare one explicitly AND (b) initial is non-`nil`.
         ///
         /// - Parameters:
         ///   - help: The original L1 ``Argument/Help`` carrying the
         ///     user-declared documentation. Returned unchanged when
-        ///     `help.defaultDescription` is non-`nil` — user precedence
+        ///     `help.defaults` is non-`nil` — user precedence
         ///     is preserved.
         ///   - initial: The seed `Root` instance from which to derive a
         ///     default. When `nil`, auto-derivation is skipped and
         ///     `help` is returned unchanged.
         ///   - keyPath: The `Root → V` key path identifying the field
         ///     whose initial value supplies the rendered default.
-        /// - Returns: `help` with `defaultDescription` populated when
+        /// - Returns: `help` with `defaults` populated when
         ///   both the user-explicit slot is empty and a default can be
         ///   derived; `help` unchanged otherwise.
         @usableFromInline
@@ -50,7 +50,7 @@ extension Command {
             initial: Root?,
             keyPath: WritableKeyPath<Root, V> & Sendable
         ) -> Argument.Help {
-            if help.defaultDescription != nil { return help }
+            if help.defaults != nil { return help }
             guard let initial else { return help }
             let value = initial[keyPath: keyPath]
             let rendered = Self.render(value)
@@ -58,8 +58,8 @@ extension Command {
             return Argument.Help(
                 abstract: help.abstract,
                 discussion: help.discussion,
-                valueDescription: help.valueDescription,
-                defaultDescription: rendered
+                placeholder: help.placeholder,
+                defaults: rendered
             )
         }
 

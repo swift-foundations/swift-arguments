@@ -54,10 +54,10 @@ extension Command {
         /// be parsed via ``Argument/Codable``.
         ///
         /// Diagnostics emit this case when an option declared with an
-        /// `environmentVariable:` fallback receives a value from
+        /// `environment:` fallback receives a value from
         /// ``Argument/Environment/Variable/Name`` lookup that
         /// ``Argument/Codable`` rejects. The `name` carries the option's
-        /// public form (e.g. `"--count"`); `environmentVariable` carries
+        /// public form (e.g. `"--count"`); `environment` carries
         /// the env-var name read (e.g. `"MYAPP_COUNT"`); `value` carries
         /// the raw env-var string that failed conversion. Unlike
         /// ``invalidValue(name:value:position:)`` there is no
@@ -66,7 +66,7 @@ extension Command {
         /// slot.
         case invalidEnvironmentValue(
             name: String,
-            environmentVariable: Argument.Environment.Variable.Name,
+            environment: Argument.Environment.Variable.Name,
             value: String
         )
 

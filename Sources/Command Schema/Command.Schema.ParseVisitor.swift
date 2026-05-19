@@ -203,7 +203,7 @@ extension Command.Schema.ParseVisitor {
         @usableFromInline let apply: @Sendable (String, inout Root) -> Bool
         /// The optional process-environment variable name that supplies
         /// a fallback value when the option is not provided on argv.
-        @usableFromInline let environmentVariable: Argument.Environment.Variable.Name?
+        @usableFromInline let environment: Argument.Environment.Variable.Name?
     }
 
     /// A type-erased repeatable-option ("Many") schema entry.
@@ -349,7 +349,7 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
                     root[keyPath: keyPath] = parsed
                     return true
                 },
-                environmentVariable: option.declaration.environmentVariable
+                environment: option.declaration.environment
             )
         )
     }
@@ -422,7 +422,7 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         let keyPath = flagEnumerable.keyPath
         var casesByLongName: [String: @Sendable (inout Root) -> Void] = [:]
         for value in E.allCases {
-            let name = E.flagName(for: value).string
+            let name = E.name(for: value).string
             let captured = value
             casesByLongName[name] = { root in
                 root[keyPath: keyPath] = captured
@@ -596,7 +596,7 @@ extension Command.Schema.ParseVisitor {
         }
 
         // After argv consumption, apply the env-var fallback pass for
-        // any option whose `environmentVariable` was declared and whose
+        // any option whose `environment` was declared and whose
         // value was not supplied by argv. argv precedence is preserved:
         // options recorded in `filledOptionIndices` are skipped.
         try applyEnvironmentVariableFallbacks()
@@ -621,25 +621,25 @@ extension Command.Schema.ParseVisitor {
 
     /// Applies env-var fallbacks for any option not filled by argv.
     ///
-    /// For each ``OptionEntry`` whose `environmentVariable` is non-nil
+    /// For each ``OptionEntry`` whose `environment` is non-nil
     /// and whose index is not in ``filledOptionIndices``, reads the
     /// process environment via ``Environment/Read`` and, when the value
     /// is set, runs the entry's apply closure. argv-supplied values
     /// take precedence; an unset env-var leaves the option's field at
     /// its `initial` value (consumer's static default).
     ///
-    /// - Throws: ``Command/Error/invalidEnvironmentValue(name:environmentVariable:value:)``
+    /// - Throws: ``Command/Error/invalidEnvironmentValue(name:environment:value:)``
     ///   when an env-var value fails ``Argument/Codable`` conversion.
     @usableFromInline
     internal mutating func applyEnvironmentVariableFallbacks() throws(Command.Error) {
         for (optionIndex, entry) in options.enumerated() {
             guard !filledOptionIndices.contains(optionIndex) else { continue }
-            guard let envVar = entry.environmentVariable else { continue }
+            guard let envVar = entry.environment else { continue }
             guard let value = Self.readEnvironmentVariable(envVar.underlying) else { continue }
             guard entry.apply(value, &root) else {
                 throw .invalidEnvironmentValue(
                     name: Self.publicName(for: entry.name),
-                    environmentVariable: envVar,
+                    environment: envVar,
                     value: value
                 )
             }

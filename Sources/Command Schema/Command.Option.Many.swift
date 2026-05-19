@@ -23,7 +23,7 @@ extension Command.Option {
     ///
     /// ```swift
     /// Command.Option<MyRoot, String>.Many(\.tags,
-    ///     name: .longLiteral("tag"),
+    ///     name: .long(.literal("tag")),
     ///     help: .init(abstract: "A tag value (repeatable)."))
     /// ```
     ///
@@ -40,10 +40,10 @@ extension Command.Option {
     ///
     /// ## Environment-variable fallback
     ///
-    /// `environmentVariable` fallback for repeatable options is deferred
+    /// `environment` fallback for repeatable options is deferred
     /// to v2 — the splitting semantics (comma-separated single value
     /// vs. repeated env reads) are not yet defined. Setting
-    /// `environmentVariable` on a ``Command/Option/Many`` is a no-op at
+    /// `environment` on a ``Command/Option/Many`` is a no-op at
     /// the v1 surface; the schema author should leave it `nil`.
     public struct Many: Sendable
     where Root: Sendable, V: Sendable & Equatable {
@@ -69,7 +69,7 @@ extension Command.Option {
         ///     appended on each occurrence.
         ///   - name: The option name (short / long / both) at the L1
         ///     ``Argument/Name`` level.
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to the option's long-form name or `"value"`.
         ///   - arity: Cardinality. Defaults to
         ///     ``Argument/Arity/atLeast(0)`` (any number of occurrences).
@@ -80,20 +80,20 @@ extension Command.Option {
         public init(
             _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
             name: Argument.Name,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init()
         ) where V: Argument.Codable {
             self.keyPath = keyPath
-            let resolvedValueName = valueName ?? name.long?.string ?? "value"
+            let resolvedValueName = placeholder ?? name.long?.string ?? "value"
             self.declaration = Argument.Option<V>(
                 name: name,
-                valueName: resolvedValueName,
+                placeholder: resolvedValueName,
                 arity: arity,
                 visibility: visibility,
                 help: help,
-                environmentVariable: nil
+                environment: nil
             )
             self.parse = { V(argument: $0) }
         }
@@ -110,7 +110,7 @@ extension Command.Option {
         ///     appended on each occurrence.
         ///   - name: The option name (short / long / both) at the L1
         ///     ``Argument/Name`` level.
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to the option's long-form name or `"value"`.
         ///   - arity: Cardinality. Defaults to
         ///     ``Argument/Arity/atLeast(0)`` (any number of occurrences).
@@ -123,21 +123,21 @@ extension Command.Option {
         public init(
             _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
             name: Argument.Name,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init(),
             transform: @escaping @Sendable (String) throws(Command.Error) -> V
         ) {
             self.keyPath = keyPath
-            let resolvedValueName = valueName ?? name.long?.string ?? "value"
+            let resolvedValueName = placeholder ?? name.long?.string ?? "value"
             self.declaration = Argument.Option<V>(
                 name: name,
-                valueName: resolvedValueName,
+                placeholder: resolvedValueName,
                 arity: arity,
                 visibility: visibility,
                 help: help,
-                environmentVariable: nil
+                environment: nil
             )
             self.parse = { input in
                 do {

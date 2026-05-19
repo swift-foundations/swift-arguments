@@ -31,7 +31,7 @@ extension Command.Help {
         /// Optional seed instance from which auto-derived defaults are
         /// extracted at visit-time. When non-`nil`, each visit method
         /// reads the bound field via the declaration's `keyPath` and
-        /// fills in `Argument.Help.defaultDescription` per the per-binding
+        /// fills in `Argument.Help.defaults` per the per-binding
         /// rules documented in ``Command/HelpDefault``. When `nil`, no
         /// defaults are auto-derived (the v1.0.15 behavior preserved for
         /// the no-initial overload of ``Command/Help/serialize(_:into:)``).
@@ -73,7 +73,7 @@ extension Command.Help {
             rows.append(
                 .positional(
                     name: positional.declaration.name,
-                    valueName: positional.declaration.valueName,
+                    placeholder: positional.declaration.placeholder,
                     help: help,
                     visibility: positional.declaration.visibility
                 )
@@ -91,7 +91,7 @@ extension Command.Help {
             rows.append(
                 .positionalMany(
                     name: positionalMany.declaration.name,
-                    valueName: positionalMany.declaration.valueName,
+                    placeholder: positionalMany.declaration.placeholder,
                     help: help,
                     visibility: positionalMany.declaration.visibility
                 )
@@ -109,7 +109,7 @@ extension Command.Help {
             rows.append(
                 .option(
                     name: option.declaration.name,
-                    valueName: option.declaration.valueName,
+                    placeholder: option.declaration.placeholder,
                     help: help,
                     visibility: option.declaration.visibility
                 )
@@ -127,7 +127,7 @@ extension Command.Help {
             rows.append(
                 .optionMany(
                     name: optionMany.declaration.name,
-                    valueName: optionMany.declaration.valueName,
+                    placeholder: optionMany.declaration.placeholder,
                     help: help,
                     visibility: optionMany.declaration.visibility
                 )
@@ -175,14 +175,14 @@ extension Command.Help {
             // `HelpDefault.inject` path suppresses `Bool` values, so we
             // derive the rendered side here directly.
             var help = flagInverted.help
-            if help.defaultDescription == nil, let initial {
+            if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagInverted.keyPath]
                 let renderedName = value ? flagInverted.trueName : flagInverted.falseName
                 help = Argument.Help(
                     abstract: help.abstract,
                     discussion: help.discussion,
-                    valueDescription: help.valueDescription,
-                    defaultDescription: "--" + renderedName
+                    placeholder: help.placeholder,
+                    defaults: "--" + renderedName
                 )
             }
             rows.append(
@@ -201,19 +201,19 @@ extension Command.Help {
             // `Flag.Enumerable` is keyed on `initial[keyPath:]`'s case;
             // the default-line shape is the case's flag name.
             var help = flagEnumerable.help
-            if help.defaultDescription == nil, let initial {
+            if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagEnumerable.keyPath]
-                let renderedName = E.flagName(for: value).string
+                let renderedName = E.name(for: value).string
                 help = Argument.Help(
                     abstract: help.abstract,
                     discussion: help.discussion,
-                    valueDescription: help.valueDescription,
-                    defaultDescription: "--" + renderedName
+                    placeholder: help.placeholder,
+                    defaults: "--" + renderedName
                 )
             }
             let cases: [Command.HelpEnumerableCase] = E.allCases.map { value in
                 Command.HelpEnumerableCase(
-                    name: E.flagName(for: value).string,
+                    name: E.name(for: value).string,
                     help: E.help(for: value)
                 )
             }
@@ -325,17 +325,17 @@ extension Command.Help {
                 output += "\nARGUMENTS:\n"
                 for row in positionalRows {
                     switch row {
-                    case let .positional(_, valueName, help, _):
-                        let left = "<\(valueName)>"
+                    case let .positional(_, placeholder, help, _):
+                        let left = "<\(placeholder)>"
                         var right = help.abstract
-                        if let def = help.defaultDescription, !def.isEmpty {
+                        if let def = help.defaults, !def.isEmpty {
                             right += " (default: \(def))"
                         }
                         output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
-                    case let .positionalMany(_, valueName, help, _):
-                        let left = "<\(valueName)>..."
+                    case let .positionalMany(_, placeholder, help, _):
+                        let left = "<\(placeholder)>..."
                         var right = help.abstract
-                        if let def = help.defaultDescription, !def.isEmpty {
+                        if let def = help.defaults, !def.isEmpty {
                             right += " (default: \(def))"
                         }
                         output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
@@ -353,18 +353,18 @@ extension Command.Help {
                 case .positional, .positionalMany, .subcommand:
                     continue
 
-                case let .option(name, valueName, help, _):
-                    let left = formatOptionName(name) + " <\(valueName)>"
+                case let .option(name, placeholder, help, _):
+                    let left = formatOptionName(name) + " <\(placeholder)>"
                     var right = help.abstract
-                    if let def = help.defaultDescription, !def.isEmpty {
+                    if let def = help.defaults, !def.isEmpty {
                         right += " (default: \(def))"
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .optionMany(name, valueName, help, _):
-                    let left = formatOptionName(name) + " <\(valueName)>..."
+                case let .optionMany(name, placeholder, help, _):
+                    let left = formatOptionName(name) + " <\(placeholder)>..."
                     var right = help.abstract
-                    if let def = help.defaultDescription, !def.isEmpty {
+                    if let def = help.defaults, !def.isEmpty {
                         right += " (default: \(def))"
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
@@ -372,7 +372,7 @@ extension Command.Help {
                 case let .flag(name, help, _):
                     let left = formatOptionName(name)
                     var right = help.abstract
-                    if let def = help.defaultDescription, !def.isEmpty {
+                    if let def = help.defaults, !def.isEmpty {
                         right += " (default: \(def))"
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
@@ -380,7 +380,7 @@ extension Command.Help {
                 case let .flagCount(name, help, _):
                     let left = formatOptionName(name) + "..."
                     var right = help.abstract
-                    if let def = help.defaultDescription, !def.isEmpty {
+                    if let def = help.defaults, !def.isEmpty {
                         right += " (default: \(def))"
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
@@ -388,18 +388,18 @@ extension Command.Help {
                 case let .flagInverted(trueName, falseName, help, _):
                     let left = "--\(trueName)/--\(falseName)"
                     var right = help.abstract
-                    if let def = help.defaultDescription, !def.isEmpty {
+                    if let def = help.defaults, !def.isEmpty {
                         right += " (default: \(def))"
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
                 case let .flagEnumerable(cases, groupHelp, _):
-                    if !groupHelp.abstract.isEmpty || groupHelp.defaultDescription != nil {
+                    if !groupHelp.abstract.isEmpty || groupHelp.defaults != nil {
                         // Group header row first (carrying any
                         // auto-derived default), then per-case rows
                         // indented under it.
                         var right = groupHelp.abstract
-                        if let def = groupHelp.defaultDescription, !def.isEmpty {
+                        if let def = groupHelp.defaults, !def.isEmpty {
                             right += " (default: \(def))"
                         }
                         output += "  " + pad("", to: Self.padWidth) + "  " + right + "\n"
@@ -441,13 +441,13 @@ extension Command.Help {
                 case .positional, .positionalMany, .subcommand:
                     continue
 
-                case let .option(name, valueName, _, visibility):
+                case let .option(name, placeholder, _, visibility):
                     guard visibility == .visible else { continue }
-                    parts.append("[\(formatOptionName(name)) <\(valueName)>]")
+                    parts.append("[\(formatOptionName(name)) <\(placeholder)>]")
 
-                case let .optionMany(name, valueName, _, visibility):
+                case let .optionMany(name, placeholder, _, visibility):
                     guard visibility == .visible else { continue }
-                    parts.append("[\(formatOptionName(name)) <\(valueName)>]...")
+                    parts.append("[\(formatOptionName(name)) <\(placeholder)>]...")
 
                 case let .flag(name, _, visibility):
                     guard visibility == .visible else { continue }
@@ -481,12 +481,12 @@ extension Command.Help {
             }
             for row in rows {
                 switch row {
-                case let .positional(_, valueName, _, visibility):
+                case let .positional(_, placeholder, _, visibility):
                     guard visibility == .visible else { continue }
-                    parts.append("<\(valueName)>")
-                case let .positionalMany(_, valueName, _, visibility):
+                    parts.append("<\(placeholder)>")
+                case let .positionalMany(_, placeholder, _, visibility):
                     guard visibility == .visible else { continue }
-                    parts.append("<\(valueName)>...")
+                    parts.append("<\(placeholder)>...")
                 default:
                     continue
                 }

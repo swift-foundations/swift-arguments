@@ -24,7 +24,7 @@ extension Command.Flag {
     /// ```swift
     /// enum Operation: Argument.Flag.Enumerable {
     ///     case add, multiply
-    ///     static func flagName(for value: Self) -> Argument.Name.Long {
+    ///     static func name(for value: Self) -> Argument.Name.Long {
     ///         switch value {
     ///         case .add: return .literal("add")
     ///         case .multiply: return .literal("multiply")

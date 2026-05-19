@@ -24,7 +24,7 @@ extension Command.Subcommand {
     internal enum HelpDefault {
         /// Derives a default-value description from `initial` against
         /// the supplied `keyPath`, swapping it into
-        /// `help.defaultDescription` only when (a) the user did not
+        /// `help.defaults` only when (a) the user did not
         /// declare one explicitly AND (b) initial is non-`nil`.
         @usableFromInline
         internal static func inject<Root, V>(
@@ -32,7 +32,7 @@ extension Command.Subcommand {
             initial: Root?,
             keyPath: WritableKeyPath<Root, V> & Sendable
         ) -> Argument.Help {
-            if help.defaultDescription != nil { return help }
+            if help.defaults != nil { return help }
             guard let initial else { return help }
             let value = initial[keyPath: keyPath]
             let rendered = Self.render(value)
@@ -40,8 +40,8 @@ extension Command.Subcommand {
             return Argument.Help(
                 abstract: help.abstract,
                 discussion: help.discussion,
-                valueDescription: help.valueDescription,
-                defaultDescription: rendered
+                placeholder: help.placeholder,
+                defaults: rendered
             )
         }
 

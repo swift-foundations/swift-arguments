@@ -21,7 +21,7 @@ extension Command.Flag {
     ///
     /// ```swift
     /// Command.Flag<MyRoot>.Count(\.verbosity,
-    ///     name: .shortLiteral("v"),
+    ///     name: .short(.literal("v")),
     ///     help: .init(abstract: "Increase verbosity (repeatable)."))
     /// ```
     ///

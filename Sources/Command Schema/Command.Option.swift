@@ -31,7 +31,7 @@ extension Command {
     ///                 help: .init(abstract: "Number of repetitions."))
     ///
     /// // Transform-closure (escape hatch) form for a non-Codable type:
-    /// Command.Option(\.url, name: .longLiteral("url"), transform: { string in
+    /// Command.Option(\.url, name: .long(.literal("url")), transform: { string in
     ///     guard let parsed = URL(string: string) else {
     ///         throw Command.Error.invalidValue(
     ///             name: "--url",
@@ -76,33 +76,33 @@ extension Command {
         ///   - keyPath: The Root field this option writes to.
         ///   - name: The option name (short / long / both) at the L1
         ///     ``Argument/Name`` level.
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to the option's long-form name or `"value"`.
         ///   - arity: Cardinality. Defaults to `.exactly(1)`.
         ///   - visibility: Whether the option appears in help. Defaults
         ///     to `.visible`.
         ///   - help: Documentation. Defaults to empty.
-        ///   - environmentVariable: Optional env-var fallback. Defaults
+        ///   - environment: Optional env-var fallback. Defaults
         ///     to `nil`.
         @inlinable
         public init(
             _ keyPath: WritableKeyPath<Root, V> & Sendable,
             name: Argument.Name,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init(),
-            environmentVariable: Argument.Environment.Variable.Name? = nil
+            environment: Argument.Environment.Variable.Name? = nil
         ) where V: Argument.Codable {
             self.keyPath = keyPath
-            let resolvedValueName = valueName ?? name.long?.string ?? "value"
+            let resolvedValueName = placeholder ?? name.long?.string ?? "value"
             self.declaration = Argument.Option<V>(
                 name: name,
-                valueName: resolvedValueName,
+                placeholder: resolvedValueName,
                 arity: arity,
                 visibility: visibility,
                 help: help,
-                environmentVariable: environmentVariable
+                environment: environment
             )
             self.parse = { V(argument: $0) }
         }
@@ -125,39 +125,39 @@ extension Command {
         ///   - keyPath: The Root field this option writes to.
         ///   - name: The option name (short / long / both) at the L1
         ///     ``Argument/Name`` level.
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to the option's long-form name or `"value"`.
         ///   - arity: Cardinality. Defaults to `.exactly(1)`.
         ///   - visibility: Whether the option appears in help. Defaults
         ///     to `.visible`.
         ///   - help: Documentation. Defaults to empty.
-        ///   - environmentVariable: Optional env-var fallback. Defaults
+        ///   - environment: Optional env-var fallback. Defaults
         ///     to `nil`. When supplied, the env-var value is also routed
         ///     through `transform`, and a thrown ``Command/Error`` is
         ///     surfaced as
-        ///     ``Command/Error/invalidEnvironmentValue(name:environmentVariable:value:)``.
+        ///     ``Command/Error/invalidEnvironmentValue(name:environment:value:)``.
         ///   - transform: Closure that converts an argv-element string to
         ///     a `V`; throws ``Command/Error`` on parse failure.
         @inlinable
         public init(
             _ keyPath: WritableKeyPath<Root, V> & Sendable,
             name: Argument.Name,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init(),
-            environmentVariable: Argument.Environment.Variable.Name? = nil,
+            environment: Argument.Environment.Variable.Name? = nil,
             transform: @escaping @Sendable (String) throws(Command.Error) -> V
         ) {
             self.keyPath = keyPath
-            let resolvedValueName = valueName ?? name.long?.string ?? "value"
+            let resolvedValueName = placeholder ?? name.long?.string ?? "value"
             self.declaration = Argument.Option<V>(
                 name: name,
-                valueName: resolvedValueName,
+                placeholder: resolvedValueName,
                 arity: arity,
                 visibility: visibility,
                 help: help,
-                environmentVariable: environmentVariable
+                environment: environment
             )
             self.parse = { input in
                 do {

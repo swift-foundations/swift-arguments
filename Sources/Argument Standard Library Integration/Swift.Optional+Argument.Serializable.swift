@@ -21,7 +21,7 @@ extension Swift.Optional: Argument.Serializable where Wrapped: Argument.Serializ
     ///
     /// Schemas wanting to label nil defaults explicitly (e.g.,
     /// `(default: <none>)`) should set
-    /// ``Argument/Help/defaultDescription`` directly on the
+    /// ``Argument/Help/defaults`` directly on the
     /// ``Argument/Option`` declaration rather than relying on this
     /// rendering.
     @inlinable

@@ -20,9 +20,9 @@ extension Command {
     ///   visibility / help metadata for help-text emission.
     /// - A type-erased argv-string parse closure produced by the chosen
     ///   initializer — either the ``Argument/Codable``-driven default
-    ///   ``init(_:name:valueName:arity:visibility:help:)`` or the
+    ///   ``init(_:name:placeholder:arity:visibility:help:)`` or the
     ///   custom-`transform:` escape hatch
-    ///   ``init(_:name:valueName:arity:visibility:help:transform:)`` for
+    ///   ``init(_:name:placeholder:arity:visibility:help:transform:)`` for
     ///   value types the consumer does not own (e.g. `Foundation.URL`,
     ///   third-party types) that cannot conform to ``Argument/Codable``.
     ///
@@ -54,7 +54,7 @@ extension Command {
     ///
     /// `V` must be `Sendable & Equatable`. The ``Argument/Codable``
     /// conformance is required ONLY by the standard initializer; the
-    /// ``init(_:name:valueName:arity:visibility:help:transform:)`` overload
+    /// ``init(_:name:placeholder:arity:visibility:help:transform:)`` overload
     /// drops the requirement so consumers can bind any `Sendable & Equatable`
     /// value type through a custom parse closure.
     public struct Positional<Root, V>: Sendable
@@ -85,7 +85,7 @@ extension Command {
         ///     value-name is derived from a string-describing form
         ///     (intentionally minimal — schema authors typically supply an
         ///     explicit `name`).
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to `name`.
         ///   - arity: Cardinality. Defaults to `.exactly(1)`.
         ///   - visibility: Whether the positional appears in help.
@@ -95,7 +95,7 @@ extension Command {
         public init(
             _ keyPath: WritableKeyPath<Root, V> & Sendable,
             name: String? = nil,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init()
@@ -104,7 +104,7 @@ extension Command {
             let resolvedName = name ?? "value"
             self.declaration = Argument.Positional<V>(
                 name: resolvedName,
-                valueName: valueName ?? resolvedName,
+                placeholder: placeholder ?? resolvedName,
                 arity: arity,
                 visibility: visibility,
                 help: help
@@ -129,7 +129,7 @@ extension Command {
         ///   - keyPath: The Root field this positional writes to.
         ///   - name: The schema-side identifier. When `nil`, falls back
         ///     to `"value"`.
-        ///   - valueName: The usage-line placeholder. When `nil`, falls
+        ///   - placeholder: The usage-line placeholder. When `nil`, falls
         ///     back to `name`.
         ///   - arity: Cardinality. Defaults to `.exactly(1)`.
         ///   - visibility: Whether the positional appears in help.
@@ -141,7 +141,7 @@ extension Command {
         public init(
             _ keyPath: WritableKeyPath<Root, V> & Sendable,
             name: String? = nil,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init(),
@@ -151,7 +151,7 @@ extension Command {
             let resolvedName = name ?? "value"
             self.declaration = Argument.Positional<V>(
                 name: resolvedName,
-                valueName: valueName ?? resolvedName,
+                placeholder: placeholder ?? resolvedName,
                 arity: arity,
                 visibility: visibility,
                 help: help

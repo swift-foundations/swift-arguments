@@ -23,12 +23,12 @@ extension Command.Subcommand.Help {
     /// the parent visitor's row list without per-Root re-wrapping.
     @usableFromInline
     internal enum Row: Sendable {
-        case positional(name: String, valueName: String, help: Argument.Help, visibility: Argument.Visibility)
+        case positional(name: String, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
         /// An array-positional ("Many") row.
-        case positionalMany(name: String, valueName: String, help: Argument.Help, visibility: Argument.Visibility)
-        case option(name: Argument.Name, valueName: String, help: Argument.Help, visibility: Argument.Visibility)
+        case positionalMany(name: String, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
+        case option(name: Argument.Name, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
         /// A repeatable-option ("Many") row.
-        case optionMany(name: Argument.Name, valueName: String, help: Argument.Help, visibility: Argument.Visibility)
+        case optionMany(name: Argument.Name, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
         case flag(name: Argument.Name, help: Argument.Help, visibility: Argument.Visibility)
         /// A count-flag row.
         case flagCount(name: Argument.Name, help: Argument.Help, visibility: Argument.Visibility)

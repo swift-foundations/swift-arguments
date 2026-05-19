@@ -28,7 +28,7 @@ struct EnvironmentVariableParseTests {
 
     // Why these tests exist:
     //
-    // Before B1 closure, `Argument.Option.environmentVariable` was
+    // Before B1 closure, `Argument.Option.environment` was
     // declared at the L1 layer
     // (swift-argument-primitives/Sources/Argument Option
     // Primitives/Argument.Option.swift:44) and plumbed through the L3
@@ -36,7 +36,7 @@ struct EnvironmentVariableParseTests {
     // ParseVisitor never consulted the process environment for any
     // un-supplied option. The fix below reads via
     // `Environment.task.read(_:)` so each option declared with an
-    // `environmentVariable:` and not provided by argv receives its
+    // `environment:` and not provided by argv receives its
     // value from the (TaskLocal-overlay-aware) process environment;
     // argv-supplied values take precedence.
 
@@ -128,7 +128,7 @@ struct EnvCounted: Command.`Protocol`, Equatable {
                 \.count,
                 name: .longLiteral("count"),
                 help: .init(abstract: "Repeat count."),
-                environmentVariable: "ENVCOUNTED_COUNT_TEST"
+                environment: "ENVCOUNTED_COUNT_TEST"
             )
         }
     }
@@ -147,7 +147,7 @@ struct EnvGroupFragment: Sendable, Equatable {
             \.output,
             name: .longLiteral("output"),
             help: .init(abstract: "Output path."),
-            environmentVariable: "ENVGROUP_OUTPUT_TEST"
+            environment: "ENVGROUP_OUTPUT_TEST"
         )
     }
 }

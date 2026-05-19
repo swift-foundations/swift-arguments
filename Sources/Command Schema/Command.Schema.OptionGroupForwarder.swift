@@ -145,7 +145,7 @@ extension Command.Schema {
                         root[keyPath: outer] = fragment
                         return true
                     },
-                    environmentVariable: option.declaration.environmentVariable
+                    environment: option.declaration.environment
                 )
             )
         }
@@ -236,7 +236,7 @@ extension Command.Schema {
             let inner = flagEnumerable.keyPath
             var casesByLongName: [String: @Sendable (inout Root) -> Void] = [:]
             for value in E.allCases {
-                let name = E.flagName(for: value).string
+                let name = E.name(for: value).string
                 let captured = value
                 casesByLongName[name] = { root in
                     var fragment = root[keyPath: outer]
@@ -334,7 +334,7 @@ extension Command.Schema {
                             root[keyPath: outer] = fragment
                             return success
                         },
-                        environmentVariable: entry.environmentVariable
+                        environment: entry.environment
                     )
                 )
             }

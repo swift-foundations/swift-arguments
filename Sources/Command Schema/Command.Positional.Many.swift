@@ -73,7 +73,7 @@ extension Command.Positional {
         ///   - keyPath: The Root array field where parsed values are
         ///     appended.
         ///   - name: The schema-side identifier (defaults to `"values"`).
-        ///   - valueName: The usage-line placeholder (defaults to `name`).
+        ///   - placeholder: The usage-line placeholder (defaults to `name`).
         ///   - arity: Cardinality. Defaults to
         ///     ``Argument/Arity/atLeast(0)`` (zero or more, rest-positional).
         ///   - visibility: Whether the positional appears in help.
@@ -83,7 +83,7 @@ extension Command.Positional {
         public init(
             _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
             name: String? = nil,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init()
@@ -92,7 +92,7 @@ extension Command.Positional {
             let resolvedName = name ?? "values"
             self.declaration = Argument.Positional<V>(
                 name: resolvedName,
-                valueName: valueName ?? resolvedName,
+                placeholder: placeholder ?? resolvedName,
                 arity: arity,
                 visibility: visibility,
                 help: help
@@ -111,7 +111,7 @@ extension Command.Positional {
         ///   - keyPath: The Root array field where parsed values are
         ///     appended.
         ///   - name: The schema-side identifier (defaults to `"values"`).
-        ///   - valueName: The usage-line placeholder (defaults to `name`).
+        ///   - placeholder: The usage-line placeholder (defaults to `name`).
         ///   - arity: Cardinality. Defaults to
         ///     ``Argument/Arity/atLeast(0)`` (zero or more, rest-positional).
         ///   - visibility: Whether the positional appears in help.
@@ -123,7 +123,7 @@ extension Command.Positional {
         public init(
             _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
             name: String? = nil,
-            valueName: String? = nil,
+            placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init(),
@@ -133,7 +133,7 @@ extension Command.Positional {
             let resolvedName = name ?? "values"
             self.declaration = Argument.Positional<V>(
                 name: resolvedName,
-                valueName: valueName ?? resolvedName,
+                placeholder: placeholder ?? resolvedName,
                 arity: arity,
                 visibility: visibility,
                 help: help

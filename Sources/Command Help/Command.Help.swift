@@ -59,7 +59,7 @@ extension Command {
         ///
         /// Pure-text emission — cannot fail. Auto-derived defaults are
         /// not rendered on this overload; declarations whose
-        /// ``Argument/Help/defaultDescription`` is `nil` will emit no
+        /// ``Argument/Help/defaults`` is `nil` will emit no
         /// default line.
         @inlinable
         public borrowing func serialize(
@@ -74,7 +74,7 @@ extension Command {
         /// Walks the schema's nodes and appends formatted help text to
         /// `buffer`, threading `initial` so the visitor can auto-derive
         /// default-value descriptions for declarations whose
-        /// ``Argument/Help/defaultDescription`` is `nil`.
+        /// ``Argument/Help/defaults`` is `nil`.
         ///
         /// Auto-derivation rules — when `initial` is non-`nil`:
         ///
@@ -94,9 +94,9 @@ extension Command {
         /// - `Option<V?>` (`nil`) — never render.
         /// - `Option<V?>` (`some(v)`) — render `(default: \(String(describing: v)))`.
         ///
-        /// User-supplied ``Argument/Help/defaultDescription`` always
+        /// User-supplied ``Argument/Help/defaults`` always
         /// takes precedence over auto-derivation. Pass-through when the
-        /// declaration's `help.defaultDescription` is already set.
+        /// declaration's `help.defaults` is already set.
         ///
         /// - Parameters:
         ///   - output: The schema to render.
