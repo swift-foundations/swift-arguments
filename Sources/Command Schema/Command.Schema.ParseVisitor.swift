@@ -606,7 +606,7 @@ extension Command.Schema.ParseVisitor {
             let missing = positionals[positionalCursor]
             throw .missingPositional(
                 name: missing.name,
-                position: .init(argvIndex: 0, byteOffset: 0)
+                position: .init(argvIndex: .zero, byteOffset: .zero)
             )
         }
 
@@ -1054,8 +1054,8 @@ extension Command.Schema.ParseVisitor {
     @usableFromInline
     internal func position(from token: Argument.Token) -> Argument.Position {
         Argument.Position(
-            argvIndex: 0,
-            byteOffset: Int(token.range.start.underlying.rawValue)
+            argvIndex: .zero,
+            byteOffset: .init(fromZero: token.range.start)
         )
     }
 
@@ -1166,7 +1166,7 @@ extension Command.Schema.ParseVisitor {
                         throw .invalidValue(
                             name: "--\(name)",
                             value: valueString,
-                            position: .init(argvIndex: argvIndex, byteOffset: 0)
+                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                         )
                     }
                     filledOptionIndices.insert(optionIndex)
@@ -1184,7 +1184,7 @@ extension Command.Schema.ParseVisitor {
                         throw .invalidValue(
                             name: "--\(name)",
                             value: valueString,
-                            position: .init(argvIndex: argvIndex, byteOffset: 0)
+                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                         )
                     }
                     continue
@@ -1230,7 +1230,7 @@ extension Command.Schema.ParseVisitor {
                 )
                 throw .unknownLongOption(
                     name: "--\(name)",
-                    position: .init(argvIndex: argvIndex, byteOffset: 0),
+                    position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero),
                     suggestion: suggestion
                 )
             }
@@ -1249,7 +1249,7 @@ extension Command.Schema.ParseVisitor {
                         guard argvIndex + 1 < argv.count else {
                             throw .missingOptionValue(
                                 name: "-\(firstChar)",
-                                position: .init(argvIndex: argvIndex, byteOffset: 0)
+                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                             )
                         }
                         let valueString = argv[argvIndex + 1]
@@ -1257,7 +1257,7 @@ extension Command.Schema.ParseVisitor {
                             throw .invalidValue(
                                 name: "-\(firstChar)",
                                 value: valueString,
-                                position: .init(argvIndex: argvIndex, byteOffset: 0)
+                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                             )
                         }
                         filledOptionIndices.insert(optionIndex)
@@ -1271,7 +1271,7 @@ extension Command.Schema.ParseVisitor {
                         guard argvIndex + 1 < argv.count else {
                             throw .missingOptionValue(
                                 name: "-\(firstChar)",
-                                position: .init(argvIndex: argvIndex, byteOffset: 0)
+                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                             )
                         }
                         let valueString = argv[argvIndex + 1]
@@ -1279,7 +1279,7 @@ extension Command.Schema.ParseVisitor {
                             throw .invalidValue(
                                 name: "-\(firstChar)",
                                 value: valueString,
-                                position: .init(argvIndex: argvIndex, byteOffset: 0)
+                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                             )
                         }
                         argvIndex += 2
@@ -1301,7 +1301,7 @@ extension Command.Schema.ParseVisitor {
                     }
                     throw .unknownShortOption(
                         name: firstChar,
-                        position: .init(argvIndex: argvIndex, byteOffset: 0)
+                        position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                     )
                 }
                 // Multi-character cluster at root: every char must be a
@@ -1319,7 +1319,7 @@ extension Command.Schema.ParseVisitor {
                     } else {
                         throw .unknownShortOption(
                             name: character,
-                            position: .init(argvIndex: argvIndex, byteOffset: 0)
+                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
                         )
                     }
                 }
@@ -1346,7 +1346,7 @@ extension Command.Schema.ParseVisitor {
                 )
                 throw .unknownSubcommand(
                     name: subcommandName,
-                    position: .init(argvIndex: argvIndex, byteOffset: 0),
+                    position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero),
                     suggestion: suggestion
                 )
             }
@@ -1429,7 +1429,7 @@ extension Command.Schema.ParseVisitor {
         guard argvIndex + 1 < argv.count else {
             throw .missingOptionValue(
                 name: name,
-                position: .init(argvIndex: argvIndex, byteOffset: 0)
+                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
             )
         }
         let value = argv[argvIndex + 1]

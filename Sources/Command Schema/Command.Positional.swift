@@ -43,7 +43,7 @@ extension Command {
     ///         throw Command.Error.invalidValue(
     ///             name: "url",
     ///             value: string,
-    ///             position: .init(argvIndex: 0, byteOffset: 0)
+    ///             position: .init(argvIndex: .zero, byteOffset: .zero)
     ///         )
     ///     }
     ///     return parsed
