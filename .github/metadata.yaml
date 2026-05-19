@@ -1,0 +1,14 @@
+# .github/metadata.yaml
+# L3 foundation package: typed, Foundation-free CLI argument parser composing
+# swift-argument-primitives (L1) + swift-ieee-1003 (L2) into the institute's
+# argument-parsing foundation per [FAM-009] / §3.5 v1.0.7 of the design.
+description: "Typed, Foundation-free CLI argument parser — Command.\\`Protocol\\`, Command.Schema, Command.Help — composing swift-argument-primitives (L1) and swift-ieee-1003 (L2)."
+topics:
+  - foundations
+  - arguments
+  - cli
+  - command-line
+  - argv
+homepage: "https://swift-institute.org"
+readme:
+  family: E

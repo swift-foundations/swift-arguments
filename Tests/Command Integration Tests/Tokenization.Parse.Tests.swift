@@ -1,0 +1,158 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-arguments open source project
+//
+// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
+import Testing
+
+@testable import Command_Test_Support
+
+// MARK: - Gap 1 — Glued short-option value (POSIX 12.2 Guideline 6)
+
+@Suite("B4 Gap 1 — Glued short-option value (POSIX 12.2 G6)")
+struct GluedShortOptionParseTests {
+
+    @Test("-Dfoo=bar binds 'foo=bar' to the short option -D")
+    func dashDLikeCppDefine() throws(Command.Error) {
+        let parsed = try Command.parse(
+            GluedShortOptionD.self,
+            from: ["-Dfoo=bar"],
+            initial: .init()
+        )
+        #expect(parsed == GluedShortOptionD(define: "foo=bar"))
+    }
+
+    @Test("-Xmx2g binds 'mx2g' to the short option -X (javac style)")
+    func dashXLikeJavac() throws(Command.Error) {
+        let parsed = try Command.parse(
+            GluedShortOptionX.self,
+            from: ["-Xmx2g"],
+            initial: .init()
+        )
+        #expect(parsed == GluedShortOptionX(jvmFlag: "mx2g"))
+    }
+
+    @Test("-fvalue regression check — single-char glued form still works")
+    func dashFvalueRegression() throws(Command.Error) {
+        let parsed = try Command.parse(
+            GluedShortOptionF.self,
+            from: ["-fvalue"],
+            initial: .init()
+        )
+        #expect(parsed == GluedShortOptionF(flag: "value"))
+    }
+}
+
+// MARK: - Gap 2 — Negative-number positional
+
+@Suite("B4 Gap 2 — Negative-number positional heuristic")
+struct NegativeNumberPositionalParseTests {
+
+    @Test("-5 with a single Int positional binds value == -5")
+    func negativeIntPositional() throws(Command.Error) {
+        let parsed = try Command.parse(
+            NegativeIntPositional.self,
+            from: ["-5"],
+            initial: .init()
+        )
+        #expect(parsed == NegativeIntPositional(value: -5))
+    }
+
+    @Test("-3.14 with a Float positional binds value == -3.14")
+    func negativeFloatPositional() throws(Command.Error) {
+        let parsed = try Command.parse(
+            NegativeFloatPositional.self,
+            from: ["-3.14"],
+            initial: .init()
+        )
+        #expect(parsed == NegativeFloatPositional(value: -3.14))
+    }
+
+    @Test("Schema-explicit -5 flag wins over numeric-positional heuristic")
+    func schemaExplicitWinsOverNumeric() throws(Command.Error) {
+        // Schema declares `-5` as a Bool flag AND an Int positional.
+        // Argv `["-5", "7"]`: the heuristic suppresses because `-5` IS a
+        // schema-declared short flag → flag fires; positional reads "7".
+        let parsed = try Command.parse(
+            NegativeNumberWithFiveFlag.self,
+            from: ["-5", "7"],
+            initial: .init()
+        )
+        #expect(parsed == NegativeNumberWithFiveFlag(fiveFlag: true, value: 7))
+    }
+}
+
+// MARK: - Gap 3 — Did-you-mean suggestions
+
+@Suite("B4 Gap 3 — Did-you-mean suggestions on unknown name throws")
+struct SuggestionParseTests {
+
+    @Test("Unknown long option --buld suggests 'build'")
+    func unknownLongOptionSuggestsBuild() {
+        do throws(Command.Error) {
+            _ = try Command.parse(
+                BuildOptionCommand.self,
+                from: ["--buld"],
+                initial: .init()
+            )
+            Issue.record("Expected unknownLongOption throw")
+        } catch {
+            switch error {
+            case let .unknownLongOption(name, _, suggestion):
+                #expect(name == "--buld")
+                #expect(suggestion == "build")
+
+            default:
+                Issue.record("Expected unknownLongOption, got \(error)")
+            }
+        }
+    }
+
+    @Test("Unknown subcommand 'clne' suggests 'clone'")
+    func unknownSubcommandSuggestsClone() {
+        do throws(Command.Error) {
+            _ = try Command.parse(
+                GitSuggest.self,
+                from: ["clne"],
+                initial: .clone(.init())
+            )
+            Issue.record("Expected unknownSubcommand throw")
+        } catch {
+            switch error {
+            case let .unknownSubcommand(name, _, suggestion):
+                #expect(name == "clne")
+                #expect(suggestion == "clone")
+
+            default:
+                Issue.record("Expected unknownSubcommand, got \(error)")
+            }
+        }
+    }
+
+    @Test("Far-from-any-declared-name '--xyz' carries nil suggestion")
+    func farUnknownLongOptionCarriesNilSuggestion() {
+        do throws(Command.Error) {
+            _ = try Command.parse(
+                BuildOptionCommand.self,
+                from: ["--xyz"],
+                initial: .init()
+            )
+            Issue.record("Expected unknownLongOption throw")
+        } catch {
+            switch error {
+            case let .unknownLongOption(name, _, suggestion):
+                #expect(name == "--xyz")
+                #expect(suggestion == nil)
+
+            default:
+                Issue.record("Expected unknownLongOption, got \(error)")
+            }
+        }
+    }
+}

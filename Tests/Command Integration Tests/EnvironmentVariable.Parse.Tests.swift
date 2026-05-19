@@ -1,0 +1,171 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-arguments open source project
+//
+// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
+import Testing
+
+@testable import Command_Test_Support
+
+// MARK: - Test-only overlay bridge
+//
+// The ParseVisitor consults `Environment.task.read(_:)` so consumers
+// and tests can use `Environment.withOverlay` for scoped, parallel-safe
+// env-var values without mutating process state. The
+// `Argument.Environment.withOverlay` shim (in `Command Test
+// Support`) is a `Swift.String`-typed bridge that isolates the `import
+// Environment` so the `String_Primitives` `String` shadow does not
+// leak into test bodies.
+
+@Suite("Environment-variable fallback")
+struct EnvironmentVariableParseTests {
+
+    // Why these tests exist:
+    //
+    // Before B1 closure, `Argument.Option.environmentVariable` was
+    // declared at the L1 layer
+    // (swift-argument-primitives/Sources/Argument Option
+    // Primitives/Argument.Option.swift:44) and plumbed through the L3
+    // binding (Command.Option.swift:59 constructor param), but the
+    // ParseVisitor never consulted the process environment for any
+    // un-supplied option. The fix below reads via
+    // `Environment.task.read(_:)` so each option declared with an
+    // `environmentVariable:` and not provided by argv receives its
+    // value from the (TaskLocal-overlay-aware) process environment;
+    // argv-supplied values take precedence.
+
+    @Test("Env-var supplies value when option is absent from argv")
+    func envVarFallbackFires() throws(Command.Error) {
+        let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
+            () throws(Command.Error) -> EnvCounted in
+            try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
+        }
+        #expect(parsed.count == 7)
+        #expect(parsed.phrase == "hello")
+    }
+
+    @Test("argv value takes precedence over env-var value")
+    func argvBeatsEnv() throws(Command.Error) {
+        let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
+            () throws(Command.Error) -> EnvCounted in
+            try Command.parse(
+                EnvCounted.self,
+                from: ["--count", "3", "hello"],
+                initial: EnvCounted()
+            )
+        }
+        #expect(parsed.count == 3)
+    }
+
+    @Test("Unset env-var leaves the initial default in place")
+    func envVarUnsetUsesDefault() throws(Command.Error) {
+        // No overlay supplied; ENVCOUNTED_COUNT_TEST is not set by the
+        // process either, so the default field value persists.
+        let parsed = try Command.parse(
+            EnvCounted.self,
+            from: ["hello"],
+            initial: EnvCounted()
+        )
+        #expect(parsed.count == 2)
+    }
+
+    @Test("Env-var value that fails Argument.Codable throws .invalidEnvironmentValue")
+    func invalidEnvVarValueThrows() {
+        do {
+            _ = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "not-an-int"]) {
+                () throws(Command.Error) -> EnvCounted in
+                try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
+            }
+            Issue.record("Expected .invalidEnvironmentValue, parse succeeded")
+        } catch {
+            switch error {
+            case let .invalidEnvironmentValue(name, envVar, value):
+                #expect(name == "--count")
+                #expect(envVar == "ENVCOUNTED_COUNT_TEST")
+                #expect(value == "not-an-int")
+
+            default:
+                Issue.record("Expected .invalidEnvironmentValue, got \(error)")
+            }
+        }
+    }
+
+    @Test("Env-var fallback works for options inside an OptionGroup")
+    func envVarThroughOptionGroup() throws(Command.Error) {
+        let parsed = try Argument.Environment.withOverlay(["ENVGROUP_OUTPUT_TEST": "/tmp/result"]) {
+            () throws(Command.Error) -> EnvGrouped in
+            try Command.parse(EnvGrouped.self, from: ["mytarget"], initial: EnvGrouped())
+        }
+        #expect(parsed.options.output == "/tmp/result")
+        #expect(parsed.target == "mytarget")
+    }
+}
+
+// MARK: - Fixtures
+
+/// A command with an environment-variable-backed `--count` option.
+struct EnvCounted: Command.`Protocol`, Equatable {
+    var phrase: String = ""
+    var count: Int = 2
+
+    static var configuration: Command.Configuration {
+        Command.Configuration(
+            name: "envcounted",
+            abstract: "Counts environment-variable fallback."
+        )
+    }
+
+    static var schema: Command.Schema.Definition<Self> {
+        Command.Schema.Definition<Self> {
+            Command.Positional(\.phrase, name: "phrase", help: .init(abstract: "A phrase."))
+            Command.Option(
+                \.count,
+                name: .longLiteral("count"),
+                help: .init(abstract: "Repeat count."),
+                environmentVariable: "ENVCOUNTED_COUNT_TEST"
+            )
+        }
+    }
+
+    mutating func run() async throws(Command.Error) {}
+}
+
+/// A command whose env-var-backed option is in an OptionGroup.
+struct EnvGroupFragment: Sendable, Equatable {
+    var verbose: Bool = false
+    var output: String = "default"
+
+    static let schema: Command.Schema.Definition<Self> = .init {
+        Command.Flag(\.verbose, name: .longLiteral("verbose"), help: .init(abstract: "Verbose."))
+        Command.Option(
+            \.output,
+            name: .longLiteral("output"),
+            help: .init(abstract: "Output path."),
+            environmentVariable: "ENVGROUP_OUTPUT_TEST"
+        )
+    }
+}
+
+struct EnvGrouped: Command.`Protocol`, Equatable {
+    var options: EnvGroupFragment = .init()
+    var target: String = ""
+
+    static var configuration: Command.Configuration {
+        Command.Configuration(name: "envgrouped", abstract: "OptionGroup env-var.")
+    }
+
+    static var schema: Command.Schema.Definition<Self> {
+        Command.Schema.Definition<Self> {
+            Command.OptionGroup(\.options, schema: EnvGroupFragment.schema)
+            Command.Positional(\.target, name: "target", help: .init(abstract: "Target."))
+        }
+    }
+
+    mutating func run() async throws(Command.Error) {}
+}
