@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 import Command_Test_Support
-import Finite_Primitives_Core
+import Finite_Primitives
 
 /// Mutually exclusive operation enum mapping each case to a long-option name.
 enum Operation: Argument.Flag.Enumerable {
