@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Command_Namespace
+public import Command_Primitive
 public import Command_Core
 public import Command_Schema
 public import Command_Help

@@ -14,7 +14,7 @@
 // including the `Command.main(_:)` runner (via Command Runner). Consumers
 // who do not need the runner can import the narrower variants directly
 // to avoid the transitive swift-process dependency.
-@_exported public import Command_Namespace
+@_exported public import Command_Primitive
 @_exported public import Command_Core
 @_exported public import Command_Schema
 @_exported public import Command_Help

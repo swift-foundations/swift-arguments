@@ -14,8 +14,8 @@ let package = Package(
     products: [
         // MARK: - Namespace
         .library(
-            name: "Command Namespace",
-            targets: ["Command Namespace"]
+            name: "Command Primitive",
+            targets: ["Command Primitive"]
         ),
 
         // MARK: - Core + Variants
@@ -63,7 +63,7 @@ let package = Package(
     targets: [
         // MARK: - Namespace
         .target(
-            name: "Command Namespace",
+            name: "Command Primitive",
             dependencies: []
         ),
 
@@ -85,7 +85,7 @@ let package = Package(
         .target(
             name: "Command Core",
             dependencies: [
-                "Command Namespace",
+                "Command Primitive",
                 "Argument Standard Library Integration",
                 .product(name: "Argument Primitives", package: "swift-argument-primitives"),
                 .product(name: "IEEE_1003", package: "swift-ieee-1003"),
@@ -134,7 +134,7 @@ let package = Package(
         .target(
             name: "Command",
             dependencies: [
-                "Command Namespace",
+                "Command Primitive",
                 "Command Core",
                 "Command Schema",
                 "Command Help",
