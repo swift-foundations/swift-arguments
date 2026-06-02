@@ -53,12 +53,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../swift-primitives/swift-argument-primitives"),
-        .package(path: "../../swift-standards/swift-ieee-1003"),
-        .package(path: "../../swift-primitives/swift-parser-primitives"),
-        .package(path: "../../swift-primitives/swift-serializer-primitives"),
-        .package(path: "../swift-environment"),
-        .package(path: "../swift-process"),
+        .package(url: "https://github.com/swift-primitives/swift-argument-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-standards/swift-ieee-1003.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-serializer-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-environment.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-process.git", branch: "main"),
     ],
     targets: [
         // MARK: - Namespace
