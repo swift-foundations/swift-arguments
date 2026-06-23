@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Serializer_Primitives_Core
+public import Serializer_Primitives
 
 extension Command {
     /// A help-text serializer over a ``Command/Schema/Definition``.

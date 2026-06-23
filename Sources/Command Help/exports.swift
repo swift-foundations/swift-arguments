@@ -10,4 +10,4 @@
 // ===----------------------------------------------------------------------===//
 
 @_exported public import Command_Schema
-@_exported public import Serializer_Primitives_Core
+@_exported public import Serializer_Primitives
