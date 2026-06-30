@@ -15,7 +15,8 @@ import Linter_Institute_Rules
 
 Lint.run(dependencies: [
     .package(
-        path: "../swift-institute-linter-rules",
+        url: "https://github.com/swift-foundations/swift-institute-linter-rules.git",
+        branch: "main",
         products: ["Linter Institute Rules"]
     ),
 ]) {
