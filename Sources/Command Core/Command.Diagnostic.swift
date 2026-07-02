@@ -9,6 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
+internal import Tagged_Primitives
+
 extension Command {
     /// Diagnostic helpers that map ``Command/Error`` to human-readable
     /// messages and canonical Unix exit codes.

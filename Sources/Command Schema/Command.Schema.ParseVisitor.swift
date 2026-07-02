@@ -9,6 +9,14 @@
 //
 // ===----------------------------------------------------------------------===//
 
+internal import Affine_Carrier_Primitives
+internal import Affine_Tagged_Primitives
+internal import Index_Primitives
+internal import Ordinal_Primitive
+internal import Ordinal_Tagged_Primitives
+public import Tagged_Primitives
+internal import Text_Primitives
+
 extension Command.Schema {
     /// The schema-driven argv parser, implemented as a
     /// ``Command/Schema/Visitor``.

@@ -11,6 +11,9 @@
 
 public import Argument_Primitives
 public import IEEE_1003
+internal import Ordinal_Primitive
+internal import Tagged_Primitives
+internal import Text_Primitives
 
 extension Argument.Tokenizer {
     /// The default L3 argv tokenizer.
