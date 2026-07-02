@@ -11,11 +11,10 @@
 
 import Command_Test_Support
 
-/// Fixture: a sub-command that takes no arguments. Used as the default
-/// for `RouterWithDefault`.
+/// Fixture: a sub-command that takes no arguments.
+///
+/// Used as the default for `RouterWithDefault`.
 struct DefaultList: Command.`Protocol`, Equatable {
-    init() {}
-
     static var configuration: Command.Configuration {
         Command.Configuration(name: "list", abstract: "List items.")
     }
@@ -27,8 +26,9 @@ struct DefaultList: Command.`Protocol`, Equatable {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture: a sub-command with one positional. The explicit-only case
-/// in `RouterWithDefault`.
+/// Fixture: a sub-command with one positional.
+///
+/// The explicit-only case in `RouterWithDefault`.
 struct DefaultClone: Command.`Protocol`, Equatable {
     var url: String
 

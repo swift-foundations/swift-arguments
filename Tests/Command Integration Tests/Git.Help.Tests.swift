@@ -55,7 +55,7 @@ struct GitHelpTests {
             )
             Issue.record("Expected helpRequestedForSubcommand")
         } catch {
-            guard case let .helpRequestedForSubcommand(_, rendered) = error else {
+            guard case .helpRequestedForSubcommand(_, let rendered) = error else {
                 Issue.record("Expected helpRequestedForSubcommand, got \(error)")
                 return
             }
@@ -77,7 +77,7 @@ struct GitHelpTests {
             )
             Issue.record("Expected helpRequestedForSubcommand")
         } catch {
-            guard case let .helpRequestedForSubcommand(_, rendered) = error else {
+            guard case .helpRequestedForSubcommand(_, let rendered) = error else {
                 Issue.record("Expected helpRequestedForSubcommand, got \(error)")
                 return
             }

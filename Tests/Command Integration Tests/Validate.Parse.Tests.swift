@@ -37,7 +37,7 @@ struct ValidateParseTests {
             Issue.record("expected validationFailed throw")
         } catch {
             switch error {
-            case let .validationFailed(reason):
+            case .validationFailed(let reason):
                 #expect(reason.contains("--mode=local") || reason.contains("--remote"))
 
             default:

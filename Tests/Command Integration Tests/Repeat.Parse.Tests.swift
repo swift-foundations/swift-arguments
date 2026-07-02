@@ -25,7 +25,9 @@ struct RepeatParseTests {
     @Test("Parse option + positional: ['--count', '3', 'hello']")
     func optionAndPositional() throws(Command.Error) {
         let parsed = try Command.parse(
-            Repeat.self, from: ["--count", "3", "hello"], initial: Repeat()
+            Repeat.self,
+            from: ["--count", "3", "hello"],
+            initial: Repeat()
         )
         #expect(parsed == Repeat(phrase: "hello", count: 3, counter: false))
     }
@@ -33,7 +35,9 @@ struct RepeatParseTests {
     @Test("Parse flag + positional: ['--counter', 'hi']")
     func flagAndPositional() throws(Command.Error) {
         let parsed = try Command.parse(
-            Repeat.self, from: ["--counter", "hi"], initial: Repeat()
+            Repeat.self,
+            from: ["--counter", "hi"],
+            initial: Repeat()
         )
         #expect(parsed == Repeat(phrase: "hi", count: 2, counter: true))
     }
@@ -41,7 +45,9 @@ struct RepeatParseTests {
     @Test("Parse --count=value form")
     func equalsValueForm() throws(Command.Error) {
         let parsed = try Command.parse(
-            Repeat.self, from: ["--count=5", "hi"], initial: Repeat()
+            Repeat.self,
+            from: ["--count=5", "hi"],
+            initial: Repeat()
         )
         #expect(parsed == Repeat(phrase: "hi", count: 5, counter: false))
     }
@@ -78,7 +84,9 @@ struct RepeatParseTests {
     func invalidIntValue() {
         do {
             _ = try Command.parse(
-                Repeat.self, from: ["--count", "not-num", "hi"], initial: Repeat()
+                Repeat.self,
+                from: ["--count", "not-num", "hi"],
+                initial: Repeat()
             )
             Issue.record("Expected invalidValue, parse succeeded")
         } catch {
@@ -96,7 +104,9 @@ struct RepeatParseTests {
     func unknownLongOption() {
         do {
             _ = try Command.parse(
-                Repeat.self, from: ["--unknown", "x", "hi"], initial: Repeat()
+                Repeat.self,
+                from: ["--unknown", "x", "hi"],
+                initial: Repeat()
             )
             Issue.record("Expected unknownLongOption, parse succeeded")
         } catch {

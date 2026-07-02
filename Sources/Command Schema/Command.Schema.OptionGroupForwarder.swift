@@ -42,9 +42,11 @@ extension Command.Schema {
         @usableFromInline
         internal var positionals: [Command.Schema.ParseVisitor<Root>.PositionalEntry] = []
 
-        /// Array-positional ("Many") entry, if any. At most one across
-        /// the entire schema — the parent visitor's `visit(optionGroup:)`
-        /// folds this into its own slot and rejects duplicates.
+        /// Array-positional ("Many") entry, if any.
+        ///
+        /// At most one across the entire schema — the parent visitor's
+        /// `visit(optionGroup:)` folds this into its own slot and
+        /// rejects duplicates.
         @usableFromInline
         internal var positionalMany: Command.Schema.ParseVisitor<Root>.PositionalManyEntry?
 

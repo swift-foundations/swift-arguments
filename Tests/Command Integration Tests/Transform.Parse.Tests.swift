@@ -75,11 +75,13 @@ struct TransformParseTests {
             from: ["https://a.com", "http://b.org", "ftp://c.net"],
             initial: TransformedPositionalMany()
         )
-        #expect(parsed.endpoints == [
-            TransformedHost(scheme: "https", host: "a.com"),
-            TransformedHost(scheme: "http", host: "b.org"),
-            TransformedHost(scheme: "ftp", host: "c.net"),
-        ])
+        #expect(
+            parsed.endpoints == [
+                TransformedHost(scheme: "https", host: "a.com"),
+                TransformedHost(scheme: "http", host: "b.org"),
+                TransformedHost(scheme: "ftp", host: "c.net"),
+            ]
+        )
     }
 
     @Test("Command.Positional.Many + transform: empty argv → empty array")
@@ -103,11 +105,13 @@ struct TransformParseTests {
             ],
             initial: TransformedOptionMany()
         )
-        #expect(parsed.endpoints == [
-            TransformedHost(scheme: "https", host: "a.com"),
-            TransformedHost(scheme: "http", host: "b.org"),
-            TransformedHost(scheme: "ftp", host: "c.net"),
-        ])
+        #expect(
+            parsed.endpoints == [
+                TransformedHost(scheme: "https", host: "a.com"),
+                TransformedHost(scheme: "http", host: "b.org"),
+                TransformedHost(scheme: "ftp", host: "c.net"),
+            ]
+        )
     }
 
     @Test("Command.Option.Many + transform: zero occurrences → empty array")

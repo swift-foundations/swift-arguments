@@ -27,7 +27,7 @@ extension Swift.Optional: Argument.Serializable where Wrapped: Argument.Serializ
     @inlinable
     public var argumentDescription: String {
         switch self {
-        case let .some(value):
+        case .some(let value):
             return value.argumentDescription
 
         case .none:

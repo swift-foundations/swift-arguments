@@ -67,7 +67,7 @@ struct CommandOptionGroupParseTests {
             from: ["build", "--root", "/tmp/proj", "MyTarget"],
             initial: .build(.init())
         )
-        guard case let .build(build) = parsed else {
+        guard case .build(let build) = parsed else {
             Issue.record("Expected .build case, got \(parsed)")
             return
         }
@@ -82,7 +82,7 @@ struct CommandOptionGroupParseTests {
             from: ["test", "--root", "/tmp/proj", "MyFilter"],
             initial: .test(.init())
         )
-        guard case let .test(test) = parsed else {
+        guard case .test(let test) = parsed else {
             Issue.record("Expected .test case, got \(parsed)")
             return
         }
@@ -97,7 +97,7 @@ struct CommandOptionGroupParseTests {
             from: ["build", "TargetX"],
             initial: .build(.init())
         )
-        guard case let .build(build) = parsed else {
+        guard case .build(let build) = parsed else {
             Issue.record("Expected .build case, got \(parsed)")
             return
         }

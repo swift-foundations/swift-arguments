@@ -80,7 +80,7 @@ extension Optional: _SubcommandOptionalConvertible {
     internal var _unwrapped: Any? {
         switch self {
         case .none: return nil
-        case let .some(value): return value
+        case .some(let value): return value
         }
     }
 }

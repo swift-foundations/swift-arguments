@@ -64,56 +64,56 @@ extension Command {
                 // help text emitted from the runner's pre-exit branch.
                 return "Help requested. Pass the schema through Command.Help to render."
 
-            case let .helpRequestedForSubcommand(_, rendered):
+            case .helpRequestedForSubcommand(_, let rendered):
                 return rendered
 
-            case let .versionRequested(version):
+            case .versionRequested(let version):
                 return version
 
-            case let .exit(_, message):
+            case .exit(_, let message):
                 return message ?? ""
 
-            case let .argument(argumentError):
+            case .argument(let argumentError):
                 return "Error: \(argumentError)"
 
-            case let .tokenizer(reason, argvIndex):
+            case .tokenizer(let reason, let argvIndex):
                 return "Error: Tokenizer rejected argv[\(argvIndex)]: \(reason)"
 
-            case let .unknownLongOption(name, _, suggestion):
+            case .unknownLongOption(let name, _, let suggestion):
                 if let suggestion {
                     return "Error: Unknown option '\(name)' (did you mean '--\(suggestion)'?)."
                 }
                 return "Error: Unknown option '\(name)'."
 
-            case let .unknownShortOption(name, _):
+            case .unknownShortOption(let name, _):
                 return "Error: Unknown option '-\(name)'."
 
-            case let .missingOptionValue(name, _):
+            case .missingOptionValue(let name, _):
                 return "Error: Missing value for option '\(name)'."
 
-            case let .invalidValue(name, value, _):
+            case .invalidValue(let name, let value, _):
                 return "Error: Invalid value '\(value)' for '\(name)'."
 
-            case let .invalidEnvironmentValue(name, environment, value):
+            case .invalidEnvironmentValue(let name, let environment, let value):
                 return "Error: Invalid value '\(value)' for '\(name)' from environment variable "
                     + "'\(environment.underlying)'."
 
-            case let .missingPositional(name, _):
+            case .missingPositional(let name, _):
                 return "Error: Missing expected argument '<\(name)>'."
 
-            case let .unexpectedPositional(value, _):
+            case .unexpectedPositional(let value, _):
                 return "Error: Unexpected argument '\(value)'."
 
-            case let .validationFailed(reason):
+            case .validationFailed(let reason):
                 return "Error: \(reason)"
 
-            case let .unknownSubcommand(name, _, suggestion):
+            case .unknownSubcommand(let name, _, let suggestion):
                 if let suggestion {
                     return "Error: Unknown subcommand '\(name)' (did you mean '\(suggestion)'?)."
                 }
                 return "Error: Unknown subcommand '\(name)'."
 
-            case let .missingSubcommand(available):
+            case .missingSubcommand(let available):
                 if available.isEmpty {
                     return "Error: No subcommand provided."
                 }
@@ -143,20 +143,20 @@ extension Command {
             case .helpRequested, .helpRequestedForSubcommand, .versionRequested:
                 return 0
 
-            case let .exit(code, _):
+            case .exit(let code, _):
                 return code
 
             case .tokenizer,
-                 .unknownLongOption,
-                 .unknownShortOption,
-                 .unknownSubcommand,
-                 .missingOptionValue,
-                 .invalidValue,
-                 .missingPositional,
-                 .missingSubcommand,
-                 .invalidEnvironmentValue,
-                 .unexpectedPositional,
-                 .validationFailed:
+                .unknownLongOption,
+                .unknownShortOption,
+                .unknownSubcommand,
+                .missingOptionValue,
+                .invalidValue,
+                .missingPositional,
+                .missingSubcommand,
+                .invalidEnvironmentValue,
+                .unexpectedPositional,
+                .validationFailed:
                 // BSD sysexits.h EX_USAGE — argv-syntactic / usage error.
                 return 64
 

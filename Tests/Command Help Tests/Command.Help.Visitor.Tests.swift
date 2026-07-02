@@ -23,8 +23,11 @@ private struct MinimalCommand: Command.`Protocol`, Equatable {
 
     static var schema: Command.Schema.Definition<Self> {
         Command.Schema.Definition<Self> {
-            Command.Flag(\.verbose, name: .longLiteral("verbose"),
-                         help: .init(abstract: "Be verbose."))
+            Command.Flag(
+                \.verbose,
+                name: .longLiteral("verbose"),
+                help: .init(abstract: "Be verbose.")
+            )
         }
     }
 
@@ -47,9 +50,12 @@ struct CommandHelpVisitorTests {
             static var configuration: Command.Configuration { .init(name: "hidden") }
             static var schema: Command.Schema.Definition<Self> {
                 Command.Schema.Definition<Self> {
-                    Command.Flag(\.verbose, name: .longLiteral("internal"),
-                                 visibility: .hidden,
-                                 help: .init(abstract: "Internal flag."))
+                    Command.Flag(
+                        \.verbose,
+                        name: .longLiteral("internal"),
+                        visibility: .hidden,
+                        help: .init(abstract: "Internal flag.")
+                    )
                 }
             }
             mutating func run() async throws(Command.Error) {}

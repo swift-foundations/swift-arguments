@@ -39,11 +39,11 @@ extension Command {
     /// - Returns: The fully populated command instance.
     /// - Throws: ``Command/Error`` if argv tokenization or schema-driven
     ///   parsing fails.
-    public static func parse<C: Command.`Protocol`>(
+    public static func parse<C: `Protocol`>(
         _ type: C.Type,
         from argv: [String],
         initial: C
-    ) throws(Command.Error) -> C {
+    ) throws(Error) -> C {
         // Tokenize argv → [Argument.Token].
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
 
@@ -52,7 +52,7 @@ extension Command {
         // command name so subcommand dispatch can slice the source
         // argv at the matched subcommand-name boundary and render
         // per-subcommand help with a sensible USAGE line.
-        var visitor = Command.Schema.ParseVisitor<C>(
+        var visitor = Self.Schema.ParseVisitor<C>(
             tokens: tokens,
             argv: argv,
             rootName: C.configuration.name,

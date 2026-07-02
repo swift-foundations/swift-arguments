@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 extension Command.Schema {
-    /// A visitor over a ``Command/Schema/Definition``'s bound nodes.
+    /// A visitor over the bound nodes of a ``Command/Schema/Definition``.
     ///
     /// Implementations receive value-typed dispatch from each
     /// ``Command/Schema/Node`` (via `Node.accept(_:)`) and produce

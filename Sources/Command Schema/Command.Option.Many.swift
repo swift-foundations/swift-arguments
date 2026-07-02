@@ -47,17 +47,18 @@ extension Command.Option {
     /// the v1 surface; the schema author should leave it `nil`.
     public struct Many: Sendable
     where Root: Sendable, V: Sendable & Equatable {
-        /// The KeyPath into `Root`'s array field where parsed values are
-        /// appended on each occurrence.
+        /// The KeyPath into the array field on `Root` where parsed values
+        /// are appended on each occurrence.
         public let keyPath: WritableKeyPath<Root, [V]> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         public let declaration: Argument.Option<V>
 
-        /// Type-erased argv-string parse closure. Either the
-        /// ``Argument/Codable``-driven default (`{ V(argument: $0) }`) or
-        /// a custom-`transform:` wrapper that catches any thrown
-        /// ``Command/Error`` and returns `nil`.
+        /// Type-erased argv-string parse closure.
+        ///
+        /// Either the ``Argument/Codable``-driven default
+        /// (`{ V(argument: $0) }`) or a custom-`transform:` wrapper that
+        /// catches any thrown ``Command/Error`` and returns `nil`.
         @usableFromInline
         internal let parse: @Sendable (String) -> V?
 

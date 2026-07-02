@@ -21,6 +21,7 @@ extension Command.Help {
     /// Inherits the `Root` generic from the enclosing
     /// ``Command/Help`` struct.
     public struct Visitor: Command.Schema.Visitor {
+        /// Pure-text row accumulation — cannot fail.
         public typealias Failure = Never
 
         /// The configuration carried for USAGE-line and ABSTRACT
@@ -29,7 +30,9 @@ extension Command.Help {
         internal let configuration: Command.Configuration
 
         /// Optional seed instance from which auto-derived defaults are
-        /// extracted at visit-time. When non-`nil`, each visit method
+        /// extracted at visit-time.
+        ///
+        /// When non-`nil`, each visit method
         /// reads the bound field via the declaration's `keyPath` and
         /// fills in `Argument.Help.defaults` per the per-binding
         /// rules documented in ``Command/HelpDefault``. When `nil`, no
@@ -43,8 +46,9 @@ extension Command.Help {
         internal var rows: [Command.HelpRow] = []
 
         /// Creates a visitor capturing `configuration` for the eventual
-        /// `render()` call. No `initial` value — auto-derived defaults
-        /// are skipped.
+        /// `render()` call.
+        ///
+        /// No `initial` value — auto-derived defaults are skipped.
         @inlinable
         public init(configuration: Command.Configuration) {
             self.configuration = configuration
@@ -52,7 +56,9 @@ extension Command.Help {
         }
 
         /// Creates a visitor capturing `configuration` and `initial`
-        /// for the eventual `render()` call. When `initial` is non-`nil`,
+        /// for the eventual `render()` call.
+        ///
+        /// When `initial` is non-`nil`,
         /// each visit method auto-derives a default-value description
         /// from `initial[keyPath: keyPath]` for any declaration that
         /// did not specify one explicitly.
@@ -62,6 +68,11 @@ extension Command.Help {
             self.initial = initial
         }
 
+        /// Appends a ``Command/HelpRow/positional`` row.
+        ///
+        /// Derived from `positional`'s declaration, auto-deriving a
+        /// default-value description from `initial` when the
+        /// declaration's help does not already specify one.
         public mutating func visit<V: Sendable & Equatable>(
             positional: Command.Positional<Root, V>
         ) throws(Never) {
@@ -80,6 +91,11 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/positionalMany`` row.
+        ///
+        /// Derived from `positionalMany`'s declaration, auto-deriving a
+        /// default-value description from `initial` only when the
+        /// initial array is non-empty.
         public mutating func visit<V: Sendable & Equatable>(
             positionalMany: Command.Positional<Root, V>.Many
         ) throws(Never) {
@@ -98,6 +114,11 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/option`` row.
+        ///
+        /// Derived from `option`'s declaration, auto-deriving a
+        /// default-value description from `initial` when the
+        /// declaration's help does not already specify one.
         public mutating func visit<V: Sendable & Equatable>(
             option: Command.Option<Root, V>
         ) throws(Never) {
@@ -116,6 +137,11 @@ extension Command.Help {
             )
         }
 
+        /// Appends an ``Command/HelpRow/optionMany`` row.
+        ///
+        /// Derived from `optionMany`'s declaration, auto-deriving a
+        /// default-value description from `initial` only when the
+        /// initial array is non-empty.
         public mutating func visit<V: Sendable & Equatable>(
             optionMany: Command.Option<Root, V>.Many
         ) throws(Never) {
@@ -134,6 +160,7 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/flag`` row derived from the `flag` declaration.
         public mutating func visit(flag: Command.Flag<Root>) throws(Never) {
             // Plain Bool flags do NOT auto-derive a default — the
             // present/absent semantics is what `Flag` models, and
@@ -149,6 +176,11 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/flagCount`` row.
+        ///
+        /// Derived from `flagCount`'s declaration, auto-deriving a
+        /// default-value description from `initial` only when the
+        /// initial counter is non-zero.
         public mutating func visit(
             flagCount: Command.Flag<Root>.Count
         ) throws(Never) {
@@ -166,6 +198,12 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/flagInverted`` row.
+        ///
+        /// Derived from `flagInverted`'s declaration, deriving the
+        /// rendered default-line name directly from `initial`'s bound
+        /// `Bool` value when the declaration's help does not already
+        /// specify one.
         public mutating func visit(
             flagInverted: Command.Flag<Root>.Inverted
         ) throws(Never) {
@@ -195,6 +233,12 @@ extension Command.Help {
             )
         }
 
+        /// Appends a ``Command/HelpRow/flagEnumerable`` row.
+        ///
+        /// Derived from `flagEnumerable`'s declaration and its full case
+        /// list, deriving the rendered default-line name from
+        /// `initial`'s bound case when the declaration's help does not
+        /// already specify one.
         public mutating func visit<E: Argument.Flag.Enumerable>(
             flagEnumerable: Command.Flag<Root>.Enumerable<E>
         ) throws(Never) {
@@ -226,6 +270,8 @@ extension Command.Help {
             )
         }
 
+        /// Appends one ``Command/HelpRow/subcommand`` row per binding in
+        /// `group`, in declaration order.
         public mutating func visit(
             subcommandGroup group: Command.Subcommand.Group<Root>
         ) throws(Never) {
@@ -240,6 +286,12 @@ extension Command.Help {
             }
         }
 
+        /// Splices the rendered rows of `optionGroup` into this visitor.
+        ///
+        /// Walks `optionGroup`'s sub-schema via a fragment visitor and
+        /// splices the accumulated rows into this visitor's `rows`,
+        /// chaining `initial` through the group's `keyPath` so
+        /// sub-fields also pick up auto-derived defaults.
         public mutating func visit<G: Sendable & Equatable>(
             optionGroup: Command.OptionGroup<Root, G>
         ) throws(Never) {
@@ -299,15 +351,15 @@ extension Command.Help {
 
             let visibleRows = rows.filter { row in
                 switch row {
-                case let .positional(_, _, _, visibility),
-                     let .positionalMany(_, _, _, visibility),
-                     let .option(_, _, _, visibility),
-                     let .optionMany(_, _, _, visibility),
-                     let .flag(_, _, visibility),
-                     let .flagCount(_, _, visibility),
-                     let .flagInverted(_, _, _, visibility),
-                     let .flagEnumerable(_, _, visibility),
-                     let .subcommand(_, _, visibility):
+                case .positional(_, _, _, let visibility),
+                    .positionalMany(_, _, _, let visibility),
+                    .option(_, _, _, let visibility),
+                    .optionMany(_, _, _, let visibility),
+                    .flag(_, _, let visibility),
+                    .flagCount(_, _, let visibility),
+                    .flagInverted(_, _, _, let visibility),
+                    .flagEnumerable(_, _, let visibility),
+                    .subcommand(_, _, let visibility):
                     return visibility == .visible
                 }
             }
@@ -316,6 +368,7 @@ extension Command.Help {
                 switch row {
                 case .positional, .positionalMany:
                     return row
+
                 default:
                     return nil
                 }
@@ -325,20 +378,22 @@ extension Command.Help {
                 output += "\nARGUMENTS:\n"
                 for row in positionalRows {
                     switch row {
-                    case let .positional(_, placeholder, help, _):
+                    case .positional(_, let placeholder, let help, _):
                         let left = "<\(placeholder)>"
                         var right = help.abstract
                         if let def = help.defaults, !def.isEmpty {
                             right += " (default: \(def))"
                         }
                         output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
-                    case let .positionalMany(_, placeholder, help, _):
+
+                    case .positionalMany(_, let placeholder, let help, _):
                         let left = "<\(placeholder)>..."
                         var right = help.abstract
                         if let def = help.defaults, !def.isEmpty {
                             right += " (default: \(def))"
                         }
                         output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
+
                     default:
                         continue
                     }
@@ -353,7 +408,7 @@ extension Command.Help {
                 case .positional, .positionalMany, .subcommand:
                     continue
 
-                case let .option(name, placeholder, help, _):
+                case .option(let name, let placeholder, let help, _):
                     let left = formatOptionName(name) + " <\(placeholder)>"
                     var right = help.abstract
                     if let def = help.defaults, !def.isEmpty {
@@ -361,7 +416,7 @@ extension Command.Help {
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .optionMany(name, placeholder, help, _):
+                case .optionMany(let name, let placeholder, let help, _):
                     let left = formatOptionName(name) + " <\(placeholder)>..."
                     var right = help.abstract
                     if let def = help.defaults, !def.isEmpty {
@@ -369,7 +424,7 @@ extension Command.Help {
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .flag(name, help, _):
+                case .flag(let name, let help, _):
                     let left = formatOptionName(name)
                     var right = help.abstract
                     if let def = help.defaults, !def.isEmpty {
@@ -377,7 +432,7 @@ extension Command.Help {
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .flagCount(name, help, _):
+                case .flagCount(let name, let help, _):
                     let left = formatOptionName(name) + "..."
                     var right = help.abstract
                     if let def = help.defaults, !def.isEmpty {
@@ -385,7 +440,7 @@ extension Command.Help {
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .flagInverted(trueName, falseName, help, _):
+                case .flagInverted(let trueName, let falseName, let help, _):
                     let left = "--\(trueName)/--\(falseName)"
                     var right = help.abstract
                     if let def = help.defaults, !def.isEmpty {
@@ -393,7 +448,7 @@ extension Command.Help {
                     }
                     output += "  " + pad(left, to: Self.padWidth) + "  " + right + "\n"
 
-                case let .flagEnumerable(cases, groupHelp, _):
+                case .flagEnumerable(let cases, let groupHelp, _):
                     if !groupHelp.abstract.isEmpty || groupHelp.defaults != nil {
                         // Group header row first (carrying any
                         // auto-derived default), then per-case rows
@@ -421,7 +476,7 @@ extension Command.Help {
             if !subcommandRows.isEmpty {
                 output += "\nSUBCOMMANDS:\n"
                 for row in subcommandRows {
-                    guard case let .subcommand(name, help, _) = row else { continue }
+                    guard case .subcommand(let name, let help, _) = row else { continue }
                     output += "  " + pad(name, to: Self.padWidth) + "  " + help.abstract + "\n"
                 }
                 output += "\n  See '\(configuration.name) help <subcommand>' for detailed help.\n"
@@ -441,27 +496,27 @@ extension Command.Help {
                 case .positional, .positionalMany, .subcommand:
                     continue
 
-                case let .option(name, placeholder, _, visibility):
+                case .option(let name, let placeholder, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("[\(formatOptionName(name)) <\(placeholder)>]")
 
-                case let .optionMany(name, placeholder, _, visibility):
+                case .optionMany(let name, let placeholder, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("[\(formatOptionName(name)) <\(placeholder)>]...")
 
-                case let .flag(name, _, visibility):
+                case .flag(let name, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("[\(formatOptionName(name))]")
 
-                case let .flagCount(name, _, visibility):
+                case .flagCount(let name, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("[\(formatOptionName(name))...]")
 
-                case let .flagInverted(trueName, falseName, _, visibility):
+                case .flagInverted(let trueName, let falseName, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("[--\(trueName)|--\(falseName)]")
 
-                case let .flagEnumerable(cases, _, visibility):
+                case .flagEnumerable(let cases, _, let visibility):
                     guard visibility == .visible, !cases.isEmpty else { continue }
                     let caseList = cases.map { "--" + $0.name }.joined(separator: "|")
                     parts.append("[\(caseList)]")
@@ -481,12 +536,14 @@ extension Command.Help {
             }
             for row in rows {
                 switch row {
-                case let .positional(_, placeholder, _, visibility):
+                case .positional(_, let placeholder, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("<\(placeholder)>")
-                case let .positionalMany(_, placeholder, _, visibility):
+
+                case .positionalMany(_, let placeholder, _, let visibility):
                     guard visibility == .visible else { continue }
                     parts.append("<\(placeholder)>...")
+
                 default:
                     continue
                 }
@@ -496,13 +553,13 @@ extension Command.Help {
 
         private func formatOptionName(_ name: Argument.Name) -> String {
             switch name {
-            case let .short(short):
+            case .short(let short):
                 return "-\(short.character)"
 
-            case let .long(long):
+            case .long(let long):
                 return "--\(long.string)"
 
-            case let .both(short, long):
+            case .both(let short, let long):
                 return "-\(short.character), --\(long.string)"
             }
         }

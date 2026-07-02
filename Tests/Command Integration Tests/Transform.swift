@@ -23,13 +23,15 @@ struct TransformedHost: Sendable, Equatable {
     let scheme: String
     let host: String
 
-    /// Parses `"scheme://host"` into a `TransformedHost`. Returns `nil`
-    /// when the input doesn't contain `"://"` or either side is empty.
+    /// Parses `"scheme://host"` into a `TransformedHost`.
+    ///
+    /// Returns `nil` when the input doesn't contain `"://"` or either
+    /// side is empty.
     ///
     /// Implemented via manual character scanning to avoid pulling in
     /// `Standard_Library_Extensions` (the `String.range(of:)` family
     /// requires it under the `#MemberImportVisibility` Swift 6 rule).
-    static func parse(_ string: String) -> TransformedHost? {
+    static func parse(_ string: String) -> Self? {
         var schemeChars: [Character] = []
         var hostChars: [Character] = []
         var seenColon = false
@@ -58,7 +60,7 @@ struct TransformedHost: Sendable, Equatable {
         }
         guard seenSecondSlash else { return nil }
         guard !schemeChars.isEmpty, !hostChars.isEmpty else { return nil }
-        return TransformedHost(
+        return Self(
             scheme: String(schemeChars),
             host: String(hostChars)
         )

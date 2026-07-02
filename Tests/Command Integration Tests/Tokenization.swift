@@ -198,45 +198,41 @@ struct BuildOptionCommand: Command.`Protocol`, Equatable {
 }
 
 /// Subcommand fixture used to exercise the unknown-subcommand
-/// suggestion path. Three concrete subcommands (`clone`, `commit`,
-/// `checkout`) so `clne` should suggest `clone`.
+/// suggestion path.
+///
+/// Three concrete subcommands (`clone`, `commit`, `checkout`) so `clne`
+/// should suggest `clone`.
 struct GitSuggestClone: Command.`Protocol`, Equatable {
-    init() {}
-
     static var configuration: Command.Configuration {
         Command.Configuration(name: "clone", abstract: "")
     }
 
     static var schema: Command.Schema.Definition<Self> {
-        Command.Schema.Definition<Self> { }
+        Command.Schema.Definition<Self> {}
     }
 
     mutating func run() async throws(Command.Error) {}
 }
 
 struct GitSuggestCommit: Command.`Protocol`, Equatable {
-    init() {}
-
     static var configuration: Command.Configuration {
         Command.Configuration(name: "commit", abstract: "")
     }
 
     static var schema: Command.Schema.Definition<Self> {
-        Command.Schema.Definition<Self> { }
+        Command.Schema.Definition<Self> {}
     }
 
     mutating func run() async throws(Command.Error) {}
 }
 
 struct GitSuggestCheckout: Command.`Protocol`, Equatable {
-    init() {}
-
     static var configuration: Command.Configuration {
         Command.Configuration(name: "checkout", abstract: "")
     }
 
     static var schema: Command.Schema.Definition<Self> {
-        Command.Schema.Definition<Self> { }
+        Command.Schema.Definition<Self> {}
     }
 
     mutating func run() async throws(Command.Error) {}

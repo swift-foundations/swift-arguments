@@ -9,10 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Command_Primitive
 public import Command_Core
-public import Command_Schema
 public import Command_Help
+public import Command_Primitive
+public import Command_Schema
 public import Process
 
 extension Command {
@@ -77,7 +77,7 @@ extension Command {
     ///     consumers that pre-process argv.
     /// - Returns: Never — the process is terminated by
     ///   ``Process/exit(_:)``.
-    public static func main<C: Command.`Protocol`>(
+    public static func main<C: `Protocol`>(
         _ commandType: C.Type,
         initial: C,
         arguments: [Swift.String]? = nil
@@ -94,7 +94,7 @@ extension Command {
         }
 
         do {
-            var root = try Command.parse(commandType, from: argv, initial: initial)
+            var root = try Self.parse(commandType, from: argv, initial: initial)
             do throws(C.Failure) {
                 try await root.run()
             } catch {
@@ -106,7 +106,7 @@ extension Command {
                 Process.exit(1)
             }
             Process.exit(0)
-        } catch let error as Command.Error {
+        } catch let error as Self.Error {
             // Help is the only diagnostic path that renders the full
             // help text. The parse-time .helpRequested error carries no
             // pre-rendered text (vs. .helpRequestedForSubcommand which
@@ -114,12 +114,12 @@ extension Command {
             // root-command rendering.
             if case .helpRequested = error {
                 var helpText = ""
-                Command.Help<C>().serialize(C.schema, into: &helpText)
+                Self.Help<C>().serialize(C.schema, into: &helpText)
                 print(helpText, terminator: "")
             } else {
-                print(Command.Diagnostic.message(for: error))
+                print(Self.Diagnostic.message(for: error))
             }
-            Process.exit(Command.Diagnostic.exitCode(for: error))
+            Process.exit(Self.Diagnostic.exitCode(for: error))
         } catch {
             print("Error: \(Swift.String(describing: error))")
             Process.exit(1)

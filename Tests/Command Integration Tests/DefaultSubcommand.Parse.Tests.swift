@@ -47,7 +47,7 @@ struct DefaultSubcommandParseTests {
             Issue.record("expected missingSubcommand throw")
         } catch {
             switch error {
-            case let .missingSubcommand(available):
+            case .missingSubcommand(let available):
                 #expect(available.contains("list"))
                 #expect(available.contains("clone"))
 

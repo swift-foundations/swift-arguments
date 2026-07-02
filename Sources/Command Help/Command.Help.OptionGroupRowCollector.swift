@@ -35,8 +35,9 @@ extension Command {
         @usableFromInline
         internal typealias Failure = Never
 
-        /// Optional seed instance for the option-group fragment. When
-        /// non-`nil` the parent visitor sliced its own `initial` via
+        /// Optional seed instance for the option-group fragment.
+        ///
+        /// When non-`nil` the parent visitor sliced its own `initial` via
         /// the group's outer key path before constructing this
         /// collector. Each visit method routes through
         /// ``Command/HelpDefault/inject(_:initial:keyPath:)`` so the

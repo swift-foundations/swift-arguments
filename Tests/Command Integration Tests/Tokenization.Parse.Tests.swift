@@ -104,7 +104,7 @@ struct SuggestionParseTests {
             Issue.record("Expected unknownLongOption throw")
         } catch {
             switch error {
-            case let .unknownLongOption(name, _, suggestion):
+            case .unknownLongOption(let name, _, let suggestion):
                 #expect(name == "--buld")
                 #expect(suggestion == "build")
 
@@ -125,7 +125,7 @@ struct SuggestionParseTests {
             Issue.record("Expected unknownSubcommand throw")
         } catch {
             switch error {
-            case let .unknownSubcommand(name, _, suggestion):
+            case .unknownSubcommand(let name, _, let suggestion):
                 #expect(name == "clne")
                 #expect(suggestion == "clone")
 
@@ -146,7 +146,7 @@ struct SuggestionParseTests {
             Issue.record("Expected unknownLongOption throw")
         } catch {
             switch error {
-            case let .unknownLongOption(name, _, suggestion):
+            case .unknownLongOption(let name, _, let suggestion):
                 #expect(name == "--xyz")
                 #expect(suggestion == nil)
 

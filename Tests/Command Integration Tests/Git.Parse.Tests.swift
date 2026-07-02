@@ -57,7 +57,7 @@ struct GitParseTests {
             Issue.record("Expected unknownSubcommand, parse succeeded")
         } catch {
             switch error {
-            case let .unknownSubcommand(name, _, _):
+            case .unknownSubcommand(let name, _, _):
                 #expect(name == "unknown")
 
             default:
@@ -77,7 +77,7 @@ struct GitParseTests {
             Issue.record("Expected missingSubcommand, parse succeeded")
         } catch {
             switch error {
-            case let .missingSubcommand(available):
+            case .missingSubcommand(let available):
                 #expect(available.contains("clone"))
                 #expect(available.contains("status"))
 
@@ -118,7 +118,7 @@ struct GitParseTests {
             Issue.record("Expected helpRequestedForSubcommand, parse succeeded")
         } catch {
             switch error {
-            case let .helpRequestedForSubcommand(name, rendered):
+            case .helpRequestedForSubcommand(let name, let rendered):
                 #expect(name == "clone")
                 #expect(rendered.contains("git clone"))
                 #expect(rendered.contains("Clone a repository."))

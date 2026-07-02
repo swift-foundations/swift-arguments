@@ -144,16 +144,16 @@ extension Argument.Tokenizer {
             l2Kind: IEEE_1003.UtilitySyntax.Token.Kind
         ) -> Argument.Token.Kind {
             switch l2Kind {
-            case let .shortFlag(character):
+            case .shortFlag(let character):
                 return .shortCluster(Swift.String(character))
 
-            case let .shortValue(string):
+            case .shortValue(let string):
                 return .value(string)
 
-            case let .shortCluster(string):
+            case .shortCluster(let string):
                 return .shortCluster(string)
 
-            case let .operand(string):
+            case .operand(let string):
                 return .positional(string)
 
             case .endOfOptions:

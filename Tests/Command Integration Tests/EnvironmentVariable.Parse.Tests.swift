@@ -85,7 +85,7 @@ struct EnvironmentVariableParseTests {
             Issue.record("Expected .invalidEnvironmentValue, parse succeeded")
         } catch {
             switch error {
-            case let .invalidEnvironmentValue(name, envVar, value):
+            case .invalidEnvironmentValue(let name, let envVar, let value):
                 #expect(name == "--count")
                 #expect(envVar == "ENVCOUNTED_COUNT_TEST")
                 #expect(value == "not-an-int")

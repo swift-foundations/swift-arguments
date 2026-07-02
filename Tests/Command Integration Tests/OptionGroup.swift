@@ -24,7 +24,9 @@ struct SharedRootOptions: Sendable, Equatable {
     /// The repository root directory.
     var root: String = "."
 
-    /// The fragment's own schema. Declared once; reused everywhere.
+    /// The fragment's own schema.
+    ///
+    /// Declared once; reused everywhere.
     static let schema: Command.Schema.Definition<Self> = .init {
         Command.Option(
             \.root,

@@ -45,9 +45,18 @@ extension Command {
     /// )
     /// ```
     public struct Help<Root: Command.`Protocol`>: Serializer.`Protocol` {
+        /// The schema this serializer renders — the type of value this
+        /// serializer accepts.
         public typealias Output = Command.Schema.Definition<Root>
+
+        /// The rendered help text accumulates in a `Swift.String` buffer.
         public typealias Buffer = Swift.String
+
+        /// Pure-text emission — cannot fail.
         public typealias Failure = Never
+
+        /// A leaf serializer; implements ``serialize(_:into:)`` directly
+        /// rather than composing through a declarative `body`.
         public typealias Body = Never
 
         /// Creates a help serializer.

@@ -26,7 +26,9 @@ struct OptionalSchemaParseTests {
     @Test("Both options absent: retain nil defaults")
     func bothAbsent() throws(Command.Error) {
         let parsed = try Command.parse(
-            OptionalSchema.self, from: [], initial: OptionalSchema()
+            OptionalSchema.self,
+            from: [],
+            initial: OptionalSchema()
         )
         #expect(parsed == OptionalSchema(label: nil, count: nil))
     }

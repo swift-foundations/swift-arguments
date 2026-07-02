@@ -47,7 +47,7 @@ struct CommandOptionGroupHelpTests {
             Issue.record("Expected helpRequestedForSubcommand, parse succeeded")
         } catch {
             switch error {
-            case let .helpRequestedForSubcommand(name, rendered):
+            case .helpRequestedForSubcommand(let name, let rendered):
                 #expect(name == "build")
                 #expect(rendered.contains("--root"))
                 #expect(rendered.contains("Repository root directory."))
@@ -70,7 +70,7 @@ struct CommandOptionGroupHelpTests {
             Issue.record("Expected helpRequestedForSubcommand, parse succeeded")
         } catch {
             switch error {
-            case let .helpRequestedForSubcommand(name, rendered):
+            case .helpRequestedForSubcommand(let name, let rendered):
                 #expect(name == "test")
                 #expect(rendered.contains("--root"))
                 #expect(rendered.contains("Repository root directory."))

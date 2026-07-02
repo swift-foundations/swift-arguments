@@ -131,10 +131,11 @@ struct AliasesAndDiscussionHelpTests {
         }
         // USAGE → OVERVIEW → ALIASES → DISCUSSION → ARGUMENTS
         guard let usagePos = positions["USAGE:"],
-              let overviewPos = positions["OVERVIEW:"],
-              let aliasesPos = positions["ALIASES:"],
-              let discussionPos = positions["DISCUSSION:"],
-              let argumentsPos = positions["ARGUMENTS:"] else {
+            let overviewPos = positions["OVERVIEW:"],
+            let aliasesPos = positions["ALIASES:"],
+            let discussionPos = positions["DISCUSSION:"],
+            let argumentsPos = positions["ARGUMENTS:"]
+        else {
             Issue.record("Missing section header in help text: \(help)")
             return
         }

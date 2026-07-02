@@ -22,6 +22,7 @@ extension Command.Flag.Inverted {
         switch inversion {
         case .prefixedNo:
             return base.string
+
         case .prefixedEnableDisable:
             return "enable-" + base.string
         }
@@ -34,6 +35,7 @@ extension Command.Flag.Inverted {
         switch inversion {
         case .prefixedNo:
             return "no-" + base.string
+
         case .prefixedEnableDisable:
             return "disable-" + base.string
         }

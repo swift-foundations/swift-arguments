@@ -60,9 +60,11 @@ extension Command.Schema {
         @usableFromInline
         internal var positionals: [PositionalEntry] = []
 
-        /// Accumulated array-positional ("Many") entry. At most one per
-        /// schema is supported — a second declaration creates ambiguous
-        /// greedy consumption and is rejected at parse time.
+        /// Accumulated array-positional ("Many") entry.
+        ///
+        /// At most one per schema is supported — a second declaration
+        /// creates ambiguous greedy consumption and is rejected at parse
+        /// time.
         @usableFromInline
         internal var positionalMany: PositionalManyEntry?
 
@@ -71,8 +73,10 @@ extension Command.Schema {
         internal var options: [OptionEntry] = []
 
         /// Accumulated repeatable-option ("Many") entries in declaration
-        /// order. Matched via a separate dispatch path because the
-        /// semantic differs (append vs. overwrite).
+        /// order.
+        ///
+        /// Matched via a separate dispatch path because the semantic
+        /// differs (append vs. overwrite).
         @usableFromInline
         internal var optionManies: [OptionManyEntry] = []
 
@@ -93,9 +97,10 @@ extension Command.Schema {
         @usableFromInline
         internal var flagCounts: [FlagCountEntry] = []
 
-        /// Accumulated inverted-flag entries in declaration order. Each
-        /// entry registers two long-option strings on the argv dispatch
-        /// path.
+        /// Accumulated inverted-flag entries in declaration order.
+        ///
+        /// Each entry registers two long-option strings on the argv
+        /// dispatch path.
         @usableFromInline
         internal var flagInverteds: [FlagInvertedEntry] = []
 
@@ -103,21 +108,27 @@ extension Command.Schema {
         @usableFromInline
         internal var flagEnumerables: [FlagEnumerableEntry] = []
 
-        /// The subcommand-group entry, if any. At most one Group per
-        /// schema is supported in v1 (per the design doc §3.15 v1 scope).
+        /// The subcommand-group entry, if any.
+        ///
+        /// At most one Group per schema is supported in v1 (per the
+        /// design doc §3.15 v1 scope).
         @usableFromInline
         internal var subcommandGroup: SubcommandGroupEntry?
 
-        /// The original raw argv elements. For subcommand dispatch, the
-        /// visitor needs the original argv slice following the
-        /// subcommand-name token to feed the sub-parse pass.
+        /// The original raw argv elements.
+        ///
+        /// For subcommand dispatch, the visitor needs the original argv
+        /// slice following the subcommand-name token to feed the
+        /// sub-parse pass.
         @usableFromInline
         internal let argv: [String]
 
         /// The root command's CLI name (from `Root.configuration.name`)
-        /// for sub-help USAGE-line rendering. Empty when not supplied —
-        /// callers using the legacy `init(tokens:root:)` form do not need
-        /// subcommand support, so the root name defaults to empty.
+        /// for sub-help USAGE-line rendering.
+        ///
+        /// Empty when not supplied — callers using the legacy
+        /// `init(tokens:root:)` form do not need subcommand support, so
+        /// the root name defaults to empty.
         @usableFromInline
         internal let rootName: String
 
@@ -147,7 +158,9 @@ extension Command.Schema {
         }
 
         /// Creates a parse visitor with the source argv and root-command
-        /// name recorded alongside the token stream. Used by
+        /// name recorded alongside the token stream.
+        ///
+        /// Used by
         /// ``Command/parse(_:from:initial:)`` to support subcommand
         /// dispatch — the sub-parse pass needs the original argv elements
         /// following the subcommand name, and the root name appears in
@@ -299,8 +312,12 @@ extension Command.Schema.ParseVisitor {
 }
 
 extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
+    /// Parse entries can fail with a typed ``Command/Error`` (e.g.
+    /// duplicate-declaration validation at visit time).
     public typealias Failure = Command.Error
 
+    /// Records a ``PositionalEntry`` for `positional` whose apply
+    /// closure parses one argv value and writes it to the bound field.
     public mutating func visit<V: Sendable & Equatable>(
         positional: Command.Positional<Root, V>
     ) throws(Command.Error) {
@@ -318,6 +335,13 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records the ``PositionalManyEntry`` for `positionalMany` whose
+    /// append closure parses one argv value and appends it to the bound
+    /// array field.
+    ///
+    /// Throws ``Command/Error/validationFailed(reason:)`` if a
+    /// ``PositionalManyEntry`` is already recorded — at most one
+    /// array-positional is permitted per schema.
     public mutating func visit<V: Sendable & Equatable>(
         positionalMany: Command.Positional<Root, V>.Many
     ) throws(Command.Error) {
@@ -344,6 +368,8 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records an ``OptionEntry`` for `option` whose apply closure
+    /// parses the matched argv value and writes it to the bound field.
     public mutating func visit<V: Sendable & Equatable>(
         option: Command.Option<Root, V>
     ) throws(Command.Error) {
@@ -362,6 +388,9 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records an ``OptionManyEntry`` for `optionMany` whose append
+    /// closure parses each matched occurrence's value and appends it to
+    /// the bound array field.
     public mutating func visit<V: Sendable & Equatable>(
         optionMany: Command.Option<Root, V>.Many
     ) throws(Command.Error) {
@@ -383,6 +412,8 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records a ``FlagEntry`` for `flag` whose apply closure writes
+    /// `true` to the bound field on match.
     public mutating func visit(flag: Command.Flag<Root>) throws(Command.Error) {
         let keyPath = flag.keyPath
         flags.append(
@@ -395,6 +426,8 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records a ``FlagCountEntry`` for `flagCount` whose increment
+    /// closure adds one to the bound counter on each occurrence.
     public mutating func visit(
         flagCount: Command.Flag<Root>.Count
     ) throws(Command.Error) {
@@ -409,6 +442,9 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records a ``FlagInvertedEntry`` for `flagInverted` whose apply
+    /// closure writes the matched form's `Bool` value to the bound
+    /// field.
     public mutating func visit(
         flagInverted: Command.Flag<Root>.Inverted
     ) throws(Command.Error) {
@@ -424,6 +460,9 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records a ``FlagEnumerableEntry`` for `flagEnumerable`, indexing
+    /// one apply closure per case's long-option name so the matched
+    /// argv name writes the corresponding case to the bound field.
     public mutating func visit<E: Argument.Flag.Enumerable>(
         flagEnumerable: Command.Flag<Root>.Enumerable<E>
     ) throws(Command.Error) {
@@ -441,6 +480,7 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         )
     }
 
+    /// Records `group` as this visitor's ``SubcommandGroupEntry``.
     public mutating func visit(
         subcommandGroup group: Command.Subcommand.Group<Root>
     ) throws(Command.Error) {
@@ -450,6 +490,14 @@ extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
         self.subcommandGroup = SubcommandGroupEntry(bindings: group.bindings)
     }
 
+    /// Flattens the sub-schema entries of `optionGroup` into this
+    /// visitor's per-kind accumulators.
+    ///
+    /// Walks the group's sub-schema through a ``Command/Schema/OptionGroupForwarder``
+    /// whose apply closures chain through the group's outer keyPath,
+    /// then appends each forwarded entry to this visitor's own
+    /// accumulators so the standard ``finalize()`` loop dispatches argv
+    /// tokens against the flattened entry list uniformly.
     public mutating func visit<G: Sendable & Equatable>(
         optionGroup: Command.OptionGroup<Root, G>
     ) throws(Command.Error) {
@@ -516,7 +564,7 @@ extension Command.Schema.ParseVisitor {
             if afterEndOfOptions {
                 // All tokens after -- are positionals.
                 switch token.kind {
-                case let .positional(string):
+                case .positional(let string):
                     try applyPositional(string: string, cursor: &positionalCursor, token: token)
 
                 case .endOfOptions:
@@ -527,9 +575,11 @@ extension Command.Schema.ParseVisitor {
                     // Token shapes other than .positional shouldn't appear
                     // after .endOfOptions per the tokenizer contract; treat
                     // as positional opportunistically.
-                    if case let .value(string) = token.kind {
+                    if case .value(let string) = token.kind {
                         try applyPositional(
-                            string: string, cursor: &positionalCursor, token: token
+                            string: string,
+                            cursor: &positionalCursor,
+                            token: token
                         )
                     }
                 }
@@ -542,10 +592,10 @@ extension Command.Schema.ParseVisitor {
                 afterEndOfOptions = true
                 index += 1
 
-            case let .long(name):
+            case .long(let name):
                 try applyLong(name: name, tokenIndex: &index, token: token)
 
-            case let .shortCluster(cluster):
+            case .shortCluster(let cluster):
                 // POSIX-vs-numeric heuristic: when the cluster's first
                 // character is a digit, the schema declares no short
                 // option / flag / count-flag for that digit, AND a
@@ -560,17 +610,19 @@ extension Command.Schema.ParseVisitor {
                 // heuristic suppresses and dispatch proceeds via
                 // ``applyShortCluster``.
                 if let firstChar = cluster.first,
-                   firstChar.isASCII, firstChar.isNumber,
-                   !hasShortBinding(for: firstChar),
-                   (positionalCursor < positionals.count) || (positionalMany != nil) {
+                    firstChar.isASCII, firstChar.isNumber,
+                    !hasShortBinding(for: firstChar),
+                    (positionalCursor < positionals.count) || (positionalMany != nil)
+                {
                     // Reconstruct the positional value: leading `-`, the
                     // cluster, and any glued .value carrying the
                     // remainder of the source argv element.
                     var positionalString = "-" + cluster
                     var advance = 1
                     if index + 1 < tokens.count,
-                       case let .value(continuation) = tokens[index + 1].kind,
-                       tokens[index + 1].range == token.range {
+                        case .value(let continuation) = tokens[index + 1].kind,
+                        tokens[index + 1].range == token.range
+                    {
                         positionalString += continuation
                         advance = 2
                     }
@@ -584,14 +636,14 @@ extension Command.Schema.ParseVisitor {
                 }
                 try applyShortCluster(cluster: cluster, tokenIndex: &index, token: token)
 
-            case let .positional(string):
+            case .positional(let string):
                 try applyPositional(string: string, cursor: &positionalCursor, token: token)
                 index += 1
 
             case .value:
                 // A bare .value not preceded by an option token is malformed
                 // for the v1 surface; treat as a positional (gnuly tolerant).
-                if case let .value(string) = token.kind {
+                if case .value(let string) = token.kind {
                     try applyPositional(string: string, cursor: &positionalCursor, token: token)
                 }
                 index += 1
@@ -660,13 +712,13 @@ extension Command.Schema.ParseVisitor {
     @usableFromInline
     internal static func publicName(for name: Argument.Name) -> String {
         switch name {
-        case let .short(short):
+        case .short(let short):
             return "-\(short.character)"
 
-        case let .long(long):
+        case .long(let long):
             return "--\(long.string)"
 
-        case let .both(short, long):
+        case .both(let short, let long):
             return "-\(short.character), --\(long.string)"
         }
     }
@@ -745,8 +797,10 @@ extension Command.Schema.ParseVisitor {
 
     /// Compares an observed `count` against an ``Argument/Arity`` bound
     /// and throws ``Command/Error/validationFailed(reason:)`` on
-    /// violation. Static helper so the same logic serves both
-    /// positional and option array-bound validation.
+    /// violation.
+    ///
+    /// Static helper so the same logic serves both positional and
+    /// option array-bound validation.
     @usableFromInline
     internal static func checkArityBounds(
         arity: Argument.Arity,
@@ -755,31 +809,35 @@ extension Command.Schema.ParseVisitor {
         kind: String
     ) throws(Command.Error) {
         switch arity {
-        case let .exactly(target):
+        case .exactly(let target):
             guard count == target else {
                 throw .validationFailed(
                     reason: "Expected exactly \(target) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
-        case let .atMost(maximum):
+
+        case .atMost(let maximum):
             guard count <= maximum else {
                 throw .validationFailed(
                     reason: "Expected at most \(maximum) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
-        case let .atLeast(minimum):
+
+        case .atLeast(let minimum):
             guard count >= minimum else {
                 throw .validationFailed(
                     reason: "Expected at least \(minimum) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
-        case let .range(range):
+
+        case .range(let range):
             guard range.contains(count) else {
                 throw .validationFailed(
                     reason: "Expected \(range.lowerBound)…\(range.upperBound) value(s) for \(kind) "
                         + "'\(name)', got \(count)."
                 )
             }
+
         case .count:
             // .count arity is a count-flag concept; not meaningful for
             // value-bearing array entries. Skip silently.
@@ -912,11 +970,11 @@ extension Command.Schema.ParseVisitor {
         }
         let valueToken = tokens[valueIndex]
         switch valueToken.kind {
-        case let .value(string):
+        case .value(let string):
             tokenIndex = valueIndex + 1
             return string
 
-        case let .positional(string):
+        case .positional(let string):
             // GNU-style `--option value` form; the tokenizer emits
             // .positional(value) for the next argv element.
             tokenIndex = valueIndex + 1
@@ -945,11 +1003,15 @@ extension Command.Schema.ParseVisitor {
         var effectiveCluster = cluster
         var spliceAdvance = 0
         if cluster.count == 1,
-           tokenIndex + 1 < tokens.count,
-           case let .value(continuation) = tokens[tokenIndex + 1].kind,
-           tokens[tokenIndex + 1].range == token.range {
-            let firstChar = cluster.first!  // safe — count == 1
-            let isValueOption = options.contains { $0.name.short?.character == firstChar }
+            tokenIndex + 1 < tokens.count,
+            case .value(let continuation) = tokens[tokenIndex + 1].kind,
+            tokens[tokenIndex + 1].range == token.range
+        {
+            guard let firstChar = cluster.first else {
+                fatalError("unreachable — cluster.count == 1 guarantees a first element")
+            }
+            let isValueOption =
+                options.contains { $0.name.short?.character == firstChar }
                 || optionManies.contains { $0.name.short?.character == firstChar }
             if !isValueOption {
                 effectiveCluster = cluster + continuation
@@ -961,7 +1023,9 @@ extension Command.Schema.ParseVisitor {
         // short option or short flag. Multi-character clusters require
         // either an exact short-cluster name match or are rejected.
         if effectiveCluster.count == 1 {
-            let firstChar = effectiveCluster.first!  // safe — count == 1
+            guard let firstChar = effectiveCluster.first else {
+                fatalError("unreachable — effectiveCluster.count == 1 guarantees a first element")
+            }
 
             // Try short options.
             if let optionIndex = options.firstIndex(
@@ -1249,7 +1313,9 @@ extension Command.Schema.ParseVisitor {
             if element.hasPrefix("-") && element.count >= 2 {
                 let cluster = String(element.dropFirst())
                 if cluster.count == 1 {
-                    let firstChar = cluster.first!  // safe — count == 1
+                    guard let firstChar = cluster.first else {
+                        fatalError("unreachable — cluster.count == 1 guarantees a first element")
+                    }
                     if let optionIndex = options.firstIndex(
                         where: { $0.name.short?.character == firstChar }
                     ) {
@@ -1340,9 +1406,11 @@ extension Command.Schema.ParseVisitor {
             let subArgv = Array(argv[(argvIndex + 1)...])
 
             // Match the binding (primary name or alias).
-            guard let binding = group.bindings.first(where: { binding in
-                binding.name == subcommandName || binding.aliases.contains(subcommandName)
-            }) else {
+            guard
+                let binding = group.bindings.first(where: { binding in
+                    binding.name == subcommandName || binding.aliases.contains(subcommandName)
+                })
+            else {
                 var candidates: [String] = []
                 for binding in group.bindings {
                     candidates.append(binding.name)

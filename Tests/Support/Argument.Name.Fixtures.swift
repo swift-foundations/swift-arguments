@@ -20,9 +20,9 @@ extension Argument.Name {
     /// well-formed tests.
     public static func longLiteral(_ string: Swift.String) -> Argument.Name {
         do {
-            return .long(try Argument.Name.Long(string))
+            return .long(try Self.Long(string))
         } catch {
-            return .long(Argument.Name.Long(_unchecked: string))
+            return .long(Self.Long(_unchecked: string))
         }
     }
 
@@ -30,9 +30,9 @@ extension Argument.Name {
     /// literal character.
     public static func shortLiteral(_ character: Swift.Character) -> Argument.Name {
         do {
-            return .short(try Argument.Name.Short(character))
+            return .short(try Self.Short(character))
         } catch {
-            return .short(Argument.Name.Short(_unchecked: character))
+            return .short(Self.Short(_unchecked: character))
         }
     }
 
@@ -41,15 +41,15 @@ extension Argument.Name {
     public static func bothLiteral(short: Swift.Character, long: Swift.String) -> Argument.Name {
         let shortName: Argument.Name.Short
         do {
-            shortName = try Argument.Name.Short(short)
+            shortName = try Self.Short(short)
         } catch {
-            shortName = Argument.Name.Short(_unchecked: short)
+            shortName = Self.Short(_unchecked: short)
         }
         let longName: Argument.Name.Long
         do {
-            longName = try Argument.Name.Long(long)
+            longName = try Self.Long(long)
         } catch {
-            longName = Argument.Name.Long(_unchecked: long)
+            longName = Self.Long(_unchecked: long)
         }
         return .both(short: shortName, long: longName)
     }

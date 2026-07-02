@@ -36,10 +36,11 @@ extension Swift.Optional: Argument.Parseable where Wrapped: Argument.Parseable {
     /// invalid" from "user explicitly chose absent") and is rejected by
     /// the [FAM-009] sibling-protocol failure model.
     ///
+    /// Produces `.some(value)` when `Wrapped` accepts the string; fails
+    /// (returns `nil`) when `Wrapped` rejects it (the schema converts
+    /// `nil` into a typed `Command.Error.invalidValue`).
+    ///
     /// - Parameter argument: The argv element to parse.
-    /// - Returns: `.some(value)` when `Wrapped` accepts the string;
-    ///   `nil` when `Wrapped` rejects (the schema converts `nil` into a
-    ///   typed `Command.Error.invalidValue`).
     @inlinable
     public init?(argument: String) {
         guard let wrapped = Wrapped(argument: argument) else {

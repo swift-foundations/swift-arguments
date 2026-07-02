@@ -29,7 +29,9 @@ extension Command {
         public let executableName: String
 
         /// The operands collected after a `--` end-of-options separator,
-        /// in argv order. Empty when no `--` was present.
+        /// in argv order.
+        ///
+        /// Empty when no `--` was present.
         public let remainingArguments: [String]
 
         /// Creates a context.

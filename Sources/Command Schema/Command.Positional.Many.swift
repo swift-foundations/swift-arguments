@@ -52,17 +52,18 @@ extension Command.Positional {
     /// ``Command/Error/validationFailed(reason:)``.
     public struct Many: Sendable
     where Root: Sendable, V: Sendable & Equatable {
-        /// The KeyPath into `Root`'s array field where parsed values are
-        /// appended in argv order.
+        /// The KeyPath into the array field on `Root` where parsed values
+        /// are appended in argv order.
         public let keyPath: WritableKeyPath<Root, [V]> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         public let declaration: Argument.Positional<V>
 
-        /// Type-erased argv-string parse closure. Either the
-        /// ``Argument/Codable``-driven default (`{ V(argument: $0) }`) or
-        /// a custom-`transform:` wrapper that catches any thrown
-        /// ``Command/Error`` and returns `nil`.
+        /// Type-erased argv-string parse closure.
+        ///
+        /// Either the ``Argument/Codable``-driven default
+        /// (`{ V(argument: $0) }`) or a custom-`transform:` wrapper that
+        /// catches any thrown ``Command/Error`` and returns `nil`.
         @usableFromInline
         internal let parse: @Sendable (String) -> V?
 

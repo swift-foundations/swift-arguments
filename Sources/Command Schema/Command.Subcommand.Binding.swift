@@ -9,12 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-// swiftlint:disable no_any_protocol_existential
-// reason: subcommand-binding heterogeneity is load-bearing — the
-// protocol IS the existential carrier that lets a Group hold bindings
-// with distinct `Sub` generic parameters. The doc-comment references
-// `any Command.Subcommand.Binding<Root>` and trigger the lint at the
-// comment site; the design is intentional per the file's docs.
 extension Command.Subcommand {
     /// The existential carrier for sum-type subcommand bindings.
     ///
@@ -94,4 +88,3 @@ extension Command.Subcommand {
         func appendHelp(to buffer: inout String, fullCommandName: String)
     }
 }
-// swiftlint:enable no_any_protocol_existential

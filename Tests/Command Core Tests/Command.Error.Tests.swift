@@ -47,7 +47,7 @@ struct CommandErrorTests {
     func exitWithoutMessage() {
         let error: Command.Error = .exit(code: 2)
         switch error {
-        case let .exit(code, message):
+        case .exit(let code, let message):
             #expect(code == 2)
             #expect(message == nil)
 
@@ -60,7 +60,7 @@ struct CommandErrorTests {
     func exitWithMessage() {
         let error: Command.Error = .exit(code: 3, message: "Custom diagnostic")
         switch error {
-        case let .exit(code, message):
+        case .exit(let code, let message):
             #expect(code == 3)
             #expect(message == "Custom diagnostic")
 
@@ -95,7 +95,7 @@ struct CommandErrorTests {
             Issue.record("Expected exit, runBody returned normally")
         } catch {
             switch error {
-            case let .exit(code, message):
+            case .exit(let code, let message):
                 #expect(code == 64)
                 #expect(message == "EX_USAGE")
 

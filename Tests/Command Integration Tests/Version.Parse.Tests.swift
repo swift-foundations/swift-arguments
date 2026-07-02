@@ -58,6 +58,7 @@ private struct Unversioned: Command.`Protocol`, Equatable {
 }
 
 /// A parent command with a non-empty version and a subcommand group.
+///
 /// Exercises the dispatch path's `--version` interception (before any
 /// subcommand is selected).
 private enum VersionedParent: Command.`Protocol`, Equatable {
@@ -116,7 +117,7 @@ struct VersionParseTests {
             Issue.record("Expected .versionRequested, parse succeeded")
         } catch {
             switch error {
-            case let .versionRequested(version):
+            case .versionRequested(let version):
                 #expect(version == "1.2.3")
 
             default:
@@ -152,7 +153,7 @@ struct VersionParseTests {
             Issue.record("Expected .versionRequested, parse succeeded")
         } catch {
             switch error {
-            case let .versionRequested(version):
+            case .versionRequested(let version):
                 #expect(version == "4.5.6")
 
             default:
@@ -165,7 +166,7 @@ struct VersionParseTests {
     func versionRequestedCarriesString() {
         let error: Command.Error = .versionRequested(version: "9.8.7")
         switch error {
-        case let .versionRequested(version):
+        case .versionRequested(let version):
             #expect(version == "9.8.7")
 
         default:
