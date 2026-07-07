@@ -37,7 +37,7 @@ extension Command.Subcommand {
         /// The Root command type whose enum case this binding wraps to.
         associatedtype Root: Sendable
 
-        /// The CLI subcommand name (e.g., `"clone"`).
+        /// The CLI subcommand name (such as `"clone"`).
         var name: String { get }
 
         /// Alternative names this subcommand also responds to.
@@ -56,7 +56,7 @@ extension Command.Subcommand {
         /// ``Command/Subcommand/Group`` may carry `isDefault = true`.
         var isDefault: Bool { get }
 
-        /// Parses the sub-argv slice (i.e., the argv elements appearing
+        /// Parses the sub-argv slice (that is, the argv elements appearing
         /// after the subcommand name) into the matching `Root` enum case.
         ///
         /// Implementations call ``Command/parse(_:from:initial:)`` against
@@ -71,7 +71,7 @@ extension Command.Subcommand {
 
         /// Appends formatted help text for this subcommand's sub-schema
         /// into `buffer`. Used for per-subcommand `--help` rendering
-        /// (e.g., `git clone --help`).
+        /// (such as `git clone --help`).
         ///
         /// The implementation duplicates the help-rendering logic of
         /// ``Command/Help/Visitor`` rather than depending on the
@@ -84,7 +84,7 @@ extension Command.Subcommand {
         /// - Parameters:
         ///   - buffer: The buffer accumulating help text.
         ///   - fullCommandName: The full invocation path
-        ///     (e.g., `"git clone"`) used in the rendered USAGE line.
+        ///     (such as `"git clone"`) used in the rendered USAGE line.
         func appendHelp(to buffer: inout String, fullCommandName: String)
     }
 }

@@ -23,7 +23,7 @@ extension Command {
     ///   ``init(_:name:placeholder:arity:visibility:help:)`` or the
     ///   custom-`transform:` escape hatch
     ///   ``init(_:name:placeholder:arity:visibility:help:transform:)`` for
-    ///   value types the consumer does not own (e.g. `Foundation.URL`,
+    ///   value types the consumer does not own (such as `Foundation.URL`,
     ///   third-party types) that cannot conform to ``Argument/Codable``.
     ///
     /// The schema-driven parser at ``Command/Core`` consults the KeyPath
@@ -116,7 +116,7 @@ extension Command {
         /// custom `transform:` closure.
         ///
         /// This overload is the escape hatch for value types the consumer
-        /// does not own (e.g. `Foundation.URL`, third-party types) — types
+        /// does not own (such as `Foundation.URL`, third-party types) — types
         /// that cannot be retrofitted with an ``Argument/Codable``
         /// conformance because the consumer does not own the type
         /// definition. The closure converts an argv-element string into a

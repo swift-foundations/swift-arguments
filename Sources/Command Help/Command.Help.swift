@@ -96,7 +96,7 @@ extension Command {
         /// - `Flag.Count<Int>` — render only when the initial counter
         ///   is non-zero.
         /// - `Flag.Inverted<Bool>` — render the long-option name
-        ///   matching the initial value (e.g. `--no-feature` when
+        ///   matching the initial value (such as `--no-feature` when
         ///   `initial = false`).
         /// - `Flag.Enumerable<E>` — render the case-flag name of the
         ///   initial enum case.

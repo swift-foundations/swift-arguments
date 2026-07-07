@@ -14,7 +14,7 @@ extension Command.Option {
     ///
     /// `Command.Option.Many` is the repeatable-option sibling of
     /// ``Command/Option`` for argv layouts that accept the same option
-    /// multiple times, e.g. `mycli --tag a --tag b --tag c`. Each
+    /// multiple times, such as `mycli --tag a --tag b --tag c`. Each
     /// occurrence appends one parsed value to the
     /// `WritableKeyPath<Root, [V]>` target rather than overwriting a
     /// single-value slot.
@@ -27,7 +27,7 @@ extension Command.Option {
     ///     help: .init(abstract: "A tag value (repeatable)."))
     /// ```
     ///
-    /// For value types the consumer does not own (e.g. `Foundation.URL`,
+    /// For value types the consumer does not own (such as `Foundation.URL`,
     /// third-party types), use the `transform:` overload that drops the
     /// ``Argument/Codable`` requirement and accepts a custom parse
     /// closure.
@@ -36,13 +36,13 @@ extension Command.Option {
     ///
     /// No arity bound is enforced by default — any number of occurrences
     /// is allowed. Callers needing bounded repetition supply an explicit
-    /// ``Argument/Arity`` (e.g., `.atLeast(1)`, `.range(1...5)`).
+    /// ``Argument/Arity`` (such as `.atLeast(1)`, `.range(1...5)`).
     ///
     /// ## Environment-variable fallback
     ///
     /// `environment` fallback for repeatable options is deferred
     /// to v2 — the splitting semantics (comma-separated single value
-    /// vs. repeated env reads) are not yet defined. Setting
+    /// versus repeated env reads) are not yet defined. Setting
     /// `environment` on a ``Command/Option/Many`` is a no-op at
     /// the v1 surface; the schema author should leave it `nil`.
     public struct Many: Sendable

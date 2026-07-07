@@ -15,7 +15,7 @@ import Command_Test_Support
 /// schema-node binding inits.
 ///
 /// Critically, this type does NOT conform to ``Argument/Codable``. It
-/// stands in for value types the consumer does not own (e.g.
+/// stands in for value types the consumer does not own (such as
 /// `Foundation.URL`, third-party value types) where the only path to a
 /// schema-bound value is a custom argv-string parse closure supplied at
 /// the call site.

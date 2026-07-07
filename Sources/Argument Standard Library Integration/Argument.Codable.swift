@@ -33,7 +33,7 @@ extension Argument {
     /// `Coder_Primitives.Codable`. It is a *sibling* protocol per the
     /// family-codable-convention: one format ≠ canonical-format choice.
     /// `Int: Argument.Codable` can coexist with `Int: JSON.Codable`,
-    /// `Int: Binary.Codable`, etc. — each format owns its own conformance.
+    /// `Int: Binary.Codable` and similar — each format owns its own conformance.
     ///
     /// ## Example
     ///

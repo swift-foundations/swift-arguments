@@ -22,7 +22,7 @@ extension Command.Schema {
     /// ## Failure
     ///
     /// `Failure` defaults to `Never` (pure-text emitters typically can't
-    /// fail). Visitors that compose with throwing infrastructure (e.g.,
+    /// fail). Visitors that compose with throwing infrastructure (such as
     /// a parser-config builder that validates cross-field constraints
     /// at build time) override `Failure` to a domain-specific
     /// `Swift.Error`.

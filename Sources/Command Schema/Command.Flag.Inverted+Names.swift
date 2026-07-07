@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 extension Command.Flag.Inverted {
-    /// The long-option string that selects the `true` value (e.g.,
+    /// The long-option string that selects the `true` value (such as
     /// `"feature"` or `"enable-feature"`).
     ///
     /// Derived from ``base`` and ``inversion`` at access time; both
@@ -28,7 +28,7 @@ extension Command.Flag.Inverted {
         }
     }
 
-    /// The long-option string that selects the `false` value (e.g.,
+    /// The long-option string that selects the `false` value (such as
     /// `"no-feature"` or `"disable-feature"`).
     @inlinable
     public var falseName: String {

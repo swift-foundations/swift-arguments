@@ -25,7 +25,7 @@ extension Command.Subcommand.Case: Command.Subcommand.Binding {
     ///
     /// Renders sub-help using a Schema-internal help visitor
     /// (``Command/Subcommand/Help/Visitor``) with the configuration's
-    /// `name` overridden to the full invocation path (e.g., `"git clone"`
+    /// `name` overridden to the full invocation path (such as `"git clone"`
     /// rather than the bare subcommand name) so the USAGE line reads
     /// naturally.
     @inlinable

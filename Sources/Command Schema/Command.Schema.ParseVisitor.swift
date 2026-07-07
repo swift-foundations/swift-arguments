@@ -76,7 +76,7 @@ extension Command.Schema {
         /// order.
         ///
         /// Matched via a separate dispatch path because the semantic
-        /// differs (append vs. overwrite).
+        /// differs (append versus overwrite).
         @usableFromInline
         internal var optionManies: [OptionManyEntry] = []
 
@@ -312,7 +312,7 @@ extension Command.Schema.ParseVisitor {
 }
 
 extension Command.Schema.ParseVisitor: Command.Schema.Visitor {
-    /// Parse entries can fail with a typed ``Command/Error`` (e.g.
+    /// Parse entries can fail with a typed ``Command/Error`` (such as
     /// duplicate-declaration validation at visit time).
     public typealias Failure = Command.Error
 
@@ -708,7 +708,7 @@ extension Command.Schema.ParseVisitor {
     }
 
     /// Renders an ``Argument/Name`` to its public CLI form for
-    /// diagnostics (e.g., `"--count"`, `"-c"`, `"-c, --count"`).
+    /// diagnostics (such as `"--count"`, `"-c"`, `"-c, --count"`).
     @usableFromInline
     internal static func publicName(for name: Argument.Name) -> String {
         switch name {
@@ -1136,7 +1136,7 @@ extension Command.Schema.ParseVisitor {
     ///
     /// Used by the numeric-positional dispatch heuristic in
     /// ``finalize()`` to detect "schema-explicit-wins" cases — when the
-    /// schema declares a short binding for a digit (e.g. `-5` as a Bool
+    /// schema declares a short binding for a digit (such as `-5` as a Bool
     /// flag), the negative-number positional heuristic suppresses so
     /// the dispatched short binding wins.
     @usableFromInline

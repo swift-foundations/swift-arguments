@@ -14,8 +14,8 @@ extension Command.Flag {
     ///
     /// `Command.Flag.Enumerable` is the enum-of-flags sibling of
     /// ``Command/Flag`` for argv layouts where one of a fixed set of
-    /// mutually exclusive long options selects a case of an enum, e.g.
-    /// `mycli --add` vs. `mycli --multiply` writing different cases of
+    /// mutually exclusive long options selects a case of an enum, such as
+    /// `mycli --add` versus `mycli --multiply` writing different cases of
     /// an `Operation` enum to the bound field. The institute analog of
     /// swift-argument-parser's `EnumerableFlag` protocol.
     ///

@@ -47,10 +47,10 @@ extension Command.Subcommand {
     ///   own ``Command/Schema/Definition`` via ``Command/Protocol``.
     public struct Case<Root, Sub>: Sendable
     where Root: Sendable, Sub: Command.`Protocol` {
-        /// The CLI subcommand name (e.g., `"clone"`).
+        /// The CLI subcommand name (such as `"clone"`).
         public let name: String
 
-        /// Alternative names this subcommand also responds to (e.g., `["c"]`).
+        /// Alternative names this subcommand also responds to (such as `["c"]`).
         public let aliases: [String]
 
         /// Whether this subcommand appears in help text.
@@ -79,7 +79,7 @@ extension Command.Subcommand {
         public let initial: @Sendable () -> Sub
 
         /// Wraps a parsed `Sub` value into the matching `Root` enum case
-        /// (e.g., `Git.clone`).
+        /// (such as `Git.clone`).
         public let map: @Sendable (Sub) -> Root
 
         /// Creates a sum-type subcommand case.

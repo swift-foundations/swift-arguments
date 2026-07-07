@@ -19,7 +19,7 @@ extension Swift.Optional: Argument.Serializable where Wrapped: Argument.Serializ
     ///   is empty — schemas declaring `T?`-typed properties with `nil`
     ///   defaults therefore avoid noise like `(default: )` in `--help`.
     ///
-    /// Schemas wanting to label nil defaults explicitly (e.g.,
+    /// Schemas wanting to label nil defaults explicitly (such as
     /// `(default: <none>)`) should set
     /// ``Argument/Help/defaults`` directly on the
     /// ``Argument/Option`` declaration rather than relying on this

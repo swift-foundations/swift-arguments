@@ -45,7 +45,7 @@ extension Command.Flag {
         public let keyPath: WritableKeyPath<Root, Bool> & Sendable
 
         /// The base long name from which both the "true" and "false"
-        /// forms are derived (e.g., `"feature"` →
+        /// forms are derived (such as `"feature"` →
         /// `--feature` / `--no-feature`).
         public let base: Argument.Name.Long
 
@@ -62,7 +62,7 @@ extension Command.Flag {
         ///
         /// - Parameters:
         ///   - keyPath: The Bool field this flag pair writes to.
-        ///   - base: The base long name used to derive both forms (e.g.,
+        ///   - base: The base long name used to derive both forms (such as
         ///     `"feature"`).
         ///   - inversion: The strategy that maps `base` to the two
         ///     long-option names. Defaults to

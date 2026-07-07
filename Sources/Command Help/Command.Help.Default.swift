@@ -67,7 +67,7 @@ extension Command {
         /// per-binding-type rules in §3.13.
         ///
         /// Returns `nil` when the value should NOT render a default in
-        /// help text — e.g. a `nil` Optional binding, an empty array
+        /// help text — such as a `nil` Optional binding, an empty array
         /// binding for `Many`, a `Bool` binding for a plain `Flag`, or
         /// an `Int` `0` for a `Flag.Count` initial.
         @usableFromInline
@@ -82,6 +82,10 @@ extension Command {
             // Array-aware path: an empty array renders nothing; a
             // non-empty array renders `[a, b, c]` via
             // `String(describing:)`.
+            // `V` is an unconstrained generic parameter here — an existential
+            // cast is the only way to probe for Collection conformance at
+            // runtime for an arbitrary binding type.
+            // swiftlint:disable:next no_any_protocol_existential
             if let collection = value as? (any Collection), collection.isEmpty {
                 return nil
             }

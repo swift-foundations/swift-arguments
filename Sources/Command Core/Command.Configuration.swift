@@ -33,7 +33,7 @@ extension Command {
     /// }
     /// ```
     public struct Configuration: Sendable, Hashable, Equatable {
-        /// The CLI invocation name (e.g., `"repeat"`).
+        /// The CLI invocation name (such as `"repeat"`).
         public let name: String
 
         /// A one-line summary rendered in help text.

@@ -14,7 +14,7 @@ extension Command.Positional {
     ///
     /// `Command.Positional.Many` is the variadic-positional sibling of
     /// ``Command/Positional`` for argv layouts that collect any number of
-    /// values into an array field, e.g. `mycli file1 file2 file3 …`. The
+    /// values into an array field, such as `mycli file1 file2 file3 …`. The
     /// schema parser appends each consumed positional value to the
     /// `WritableKeyPath<Root, [V]>` target rather than overwriting a
     /// single-value slot.
@@ -29,7 +29,7 @@ extension Command.Positional {
     ///     help: .init(abstract: "Tag values."))
     /// ```
     ///
-    /// For value types the consumer does not own (e.g. `Foundation.URL`,
+    /// For value types the consumer does not own (such as `Foundation.URL`,
     /// third-party types), use the `transform:` overload that drops the
     /// ``Argument/Codable`` requirement and accepts a custom parse
     /// closure.
@@ -39,7 +39,7 @@ extension Command.Positional {
     /// The default arity is ``Argument/Arity/atLeast(0)`` — accept zero
     /// or more positional values (rest-positional shape). Callers needing
     /// at-least-one semantics use ``Argument/Arity/atLeast(1)``; bounded
-    /// ranges use ``Argument/Arity/range(_:)`` (e.g., `.range(1...5)`).
+    /// ranges use ``Argument/Arity/range(_:)`` (such as `.range(1...5)`).
     ///
     /// ## Composition constraints
     ///

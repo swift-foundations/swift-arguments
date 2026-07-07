@@ -52,6 +52,10 @@ extension Command.Subcommand {
             if let optional = value as? (any _SubcommandOptionalConvertible) {
                 return optional._unwrapped.map { Swift.String(describing: $0) }
             }
+            // `V` is an unconstrained generic parameter here — an existential
+            // cast is the only way to probe for Collection conformance at
+            // runtime for an arbitrary binding type.
+            // swiftlint:disable:next no_any_protocol_existential
             if let collection = value as? (any Collection), collection.isEmpty {
                 return nil
             }

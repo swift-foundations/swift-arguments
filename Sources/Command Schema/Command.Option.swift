@@ -111,7 +111,7 @@ extension Command {
         /// `transform:` closure.
         ///
         /// This overload is the escape hatch for value types the consumer
-        /// does not own (e.g. `Foundation.URL`, third-party types) — types
+        /// does not own (such as `Foundation.URL`, third-party types) — types
         /// that cannot be retrofitted with an ``Argument/Codable``
         /// conformance because the consumer does not own the type
         /// definition. The closure converts an argv-element string into a
