@@ -1430,7 +1430,7 @@ extension Command.Schema.ParseVisitor {
             // Dispatch sub-parse. If the sub-parse raises .helpRequested,
             // re-route through .helpRequestedForSubcommand with rendered
             // sub-help text so callers can distinguish.
-            do {
+            do throws(Command.Error) {
                 root = try binding.parse(subArgv: subArgv)
                 return
             } catch {
@@ -1457,7 +1457,7 @@ extension Command.Schema.ParseVisitor {
         // declares a default binding, dispatch it with empty sub-argv;
         // otherwise surface the missing-subcommand error.
         if let defaultBinding = group.bindings.first(where: \.isDefault) {
-            do {
+            do throws(Command.Error) {
                 root = try defaultBinding.parse(subArgv: [])
                 return
             } catch {

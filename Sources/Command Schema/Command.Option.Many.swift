@@ -141,7 +141,7 @@ extension Command.Option {
                 environment: nil
             )
             self.parse = { input in
-                do {
+                do throws(Command.Error) {
                     return try transform(input)
                 } catch {
                     return nil

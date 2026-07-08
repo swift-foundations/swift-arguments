@@ -160,7 +160,7 @@ extension Command {
                 environment: environment
             )
             self.parse = { input in
-                do {
+                do throws(Command.Error) {
                     return try transform(input)
                 } catch {
                     return nil

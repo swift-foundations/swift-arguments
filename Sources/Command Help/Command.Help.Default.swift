@@ -25,90 +25,92 @@ extension Command {
     /// nested namespace. The compound is `@usableFromInline internal` —
     /// strictly an implementation detail of the help target.
     @usableFromInline
-    internal enum HelpDefault {
-        /// Derives a default-value description from `initial` against
-        /// the supplied `keyPath`, swapping it into
-        /// `help.defaults` only when (a) the user did not
-        /// declare one explicitly AND (b) initial is non-`nil`.
-        ///
-        /// - Parameters:
-        ///   - help: The original L1 ``Argument/Help`` carrying the
-        ///     user-declared documentation. Returned unchanged when
-        ///     `help.defaults` is non-`nil` — user precedence
-        ///     is preserved.
-        ///   - initial: The seed `Root` instance from which to derive a
-        ///     default. When `nil`, auto-derivation is skipped and
-        ///     `help` is returned unchanged.
-        ///   - keyPath: The `Root → V` key path identifying the field
-        ///     whose initial value supplies the rendered default.
-        /// - Returns: `help` with `defaults` populated when
-        ///   both the user-explicit slot is empty and a default can be
-        ///   derived; `help` unchanged otherwise.
-        @usableFromInline
-        internal static func inject<Root, V>(
-            _ help: Argument.Help,
-            initial: Root?,
-            keyPath: WritableKeyPath<Root, V> & Sendable
-        ) -> Argument.Help {
-            if help.defaults != nil { return help }
-            guard let initial else { return help }
-            let value = initial[keyPath: keyPath]
-            let rendered = Self.render(value)
-            guard let rendered else { return help }
-            return Argument.Help(
-                abstract: help.abstract,
-                discussion: help.discussion,
-                placeholder: help.placeholder,
-                defaults: rendered
-            )
+    internal enum HelpDefault {}
+}
+
+extension Command.HelpDefault {
+    /// Derives a default-value description from `initial` against
+    /// the supplied `keyPath`, swapping it into
+    /// `help.defaults` only when (a) the user did not
+    /// declare one explicitly AND (b) initial is non-`nil`.
+    ///
+    /// - Parameters:
+    ///   - help: The original L1 ``Argument/Help`` carrying the
+    ///     user-declared documentation. Returned unchanged when
+    ///     `help.defaults` is non-`nil` — user precedence
+    ///     is preserved.
+    ///   - initial: The seed `Root` instance from which to derive a
+    ///     default. When `nil`, auto-derivation is skipped and
+    ///     `help` is returned unchanged.
+    ///   - keyPath: The `Root → V` key path identifying the field
+    ///     whose initial value supplies the rendered default.
+    /// - Returns: `help` with `defaults` populated when
+    ///   both the user-explicit slot is empty and a default can be
+    ///   derived; `help` unchanged otherwise.
+    @usableFromInline
+    internal static func inject<Root, V>(
+        _ help: Argument.Help,
+        initial: Root?,
+        keyPath: WritableKeyPath<Root, V> & Sendable
+    ) -> Argument.Help {
+        if help.defaults != nil { return help }
+        guard let initial else { return help }
+        let value = initial[keyPath: keyPath]
+        let rendered = Self.render(value)
+        guard let rendered else { return help }
+        return Argument.Help(
+            abstract: help.abstract,
+            discussion: help.discussion,
+            placeholder: help.placeholder,
+            defaults: rendered
+        )
+    }
+
+    /// Renders a typed default value to its display string per the
+    /// per-binding-type rules in §3.13.
+    ///
+    /// Returns `nil` when the value should NOT render a default in
+    /// help text — such as a `nil` Optional binding, an empty array
+    /// binding for `Many`, a `Bool` binding for a plain `Flag`, or
+    /// an `Int` `0` for a `Flag.Count` initial.
+    @usableFromInline
+    internal static func render<V>(_ value: V) -> String? {
+        // Optional-aware path: a `.none` initial value SHOULD NOT
+        // render a default line; a `.some(v)` renders
+        // `String(describing: v)`.
+        if let optional = value as? (any _OptionalConvertible) {
+            return optional._unwrapped.map { Swift.String(describing: $0) }
         }
 
-        /// Renders a typed default value to its display string per the
-        /// per-binding-type rules in §3.13.
-        ///
-        /// Returns `nil` when the value should NOT render a default in
-        /// help text — such as a `nil` Optional binding, an empty array
-        /// binding for `Many`, a `Bool` binding for a plain `Flag`, or
-        /// an `Int` `0` for a `Flag.Count` initial.
-        @usableFromInline
-        internal static func render<V>(_ value: V) -> String? {
-            // Optional-aware path: a `.none` initial value SHOULD NOT
-            // render a default line; a `.some(v)` renders
-            // `String(describing: v)`.
-            if let optional = value as? (any _OptionalConvertible) {
-                return optional._unwrapped.map { Swift.String(describing: $0) }
-            }
-
-            // Array-aware path: an empty array renders nothing; a
-            // non-empty array renders `[a, b, c]` via
-            // `String(describing:)`.
-            // `V` is an unconstrained generic parameter here — an existential
-            // cast is the only way to probe for Collection conformance at
-            // runtime for an arbitrary binding type.
-            // swiftlint:disable:next no_any_protocol_existential
-            if let collection = value as? (any Collection), collection.isEmpty {
-                return nil
-            }
-
-            // Bool-aware suppression: plain `Bool` initial values do
-            // NOT render a default line. `Bool`-flag defaults are
-            // present/absent semantics; rendering `(default: false)` on
-            // every flag would be noisy. `Flag.Inverted` is handled in
-            // its visit-time entry point with explicit boolean → name
-            // selection because the row carries both names — the visitor
-            // walks that branch separately and bypasses this helper.
-            if value is Bool { return nil }
-
-            // Int-aware suppression: `Flag.Count` with `0` initial
-            // suppresses its default render; the visitor's
-            // visit(flagCount:) path routes through here with `keyPath`'d
-            // `Int` and a `0` value surfaces as `nil`.
-            if let intValue = value as? Int, intValue == 0 {
-                return nil
-            }
-
-            return Swift.String(describing: value)
+        // Array-aware path: an empty array renders nothing; a
+        // non-empty array renders `[a, b, c]` via
+        // `String(describing:)`.
+        // `V` is an unconstrained generic parameter here — an existential
+        // cast is the only way to probe for Collection conformance at
+        // runtime for an arbitrary binding type.
+        // swiftlint:disable:next no_any_protocol_existential
+        if let collection = value as? (any Collection), collection.isEmpty {
+            return nil
         }
+
+        // Bool-aware suppression: plain `Bool` initial values do
+        // NOT render a default line. `Bool`-flag defaults are
+        // present/absent semantics; rendering `(default: false)` on
+        // every flag would be noisy. `Flag.Inverted` is handled in
+        // its visit-time entry point with explicit boolean → name
+        // selection because the row carries both names — the visitor
+        // walks that branch separately and bypasses this helper.
+        if value is Bool { return nil }
+
+        // Int-aware suppression: `Flag.Count` with `0` initial
+        // suppresses its default render; the visitor's
+        // visit(flagCount:) path routes through here with `keyPath`'d
+        // `Int` and a `0` value surfaces as `nil`.
+        if let intValue = value as? Int, intValue == 0 {
+            return nil
+        }
+
+        return Swift.String(describing: value)
     }
 }
 

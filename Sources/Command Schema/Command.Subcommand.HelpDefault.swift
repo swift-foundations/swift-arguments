@@ -21,50 +21,52 @@ extension Command.Subcommand {
     /// ``Command/Subcommand/Help/Visitor`` — the Schema target must
     /// remain dependency-free of the help-text formatter.
     @usableFromInline
-    internal enum HelpDefault {
-        /// Derives a default-value description from `initial` against
-        /// the supplied `keyPath`, swapping it into
-        /// `help.defaults` only when (a) the user did not
-        /// declare one explicitly AND (b) initial is non-`nil`.
-        @usableFromInline
-        internal static func inject<Root, V>(
-            _ help: Argument.Help,
-            initial: Root?,
-            keyPath: WritableKeyPath<Root, V> & Sendable
-        ) -> Argument.Help {
-            if help.defaults != nil { return help }
-            guard let initial else { return help }
-            let value = initial[keyPath: keyPath]
-            let rendered = Self.render(value)
-            guard let rendered else { return help }
-            return Argument.Help(
-                abstract: help.abstract,
-                discussion: help.discussion,
-                placeholder: help.placeholder,
-                defaults: rendered
-            )
-        }
+    internal enum HelpDefault {}
+}
 
-        /// Renders a typed default value to its display string per the
-        /// per-binding-type rules in §3.13.
-        @usableFromInline
-        internal static func render<V>(_ value: V) -> String? {
-            if let optional = value as? (any _SubcommandOptionalConvertible) {
-                return optional._unwrapped.map { Swift.String(describing: $0) }
-            }
-            // `V` is an unconstrained generic parameter here — an existential
-            // cast is the only way to probe for Collection conformance at
-            // runtime for an arbitrary binding type.
-            // swiftlint:disable:next no_any_protocol_existential
-            if let collection = value as? (any Collection), collection.isEmpty {
-                return nil
-            }
-            if value is Bool { return nil }
-            if let intValue = value as? Int, intValue == 0 {
-                return nil
-            }
-            return Swift.String(describing: value)
+extension Command.Subcommand.HelpDefault {
+    /// Derives a default-value description from `initial` against
+    /// the supplied `keyPath`, swapping it into
+    /// `help.defaults` only when (a) the user did not
+    /// declare one explicitly AND (b) initial is non-`nil`.
+    @usableFromInline
+    internal static func inject<Root, V>(
+        _ help: Argument.Help,
+        initial: Root?,
+        keyPath: WritableKeyPath<Root, V> & Sendable
+    ) -> Argument.Help {
+        if help.defaults != nil { return help }
+        guard let initial else { return help }
+        let value = initial[keyPath: keyPath]
+        let rendered = Self.render(value)
+        guard let rendered else { return help }
+        return Argument.Help(
+            abstract: help.abstract,
+            discussion: help.discussion,
+            placeholder: help.placeholder,
+            defaults: rendered
+        )
+    }
+
+    /// Renders a typed default value to its display string per the
+    /// per-binding-type rules in §3.13.
+    @usableFromInline
+    internal static func render<V>(_ value: V) -> String? {
+        if let optional = value as? (any _SubcommandOptionalConvertible) {
+            return optional._unwrapped.map { Swift.String(describing: $0) }
         }
+        // `V` is an unconstrained generic parameter here — an existential
+        // cast is the only way to probe for Collection conformance at
+        // runtime for an arbitrary binding type.
+        // swiftlint:disable:next no_any_protocol_existential
+        if let collection = value as? (any Collection), collection.isEmpty {
+            return nil
+        }
+        if value is Bool { return nil }
+        if let intValue = value as? Int, intValue == 0 {
+            return nil
+        }
+        return Swift.String(describing: value)
     }
 }
 

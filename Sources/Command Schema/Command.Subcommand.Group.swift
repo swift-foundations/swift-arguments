@@ -87,7 +87,7 @@ extension Command.Subcommand {
         /// construction is a compile-time-shaped concern; runtime
         /// fallthrough to argv dispatch would mask a programmer error.
         @inlinable
-        internal static func checkAtMostOneDefault(
+        package static func checkAtMostOneDefault(
             _ bindings: [any Command.Subcommand.Binding<Root>]
         ) {
             let defaults = bindings.filter(\.isDefault)

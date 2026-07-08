@@ -157,7 +157,7 @@ extension Command {
                 help: help
             )
             self.parse = { input in
-                do {
+                do throws(Command.Error) {
                     return try transform(input)
                 } catch {
                     return nil
