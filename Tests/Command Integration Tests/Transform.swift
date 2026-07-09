@@ -22,7 +22,9 @@ import Command_Test_Support
 struct TransformedHost: Sendable, Equatable {
     let scheme: String
     let host: String
+}
 
+extension TransformedHost {
     /// Parses `"scheme://host"` into a `TransformedHost`.
     ///
     /// Returns `nil` when the input doesn't contain `"://"` or either
@@ -75,7 +77,9 @@ struct TransformedPositional: Command.`Protocol`, Equatable {
     init(endpoint: TransformedHost = TransformedHost(scheme: "", host: "")) {
         self.endpoint = endpoint
     }
+}
 
+extension TransformedPositional {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "transformed-positional",
@@ -114,7 +118,9 @@ struct TransformedOption: Command.`Protocol`, Equatable {
     init(endpoint: TransformedHost = TransformedHost(scheme: "", host: "")) {
         self.endpoint = endpoint
     }
+}
 
+extension TransformedOption {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "transformed-option",
@@ -153,7 +159,9 @@ struct TransformedPositionalMany: Command.`Protocol`, Equatable {
     init(endpoints: [TransformedHost] = []) {
         self.endpoints = endpoints
     }
+}
 
+extension TransformedPositionalMany {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "transformed-positional-many",
@@ -192,7 +200,9 @@ struct TransformedOptionMany: Command.`Protocol`, Equatable {
     init(endpoints: [TransformedHost] = []) {
         self.endpoints = endpoints
     }
+}
 
+extension TransformedOptionMany {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "transformed-option-many",

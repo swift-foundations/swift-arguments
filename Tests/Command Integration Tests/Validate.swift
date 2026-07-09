@@ -19,7 +19,9 @@ struct ValidateNoOp: Command.`Protocol`, Equatable {
     init(phrase: String = "") {
         self.phrase = phrase
     }
+}
 
+extension ValidateNoOp {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "validate-no-op", abstract: "")
     }
@@ -45,7 +47,9 @@ struct ValidateCrossField: Command.`Protocol`, Equatable {
         self.mode = mode
         self.remote = remote
     }
+}
 
+extension ValidateCrossField {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "validate-cross", abstract: "")
     }

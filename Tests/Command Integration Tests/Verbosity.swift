@@ -18,7 +18,9 @@ struct Verbosity: Command.`Protocol`, Equatable {
     init(level: Int = 0) {
         self.level = level
     }
+}
 
+extension Verbosity {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "verbosity", abstract: "Count-flag verbosity demo.")
     }

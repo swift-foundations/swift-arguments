@@ -19,7 +19,7 @@ extension Argument.Name {
     /// path is a defensive fallback that should never fire in
     /// well-formed tests.
     public static func longLiteral(_ string: Swift.String) -> Argument.Name {
-        do {
+        do throws(Self.Long.Error) {
             return .long(try Self.Long(string))
         } catch {
             return .long(Self.Long(_unchecked: string))
@@ -29,7 +29,7 @@ extension Argument.Name {
     /// Test-support helper: constructs a `.short(_)` name from a known-good
     /// literal character.
     public static func shortLiteral(_ character: Swift.Character) -> Argument.Name {
-        do {
+        do throws(Self.Short.Error) {
             return .short(try Self.Short(character))
         } catch {
             return .short(Self.Short(_unchecked: character))
@@ -40,13 +40,13 @@ extension Argument.Name {
     /// known-good literals.
     public static func bothLiteral(short: Swift.Character, long: Swift.String) -> Argument.Name {
         let shortName: Argument.Name.Short
-        do {
+        do throws(Self.Short.Error) {
             shortName = try Self.Short(short)
         } catch {
             shortName = Self.Short(_unchecked: short)
         }
         let longName: Argument.Name.Long
-        do {
+        do throws(Self.Long.Error) {
             longName = try Self.Long(long)
         } catch {
             longName = Self.Long(_unchecked: long)

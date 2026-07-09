@@ -22,8 +22,8 @@ struct CommandSchemaDefinitionTests {
         var verbose: Bool = false
     }
 
-    @Test("Builder closure accepts mixed-kind nodes")
-    func builderAcceptsMixedKinds() {
+    @Test
+    func `Builder closure accepts mixed-kind nodes`() {
         let definition = Command.Schema.Definition<TestRoot> {
             Command.Positional(\.phrase, name: "phrase")
             Command.Option(
@@ -38,14 +38,14 @@ struct CommandSchemaDefinitionTests {
         #expect(definition.nodes.count == 3)
     }
 
-    @Test("Definition supports empty schemas")
-    func emptyDefinition() {
+    @Test
+    func `Definition supports empty schemas`() {
         let definition = Command.Schema.Definition<TestRoot>(nodes: [])
         #expect(definition.nodes.isEmpty)
     }
 
-    @Test("Direct-array initializer takes ordered nodes")
-    func directArrayInit() {
+    @Test
+    func `Direct-array initializer takes ordered nodes`() {
         let nodes: [any Command.Schema.Node<TestRoot>] = [
             Command.Positional(\.phrase, name: "p"),
             Command.Flag(\.verbose, name: .longLiteral("v")),
@@ -58,10 +58,6 @@ struct CommandSchemaDefinitionTests {
 
     fileprivate struct Fragment: Sendable, Equatable {
         var name: String = ""
-
-        static let schema: Command.Schema.Definition<Self> = .init {
-            Command.Option(\.name, name: .longLiteral("name"))
-        }
     }
 
     fileprivate struct CompositeRoot: Sendable, Equatable {
@@ -69,8 +65,8 @@ struct CommandSchemaDefinitionTests {
         var count: Int = 0
     }
 
-    @Test("OptionGroup is a Schema.Node")
-    func optionGroupIsNode() {
+    @Test
+    func `OptionGroup is a Schema.Node`() {
         // Witnesses Command.OptionGroup: Command.Schema.Node — the
         // builder grammar's `buildExpression` accepts it.
         let definition = Command.Schema.Definition<CompositeRoot> {
@@ -80,8 +76,8 @@ struct CommandSchemaDefinitionTests {
         #expect(definition.nodes.count == 2)
     }
 
-    @Test("OptionGroup with default visibility")
-    func optionGroupDefaultVisibility() {
+    @Test
+    func `OptionGroup with default visibility`() {
         let group = Command.OptionGroup<CompositeRoot, Fragment>(
             \.fragment,
             schema: Fragment.schema
@@ -89,13 +85,19 @@ struct CommandSchemaDefinitionTests {
         #expect(group.visibility == .visible)
     }
 
-    @Test("OptionGroup with explicit hidden visibility")
-    func optionGroupHiddenVisibility() {
+    @Test
+    func `OptionGroup with explicit hidden visibility`() {
         let group = Command.OptionGroup<CompositeRoot, Fragment>(
             \.fragment,
             schema: Fragment.schema,
             visibility: .hidden
         )
         #expect(group.visibility == .hidden)
+    }
+}
+
+extension CommandSchemaDefinitionTests.Fragment {
+    static let schema: Command.Schema.Definition<Self> = .init {
+        Command.Option(\.name, name: .longLiteral("name"))
     }
 }

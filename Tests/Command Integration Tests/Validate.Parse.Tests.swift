@@ -16,8 +16,8 @@ import Testing
 @Suite("Command.validate() post-decode hook")
 struct ValidateParseTests {
 
-    @Test("Default validate() is a no-op for conformers that do not shadow")
-    func defaultValidateNoOp() throws(Command.Error) {
+    @Test
+    func `Default validate() is a no-op for conformers that do not shadow`() throws(Command.Error) {
         let parsed = try Command.parse(
             ValidateNoOp.self,
             from: ["hello"],
@@ -26,8 +26,8 @@ struct ValidateParseTests {
         #expect(parsed == ValidateNoOp(phrase: "hello"))
     }
 
-    @Test("Shadowed validate() throws on cross-field violation")
-    func shadowedValidateThrows() {
+    @Test
+    func `Shadowed validate() throws on cross-field violation`() {
         do throws(Command.Error) {
             _ = try Command.parse(
                 ValidateCrossField.self,
@@ -46,8 +46,8 @@ struct ValidateParseTests {
         }
     }
 
-    @Test("Shadowed validate() passes when cross-field invariant holds")
-    func shadowedValidatePasses() throws(Command.Error) {
+    @Test
+    func `Shadowed validate() passes when cross-field invariant holds`() throws(Command.Error) {
         let parsed = try Command.parse(
             ValidateCrossField.self,
             from: ["--mode", "remote", "--remote"],

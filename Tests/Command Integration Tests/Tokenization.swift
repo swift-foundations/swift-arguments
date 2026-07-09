@@ -26,7 +26,9 @@ struct GluedShortOptionD: Command.`Protocol`, Equatable {
     init(define: String = "") {
         self.define = define
     }
+}
 
+extension GluedShortOptionD {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "glued-d", abstract: "")
     }
@@ -50,7 +52,9 @@ struct GluedShortOptionX: Command.`Protocol`, Equatable {
     init(jvmFlag: String = "") {
         self.jvmFlag = jvmFlag
     }
+}
 
+extension GluedShortOptionX {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "glued-x", abstract: "")
     }
@@ -75,7 +79,9 @@ struct GluedShortOptionF: Command.`Protocol`, Equatable {
     init(flag: String = "") {
         self.flag = flag
     }
+}
 
+extension GluedShortOptionF {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "glued-f", abstract: "")
     }
@@ -102,7 +108,9 @@ struct NegativeIntPositional: Command.`Protocol`, Equatable {
     init(value: Int = 0) {
         self.value = value
     }
+}
 
+extension NegativeIntPositional {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "neg-int", abstract: "")
     }
@@ -128,7 +136,9 @@ struct NegativeFloatPositional: Command.`Protocol`, Equatable {
     init(value: Float = 0) {
         self.value = value
     }
+}
 
+extension NegativeFloatPositional {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "neg-float", abstract: "")
     }
@@ -156,7 +166,9 @@ struct NegativeNumberWithFiveFlag: Command.`Protocol`, Equatable {
         self.fiveFlag = fiveFlag
         self.value = value
     }
+}
 
+extension NegativeNumberWithFiveFlag {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "flag-five", abstract: "")
     }
@@ -183,7 +195,9 @@ struct BuildOptionCommand: Command.`Protocol`, Equatable {
     init(build: Bool = false) {
         self.build = build
     }
+}
 
+extension BuildOptionCommand {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "buildcmd", abstract: "")
     }
@@ -202,7 +216,9 @@ struct BuildOptionCommand: Command.`Protocol`, Equatable {
 ///
 /// Three concrete subcommands (`clone`, `commit`, `checkout`) so `clne`
 /// should suggest `clone`.
-struct GitSuggestClone: Command.`Protocol`, Equatable {
+struct GitSuggestClone: Command.`Protocol`, Equatable {}
+
+extension GitSuggestClone {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "clone", abstract: "")
     }
@@ -214,7 +230,9 @@ struct GitSuggestClone: Command.`Protocol`, Equatable {
     mutating func run() async throws(Command.Error) {}
 }
 
-struct GitSuggestCommit: Command.`Protocol`, Equatable {
+struct GitSuggestCommit: Command.`Protocol`, Equatable {}
+
+extension GitSuggestCommit {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "commit", abstract: "")
     }
@@ -226,7 +244,9 @@ struct GitSuggestCommit: Command.`Protocol`, Equatable {
     mutating func run() async throws(Command.Error) {}
 }
 
-struct GitSuggestCheckout: Command.`Protocol`, Equatable {
+struct GitSuggestCheckout: Command.`Protocol`, Equatable {}
+
+extension GitSuggestCheckout {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "checkout", abstract: "")
     }
@@ -243,7 +263,9 @@ enum GitSuggest: Command.`Protocol`, Equatable {
     case clone(GitSuggestClone)
     case commit(GitSuggestCommit)
     case checkout(GitSuggestCheckout)
+}
 
+extension GitSuggest {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "git", abstract: "")
     }

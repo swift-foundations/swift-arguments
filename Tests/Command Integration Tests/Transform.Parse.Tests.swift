@@ -26,8 +26,8 @@ import Testing
 @Suite("Transform-closure escape hatch — parse")
 struct TransformParseTests {
 
-    @Test("Command.Positional + transform: parses non-Codable value")
-    func positionalTransformParses() throws(Command.Error) {
+    @Test
+    func `Command.Positional + transform: parses non-Codable value`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedPositional.self,
             from: ["https://example.com"],
@@ -36,8 +36,8 @@ struct TransformParseTests {
         #expect(parsed.endpoint == TransformedHost(scheme: "https", host: "example.com"))
     }
 
-    @Test("Command.Positional + transform: throws .invalidValue on malformed input")
-    func positionalTransformInvalidValue() {
+    @Test
+    func `Command.Positional + transform: throws .invalidValue on malformed input`() {
         #expect(throws: Command.Error.self) {
             _ = try Command.parse(
                 TransformedPositional.self,
@@ -47,8 +47,8 @@ struct TransformParseTests {
         }
     }
 
-    @Test("Command.Option + transform: parses non-Codable value")
-    func optionTransformParses() throws(Command.Error) {
+    @Test
+    func `Command.Option + transform: parses non-Codable value`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedOption.self,
             from: ["--endpoint", "https://example.com"],
@@ -57,8 +57,8 @@ struct TransformParseTests {
         #expect(parsed.endpoint == TransformedHost(scheme: "https", host: "example.com"))
     }
 
-    @Test("Command.Option + transform: throws .invalidValue on malformed input")
-    func optionTransformInvalidValue() {
+    @Test
+    func `Command.Option + transform: throws .invalidValue on malformed input`() {
         #expect(throws: Command.Error.self) {
             _ = try Command.parse(
                 TransformedOption.self,
@@ -68,8 +68,8 @@ struct TransformParseTests {
         }
     }
 
-    @Test("Command.Positional.Many + transform: parses multiple non-Codable values")
-    func positionalManyTransformParses() throws(Command.Error) {
+    @Test
+    func `Command.Positional.Many + transform: parses multiple non-Codable values`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedPositionalMany.self,
             from: ["https://a.com", "http://b.org", "ftp://c.net"],
@@ -84,8 +84,8 @@ struct TransformParseTests {
         )
     }
 
-    @Test("Command.Positional.Many + transform: empty argv → empty array")
-    func positionalManyTransformEmpty() throws(Command.Error) {
+    @Test
+    func `Command.Positional.Many + transform: empty argv → empty array`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedPositionalMany.self,
             from: [],
@@ -94,8 +94,8 @@ struct TransformParseTests {
         #expect(parsed.endpoints == [])
     }
 
-    @Test("Command.Option.Many + transform: parses multiple non-Codable values")
-    func optionManyTransformParses() throws(Command.Error) {
+    @Test
+    func `Command.Option.Many + transform: parses multiple non-Codable values`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedOptionMany.self,
             from: [
@@ -114,8 +114,8 @@ struct TransformParseTests {
         )
     }
 
-    @Test("Command.Option.Many + transform: zero occurrences → empty array")
-    func optionManyTransformEmpty() throws(Command.Error) {
+    @Test
+    func `Command.Option.Many + transform: zero occurrences → empty array`() throws(Command.Error) {
         let parsed = try Command.parse(
             TransformedOptionMany.self,
             from: [],

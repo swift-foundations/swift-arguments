@@ -17,7 +17,9 @@ import Testing
 /// `--version` is intercepted at parse time.
 private struct Versioned: Command.`Protocol`, Equatable {
     var phrase: String = ""
+}
 
+extension Versioned {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "versioned",
@@ -40,7 +42,9 @@ private struct Versioned: Command.`Protocol`, Equatable {
 /// option throw (matching swift-argument-parser's opt-in shape).
 private struct Unversioned: Command.`Protocol`, Equatable {
     var phrase: String = ""
+}
 
+extension Unversioned {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "unversioned",
@@ -63,20 +67,27 @@ private struct Unversioned: Command.`Protocol`, Equatable {
 /// subcommand is selected).
 private enum VersionedParent: Command.`Protocol`, Equatable {
     case child(Child)
+}
 
+extension VersionedParent {
     struct Child: Command.`Protocol`, Equatable {
         var flag: Bool = false
-        static var configuration: Command.Configuration {
-            Command.Configuration(name: "child", abstract: "A child subcommand.")
-        }
-        static var schema: Command.Schema.Definition<Self> {
-            Command.Schema.Definition<Self> {
-                Command.Flag(\.flag, name: .longLiteral("flag"), help: .init(abstract: "A flag."))
-            }
-        }
-        mutating func run() async throws(Command.Error) {}
     }
+}
 
+extension VersionedParent.Child {
+    static var configuration: Command.Configuration {
+        Command.Configuration(name: "child", abstract: "A child subcommand.")
+    }
+    fileprivate static var schema: Command.Schema.Definition<Self> {
+        Command.Schema.Definition<Self> {
+            Command.Flag(\.flag, name: .longLiteral("flag"), help: .init(abstract: "A flag."))
+        }
+    }
+    mutating func run() async throws(Command.Error) {}
+}
+
+extension VersionedParent {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "parent",
@@ -110,9 +121,9 @@ struct VersionParseTests {
     // therefore declared-but-inert: setting `version:` had no observable
     // effect at parse time. The fixes below close that gap.
 
-    @Test("--version on a versioned command throws .versionRequested")
-    func versionInterceptsWhenConfigured() {
-        do {
+    @Test
+    func `--version on a versioned command throws .versionRequested`() {
+        do throws(Command.Error) {
             _ = try Command.parse(Versioned.self, from: ["--version"], initial: Versioned())
             Issue.record("Expected .versionRequested, parse succeeded")
         } catch {
@@ -126,9 +137,9 @@ struct VersionParseTests {
         }
     }
 
-    @Test("--version on an unversioned command throws .unknownLongOption")
-    func versionFallsThroughWhenUnconfigured() {
-        do {
+    @Test
+    func `--version on an unversioned command throws .unknownLongOption`() {
+        do throws(Command.Error) {
             _ = try Command.parse(Unversioned.self, from: ["--version"], initial: Unversioned())
             Issue.record("Expected .unknownLongOption, parse succeeded")
         } catch {
@@ -142,9 +153,9 @@ struct VersionParseTests {
         }
     }
 
-    @Test("--version on a parent with subcommand group is intercepted before dispatch")
-    func versionInterceptsAtParentDispatch() {
-        do {
+    @Test
+    func `--version on a parent with subcommand group is intercepted before dispatch`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 VersionedParent.self,
                 from: ["--version"],
@@ -162,8 +173,8 @@ struct VersionParseTests {
         }
     }
 
-    @Test(".versionRequested case carries the version string")
-    func versionRequestedCarriesString() {
+    @Test
+    func `.versionRequested case carries the version string`() {
         let error: Command.Error = .versionRequested(version: "9.8.7")
         switch error {
         case .versionRequested(let version):
