@@ -16,14 +16,14 @@ import Testing
 @Suite("Repeat — end-to-end parse")
 struct RepeatParseTests {
 
-    @Test("Parse positional only: ['hello']")
-    func positionalOnly() throws(Command.Error) {
+    @Test
+    func `Parse positional only: ['hello']`() throws(Command.Error) {
         let parsed = try Command.parse(Repeat.self, from: ["hello"], initial: Repeat())
         #expect(parsed == Repeat(phrase: "hello", count: 2, counter: false))
     }
 
-    @Test("Parse option + positional: ['--count', '3', 'hello']")
-    func optionAndPositional() throws(Command.Error) {
+    @Test
+    func `Parse option + positional: ['--count', '3', 'hello']`() throws(Command.Error) {
         let parsed = try Command.parse(
             Repeat.self,
             from: ["--count", "3", "hello"],
@@ -32,8 +32,8 @@ struct RepeatParseTests {
         #expect(parsed == Repeat(phrase: "hello", count: 3, counter: false))
     }
 
-    @Test("Parse flag + positional: ['--counter', 'hi']")
-    func flagAndPositional() throws(Command.Error) {
+    @Test
+    func `Parse flag + positional: ['--counter', 'hi']`() throws(Command.Error) {
         let parsed = try Command.parse(
             Repeat.self,
             from: ["--counter", "hi"],
