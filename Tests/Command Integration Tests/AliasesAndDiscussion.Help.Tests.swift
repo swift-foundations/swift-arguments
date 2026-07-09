@@ -61,8 +61,8 @@ extension PlainCommand {
     mutating func run() async throws(Command.Error) {}
 }
 
-@Suite("Aliases and Discussion in help text")
-struct AliasesAndDiscussionHelpTests {
+@Suite
+struct `Command.Help AliasesAndDiscussion Tests` {
 
     // Why these tests exist:
     //

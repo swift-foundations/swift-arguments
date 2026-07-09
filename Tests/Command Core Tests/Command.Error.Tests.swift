@@ -13,8 +13,9 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Command.Error")
-struct CommandErrorTests {
+extension Command.Error {
+    @Suite("Command.Error")
+    struct Test {
 
     @Test
     func `Cases are distinct`() {
@@ -103,5 +104,6 @@ struct CommandErrorTests {
                 Issue.record("Expected .exit case, got \(error)")
             }
         }
+    }
     }
 }

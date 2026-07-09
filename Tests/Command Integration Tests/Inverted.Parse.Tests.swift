@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Inverted flag (.Inverted) parse")
-struct InvertedParseTests {
+@Suite
+struct `Command.Flag.Inverted Tests` {
 
     // MARK: - prefixedNo strategy
 

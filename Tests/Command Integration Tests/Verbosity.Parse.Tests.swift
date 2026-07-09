@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Count-flag (.Count) parse")
-struct VerbosityParseTests {
+@Suite
+struct `Command.Flag.Count Tests` {
 
     @Test
     func `No flag occurrence → 0`() throws(Command.Error) {

@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Command.Schema.Definition")
-struct CommandSchemaDefinitionTests {
+@Suite
+struct `Command.Schema.Definition Tests` {
 
     fileprivate struct TestRoot: Sendable, Equatable {
         var phrase: String = ""
@@ -96,7 +96,7 @@ struct CommandSchemaDefinitionTests {
     }
 }
 
-extension CommandSchemaDefinitionTests.Fragment {
+extension `Command.Schema.Definition Tests`.Fragment {
     static let schema: Command.Schema.Definition<Self> = .init {
         Command.Option(\.name, name: .longLiteral("name"))
     }

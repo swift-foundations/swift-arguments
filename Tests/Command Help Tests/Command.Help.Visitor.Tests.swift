@@ -36,8 +36,8 @@ extension MinimalCommand {
     mutating func run() async throws(Command.Error) {}
 }
 
-@Suite("Command.Help.Visitor")
-struct CommandHelpVisitorTests {
+@Suite
+struct `Command.Help.Visitor Tests` {
 
     @Test
     func `Renders USAGE line including the command name`() {

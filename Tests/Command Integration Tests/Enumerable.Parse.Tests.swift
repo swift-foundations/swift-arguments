@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Enumerable flag (.Enumerable) parse")
-struct EnumerableParseTests {
+@Suite
+struct `Command.Flag.Enumerable Tests` {
 
     @Test
     func `No flag → initial value preserved`() throws(Command.Error) {

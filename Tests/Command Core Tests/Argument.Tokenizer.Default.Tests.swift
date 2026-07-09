@@ -13,8 +13,9 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Argument.Tokenizer.Default")
-struct ArgumentTokenizerDefaultTests {
+extension Argument.Tokenizer.Default {
+    @Suite("Argument.Tokenizer.Default")
+    struct Test {
 
     // MARK: - GNU long options (handled inline at L3)
 
@@ -90,5 +91,6 @@ struct ArgumentTokenizerDefaultTests {
                 .positional("hello"),
             ]
         )
+    }
     }
 }

@@ -18,8 +18,8 @@ import Testing
 /// Validates that an option-group declaration inlines the fragment
 /// schema's options into the parent command's `--help` output, matching
 /// the rendered shape that a flat (non-grouped) schema would produce.
-@Suite("Command.OptionGroup — help-text emission")
-struct CommandOptionGroupHelpTests {
+@Suite
+struct `Command.OptionGroup Help Tests` {
 
     @Test
     func `Flat OptionGroup renders --root in OPTIONS section`() {

@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Argument.Codable stdlib conformances")
-struct ArgumentCodableTests {
+@Suite
+struct `Argument.Codable Tests` {
 
     // MARK: - Int
 

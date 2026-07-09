@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Command.validate() post-decode hook")
-struct ValidateParseTests {
+@Suite
+struct `Command.Protocol validate Tests` {
 
     @Test
     func `Default validate() is a no-op for conformers that do not shadow`() throws(Command.Error) {

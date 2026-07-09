@@ -21,8 +21,8 @@ import Testing
 /// 3. Works at both the flat root level AND inside subcommand-dispatch
 ///    bodies.
 /// 4. Surfaces validation errors uniformly with non-grouped options.
-@Suite("Command.OptionGroup — end-to-end parse")
-struct CommandOptionGroupParseTests {
+@Suite
+struct `Command.OptionGroup Parse Tests` {
 
     // MARK: - Flat schema (root-level OptionGroup)
 

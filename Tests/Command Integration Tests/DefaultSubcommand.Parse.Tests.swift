@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Command.Subcommand.Case — .default modifier")
-struct DefaultSubcommandParseTests {
+@Suite
+struct `Command.Subcommand.Case Tests` {
 
     @Test
     func `Empty argv dispatches the default subcommand`() throws(Command.Error) {

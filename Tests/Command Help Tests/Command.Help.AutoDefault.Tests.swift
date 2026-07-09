@@ -67,8 +67,8 @@ extension OptionalIntFixture {
     mutating func run() async throws(Command.Error) {}
 }
 
-@Suite("Command.Help — auto-derive defaults")
-struct CommandHelpAutoDefaultTests {
+@Suite
+struct `Command.Help AutoDefault Tests` {
 
     @Test
     func `Int default auto-derived for Option`() {

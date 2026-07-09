@@ -90,8 +90,9 @@ struct NegativeNumberPositionalParseTests {
 
 // MARK: - Gap 3 — Did-you-mean suggestions
 
-@Suite("B4 Gap 3 — Did-you-mean suggestions on unknown name throws")
-struct SuggestionParseTests {
+extension Command.Diagnostic.Suggestion {
+    @Suite("B4 Gap 3 — Did-you-mean suggestions on unknown name throws")
+    struct Test {
 
     @Test
     func `Unknown long option --buld suggests 'build'`() {
@@ -154,5 +155,6 @@ struct SuggestionParseTests {
                 Issue.record("Expected unknownLongOption, got \(error)")
             }
         }
+    }
     }
 }
