@@ -61,8 +61,8 @@ extension Command.Diagnostic {
 }
 
 extension Command.Diagnostic.Test {
-    @Suite("Command.Diagnostic — exitCode mapping")
-    struct ExitCode {
+    @Suite
+    struct `Exit Code` {
         @Test
         func `Help requests map to exit code 0`() {
             #expect(Command.Diagnostic.exitCode(for: .helpRequested) == 0)
