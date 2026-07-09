@@ -16,8 +16,8 @@ import Testing
 @Suite("Command.Configuration")
 struct CommandConfigurationTests {
 
-    @Test("Default initializer carries name only")
-    func defaultsCarriesNameOnly() {
+    @Test
+    func `Default initializer carries name only`() {
         let config = Command.Configuration(name: "test")
         #expect(config.name == "test")
         #expect(config.abstract.isEmpty)
@@ -26,8 +26,8 @@ struct CommandConfigurationTests {
         #expect(config.aliases.isEmpty)
     }
 
-    @Test("Full initializer carries every field")
-    func fullInitializer() {
+    @Test
+    func `Full initializer carries every field`() {
         let config = Command.Configuration(
             name: "git",
             abstract: "Distributed version control.",
@@ -46,18 +46,18 @@ struct CommandConfigurationTests {
 @Suite("Command.Exit")
 struct CommandExitTests {
 
-    @Test(".success has code 0")
-    func successCode() {
+    @Test
+    func `.success has code 0`() {
         #expect(Command.Exit.success.code == 0)
     }
 
-    @Test(".failure has code 1")
-    func failureCode() {
+    @Test
+    func `.failure has code 1`() {
         #expect(Command.Exit.failure.code == 1)
     }
 
-    @Test("Custom exit code")
-    func customCode() {
+    @Test
+    func `Custom exit code`() {
         #expect(Command.Exit(code: 42).code == 42)
     }
 }

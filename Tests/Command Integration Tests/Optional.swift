@@ -26,7 +26,9 @@ struct OptionalSchema: Command.`Protocol`, Equatable {
         self.label = label
         self.count = count
     }
+}
 
+extension OptionalSchema {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "opt",

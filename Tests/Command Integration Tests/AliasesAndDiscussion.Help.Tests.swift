@@ -18,7 +18,9 @@ import Testing
 /// A command with discussion and aliases declared.
 private struct DocumentedCommand: Command.`Protocol`, Equatable {
     var input: String = ""
+}
 
+extension DocumentedCommand {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "documented",
@@ -40,7 +42,9 @@ private struct DocumentedCommand: Command.`Protocol`, Equatable {
 /// A command with neither discussion nor aliases (negative control).
 private struct PlainCommand: Command.`Protocol`, Equatable {
     var input: String = ""
+}
 
+extension PlainCommand {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "plain",
@@ -81,34 +85,34 @@ struct AliasesAndDiscussionHelpTests {
     // existing snapshot output unchanged for commands that do not use
     // these fields.
 
-    @Test("Help renders ALIASES section when aliases are non-empty")
-    func aliasesRendered() {
+    @Test
+    func `Help renders ALIASES section when aliases are non-empty`() {
         let help = Command.Help<DocumentedCommand>().serialize(DocumentedCommand.schema)
         #expect(help.contains("ALIASES: doc, docu"))
     }
 
-    @Test("Help renders DISCUSSION section when discussion is non-empty")
-    func discussionRendered() {
+    @Test
+    func `Help renders DISCUSSION section when discussion is non-empty`() {
         let help = Command.Help<DocumentedCommand>().serialize(DocumentedCommand.schema)
         #expect(help.contains("DISCUSSION:"))
         #expect(help.contains("  This command demonstrates the discussion section."))
         #expect(help.contains("  Multiple lines are rendered indented."))
     }
 
-    @Test("Help omits ALIASES section when aliases are empty")
-    func aliasesOmittedWhenEmpty() {
+    @Test
+    func `Help omits ALIASES section when aliases are empty`() {
         let help = Command.Help<PlainCommand>().serialize(PlainCommand.schema)
         #expect(!help.contains("ALIASES:"))
     }
 
-    @Test("Help omits DISCUSSION section when discussion is empty")
-    func discussionOmittedWhenEmpty() {
+    @Test
+    func `Help omits DISCUSSION section when discussion is empty`() {
         let help = Command.Help<PlainCommand>().serialize(PlainCommand.schema)
         #expect(!help.contains("DISCUSSION:"))
     }
 
-    @Test("Aliases and discussion appear in expected order")
-    func sectionOrdering() {
+    @Test
+    func `Aliases and discussion appear in expected order`() {
         let help = Command.Help<DocumentedCommand>().serialize(DocumentedCommand.schema)
         // Order check via prefix-scan: walk the string once and record
         // first occurrence index of each section header.

@@ -16,14 +16,14 @@ import Testing
 @Suite("Enumerable flag (.Enumerable) parse")
 struct EnumerableParseTests {
 
-    @Test("No flag → initial value preserved")
-    func noFlag() throws(Command.Error) {
+    @Test
+    func `No flag → initial value preserved`() throws(Command.Error) {
         let parsed = try Command.parse(Calculator.self, from: [], initial: Calculator())
         #expect(parsed.operation == .add)
     }
 
-    @Test("--add selects .add")
-    func selectAdd() throws(Command.Error) {
+    @Test
+    func `--add selects .add`() throws(Command.Error) {
         let parsed = try Command.parse(
             Calculator.self,
             from: ["--add"],
@@ -32,8 +32,8 @@ struct EnumerableParseTests {
         #expect(parsed.operation == .add)
     }
 
-    @Test("--multiply selects .multiply")
-    func selectMultiply() throws(Command.Error) {
+    @Test
+    func `--multiply selects .multiply`() throws(Command.Error) {
         let parsed = try Command.parse(
             Calculator.self,
             from: ["--multiply"],
@@ -42,8 +42,8 @@ struct EnumerableParseTests {
         #expect(parsed.operation == .multiply)
     }
 
-    @Test("--divide selects .divide")
-    func selectDivide() throws(Command.Error) {
+    @Test
+    func `--divide selects .divide`() throws(Command.Error) {
         let parsed = try Command.parse(
             Calculator.self,
             from: ["--divide"],
@@ -52,8 +52,8 @@ struct EnumerableParseTests {
         #expect(parsed.operation == .divide)
     }
 
-    @Test("Last occurrence wins (mutual exclusion)")
-    func lastOccurrenceWins() throws(Command.Error) {
+    @Test
+    func `Last occurrence wins (mutual exclusion)`() throws(Command.Error) {
         let parsed = try Command.parse(
             Calculator.self,
             from: ["--add", "--multiply", "--divide"],

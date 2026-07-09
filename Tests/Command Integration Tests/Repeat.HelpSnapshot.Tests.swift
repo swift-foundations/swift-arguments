@@ -36,8 +36,8 @@ struct RepeatHelpSnapshotTests {
 
         """
 
-    @Test("Help-text matches the expected snapshot exactly")
-    func helpSnapshot() {
+    @Test
+    func `Help-text matches the expected snapshot exactly`() {
         let actual = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(actual == Self.expected)
     }

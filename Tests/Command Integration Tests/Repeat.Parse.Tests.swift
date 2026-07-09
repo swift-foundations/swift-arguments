@@ -42,8 +42,8 @@ struct RepeatParseTests {
         #expect(parsed == Repeat(phrase: "hi", count: 2, counter: true))
     }
 
-    @Test("Parse --count=value form")
-    func equalsValueForm() throws(Command.Error) {
+    @Test
+    func `Parse --count=value form`() throws(Command.Error) {
         let parsed = try Command.parse(
             Repeat.self,
             from: ["--count=5", "hi"],
@@ -52,8 +52,8 @@ struct RepeatParseTests {
         #expect(parsed == Repeat(phrase: "hi", count: 5, counter: false))
     }
 
-    @Test("Parse all fields together")
-    func allFields() throws(Command.Error) {
+    @Test
+    func `Parse all fields together`() throws(Command.Error) {
         let parsed = try Command.parse(
             Repeat.self,
             from: ["--count", "4", "--counter", "world"],
@@ -64,9 +64,9 @@ struct RepeatParseTests {
 
     // MARK: - Error paths
 
-    @Test("Missing positional throws .missingPositional")
-    func missingPositional() {
-        do {
+    @Test
+    func `Missing positional throws .missingPositional`() {
+        do throws(Command.Error) {
             _ = try Command.parse(Repeat.self, from: [], initial: Repeat())
             Issue.record("Expected missingPositional, parse succeeded")
         } catch {
@@ -80,9 +80,9 @@ struct RepeatParseTests {
         }
     }
 
-    @Test("Invalid Int value throws .invalidValue")
-    func invalidIntValue() {
-        do {
+    @Test
+    func `Invalid Int value throws .invalidValue`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Repeat.self,
                 from: ["--count", "not-num", "hi"],
@@ -100,9 +100,9 @@ struct RepeatParseTests {
         }
     }
 
-    @Test("Unknown long option throws .unknownLongOption")
-    func unknownLongOption() {
-        do {
+    @Test
+    func `Unknown long option throws .unknownLongOption`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Repeat.self,
                 from: ["--unknown", "x", "hi"],
@@ -120,9 +120,9 @@ struct RepeatParseTests {
         }
     }
 
-    @Test("--help triggers .helpRequested")
-    func helpRequested() {
-        do {
+    @Test
+    func `--help triggers .helpRequested`() {
+        do throws(Command.Error) {
             _ = try Command.parse(Repeat.self, from: ["--help"], initial: Repeat())
             Issue.record("Expected helpRequested, parse succeeded")
         } catch {

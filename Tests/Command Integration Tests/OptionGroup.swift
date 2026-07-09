@@ -23,7 +23,9 @@ import Command_Test_Support
 struct SharedRootOptions: Sendable, Equatable {
     /// The repository root directory.
     var root: String = "."
+}
 
+extension SharedRootOptions {
     /// The fragment's own schema.
     ///
     /// Declared once; reused everywhere.
@@ -42,7 +44,9 @@ struct SharedRootOptions: Sendable, Equatable {
 struct OGBuild: Command.`Protocol`, Equatable {
     var options: SharedRootOptions = .init()
     var target: String = ""
+}
 
+extension OGBuild {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "build", abstract: "Build a target.")
     }
@@ -61,7 +65,9 @@ struct OGBuild: Command.`Protocol`, Equatable {
 struct OGTest: Command.`Protocol`, Equatable {
     var options: SharedRootOptions = .init()
     var filter: String = ""
+}
 
+extension OGTest {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "test", abstract: "Run tests.")
     }
@@ -88,7 +94,9 @@ struct OGTest: Command.`Protocol`, Equatable {
 enum OGCLI: Command.`Protocol`, Equatable {
     case build(OGBuild)
     case test(OGTest)
+}
 
+extension OGCLI {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "og", abstract: "Demonstrates option groups across subcommands.")
     }
@@ -123,7 +131,9 @@ enum OGCLI: Command.`Protocol`, Equatable {
 struct OGFlat: Command.`Protocol`, Equatable {
     var options: SharedRootOptions = .init()
     var name: String = ""
+}
 
+extension OGFlat {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "ogflat", abstract: "Flat schema with one OptionGroup.")
     }

@@ -29,7 +29,9 @@ struct Clone: Command.`Protocol`, Equatable {
     init(url: String = "") {
         self.url = url
     }
+}
 
+extension Clone {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "clone",
@@ -59,7 +61,9 @@ struct Status: Command.`Protocol`, Equatable {
     init(short: Bool = false) {
         self.short = short
     }
+}
 
+extension Status {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "status",
@@ -86,7 +90,9 @@ struct Status: Command.`Protocol`, Equatable {
 enum Git: Command.`Protocol`, Equatable {
     case clone(Clone)
     case status(Status)
+}
 
+extension Git {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "git",

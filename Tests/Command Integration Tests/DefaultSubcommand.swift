@@ -15,6 +15,9 @@ import Command_Test_Support
 ///
 /// Used as the default for `RouterWithDefault`.
 struct DefaultList: Command.`Protocol`, Equatable {
+}
+
+extension DefaultList {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "list", abstract: "List items.")
     }
@@ -35,7 +38,9 @@ struct DefaultClone: Command.`Protocol`, Equatable {
     init(url: String = "") {
         self.url = url
     }
+}
 
+extension DefaultClone {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "clone", abstract: "Clone a repository.")
     }
@@ -54,7 +59,9 @@ struct DefaultClone: Command.`Protocol`, Equatable {
 enum RouterWithDefault: Command.`Protocol`, Equatable {
     case list(DefaultList)
     case clone(DefaultClone)
+}
 
+extension RouterWithDefault {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "router", abstract: "Router with a default.")
     }
@@ -93,7 +100,9 @@ enum RouterWithDefault: Command.`Protocol`, Equatable {
 enum RouterWithoutDefault: Command.`Protocol`, Equatable {
     case list(DefaultList)
     case clone(DefaultClone)
+}
 
+extension RouterWithoutDefault {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "router-nodefault", abstract: "")
     }

@@ -15,8 +15,8 @@ import Testing
 
 @Suite("Command.Diagnostic — message rendering")
 struct CommandDiagnosticMessageTests {
-    @Test("Unknown long option renders Error: prefix + option name")
-    func unknownLongOption() {
+    @Test
+    func `Unknown long option renders Error: prefix + option name`() {
         let error: Command.Error = .unknownLongOption(
             name: "--missing",
             position: .init(argvIndex: 0, byteOffset: 0),
@@ -27,29 +27,29 @@ struct CommandDiagnosticMessageTests {
         #expect(rendered.contains("--missing"))
     }
 
-    @Test("Validation failure surfaces the reason verbatim")
-    func validationFailedRendersReason() {
+    @Test
+    func `Validation failure surfaces the reason verbatim`() {
         let error: Command.Error = .validationFailed(reason: "Cross-field rule X")
         let rendered = Command.Diagnostic.message(for: error)
         #expect(rendered == "Error: Cross-field rule X")
     }
 
-    @Test("Version-requested renders just the version string")
-    func versionRequested() {
+    @Test
+    func `Version-requested renders just the version string`() {
         let error: Command.Error = .versionRequested(version: "1.2.3")
         let rendered = Command.Diagnostic.message(for: error)
         #expect(rendered == "1.2.3")
     }
 
-    @Test("Exit-with-message renders the message")
-    func exitWithMessage() {
+    @Test
+    func `Exit-with-message renders the message`() {
         let error: Command.Error = .exit(code: 7, message: "user cancel")
         let rendered = Command.Diagnostic.message(for: error)
         #expect(rendered == "user cancel")
     }
 
-    @Test("Missing-subcommand lists available names")
-    func missingSubcommandLists() {
+    @Test
+    func `Missing-subcommand lists available names`() {
         let error: Command.Error = .missingSubcommand(available: ["a", "b", "c"])
         let rendered = Command.Diagnostic.message(for: error)
         #expect(rendered.contains("a"))
@@ -60,8 +60,8 @@ struct CommandDiagnosticMessageTests {
 
 @Suite("Command.Diagnostic — exitCode mapping")
 struct CommandDiagnosticExitCodeTests {
-    @Test("Help requests map to exit code 0")
-    func helpRequestedZero() {
+    @Test
+    func `Help requests map to exit code 0`() {
         #expect(Command.Diagnostic.exitCode(for: .helpRequested) == 0)
         #expect(
             Command.Diagnostic.exitCode(
@@ -70,20 +70,20 @@ struct CommandDiagnosticExitCodeTests {
         )
     }
 
-    @Test("Version request maps to exit code 0")
-    func versionRequestedZero() {
+    @Test
+    func `Version request maps to exit code 0`() {
         #expect(Command.Diagnostic.exitCode(for: .versionRequested(version: "1.0.0")) == 0)
     }
 
-    @Test("Exit carries the consumer-supplied code")
-    func exitCarriesCode() {
+    @Test
+    func `Exit carries the consumer-supplied code`() {
         #expect(Command.Diagnostic.exitCode(for: .exit(code: 0, message: nil)) == 0)
         #expect(Command.Diagnostic.exitCode(for: .exit(code: 1, message: nil)) == 1)
         #expect(Command.Diagnostic.exitCode(for: .exit(code: 42, message: nil)) == 42)
     }
 
-    @Test("Argv-syntactic errors map to EX_USAGE (64)")
-    func usageErrorsToSixtyFour() {
+    @Test
+    func `Argv-syntactic errors map to EX_USAGE (64)`() {
         let cases: [Command.Error] = [
             .unknownLongOption(
                 name: "--x",
@@ -109,8 +109,8 @@ struct CommandDiagnosticExitCodeTests {
         }
     }
 
-    @Test("Argument-wrapped errors map to 1")
-    func argumentWrappedMapsToOne() {
+    @Test
+    func `Argument-wrapped errors map to 1`() {
         let inner = Argument.Error.invalidValue(
             name: "x",
             value: "y",

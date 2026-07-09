@@ -17,7 +17,9 @@ enum Operation: Argument.Flag.Enumerable {
     case add
     case multiply
     case divide
+}
 
+extension Operation {
     static func name(for value: Self) -> Argument.Name.Long {
         switch value {
         case .add: return .literal("add")
@@ -42,7 +44,9 @@ struct Calculator: Command.`Protocol`, Equatable {
     init(operation: Operation = .add) {
         self.operation = operation
     }
+}
 
+extension Calculator {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "calculator", abstract: "Enumerable-flag demo.")
     }

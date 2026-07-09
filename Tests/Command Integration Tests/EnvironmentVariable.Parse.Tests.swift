@@ -40,8 +40,8 @@ struct EnvironmentVariableParseTests {
     // value from the (TaskLocal-overlay-aware) process environment;
     // argv-supplied values take precedence.
 
-    @Test("Env-var supplies value when option is absent from argv")
-    func envVarFallbackFires() throws(Command.Error) {
+    @Test
+    func `Env-var supplies value when option is absent from argv`() throws(Command.Error) {
         let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
             () throws(Command.Error) -> EnvCounted in
             try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
@@ -50,8 +50,8 @@ struct EnvironmentVariableParseTests {
         #expect(parsed.phrase == "hello")
     }
 
-    @Test("argv value takes precedence over env-var value")
-    func argvBeatsEnv() throws(Command.Error) {
+    @Test
+    func `argv value takes precedence over env-var value`() throws(Command.Error) {
         let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
             () throws(Command.Error) -> EnvCounted in
             try Command.parse(
@@ -63,8 +63,8 @@ struct EnvironmentVariableParseTests {
         #expect(parsed.count == 3)
     }
 
-    @Test("Unset env-var leaves the initial default in place")
-    func envVarUnsetUsesDefault() throws(Command.Error) {
+    @Test
+    func `Unset env-var leaves the initial default in place`() throws(Command.Error) {
         // No overlay supplied; ENVCOUNTED_COUNT_TEST is not set by the
         // process either, so the default field value persists.
         let parsed = try Command.parse(
@@ -75,9 +75,9 @@ struct EnvironmentVariableParseTests {
         #expect(parsed.count == 2)
     }
 
-    @Test("Env-var value that fails Argument.Codable throws .invalidEnvironmentValue")
-    func invalidEnvVarValueThrows() {
-        do {
+    @Test
+    func `Env-var value that fails Argument.Codable throws .invalidEnvironmentValue`() {
+        do throws(Command.Error) {
             _ = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "not-an-int"]) {
                 () throws(Command.Error) -> EnvCounted in
                 try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
@@ -96,8 +96,8 @@ struct EnvironmentVariableParseTests {
         }
     }
 
-    @Test("Env-var fallback works for options inside an OptionGroup")
-    func envVarThroughOptionGroup() throws(Command.Error) {
+    @Test
+    func `Env-var fallback works for options inside an OptionGroup`() throws(Command.Error) {
         let parsed = try Argument.Environment.withOverlay(["ENVGROUP_OUTPUT_TEST": "/tmp/result"]) {
             () throws(Command.Error) -> EnvGrouped in
             try Command.parse(EnvGrouped.self, from: ["mytarget"], initial: EnvGrouped())
@@ -113,7 +113,9 @@ struct EnvironmentVariableParseTests {
 struct EnvCounted: Command.`Protocol`, Equatable {
     var phrase: String = ""
     var count: Int = 2
+}
 
+extension EnvCounted {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "envcounted",
@@ -140,7 +142,9 @@ struct EnvCounted: Command.`Protocol`, Equatable {
 struct EnvGroupFragment: Sendable, Equatable {
     var verbose: Bool = false
     var output: String = "default"
+}
 
+extension EnvGroupFragment {
     static let schema: Command.Schema.Definition<Self> = .init {
         Command.Flag(\.verbose, name: .longLiteral("verbose"), help: .init(abstract: "Verbose."))
         Command.Option(
@@ -155,7 +159,9 @@ struct EnvGroupFragment: Sendable, Equatable {
 struct EnvGrouped: Command.`Protocol`, Equatable {
     var options: EnvGroupFragment = .init()
     var target: String = ""
+}
 
+extension EnvGrouped {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "envgrouped", abstract: "OptionGroup env-var.")
     }

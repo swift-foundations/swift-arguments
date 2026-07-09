@@ -38,8 +38,8 @@ struct GitHelpSnapshotTests {
 
         """
 
-    @Test("Top-level help-text matches the expected snapshot exactly")
-    func helpSnapshot() {
+    @Test
+    func `Top-level help-text matches the expected snapshot exactly`() {
         let actual = Command.Help<Git>().serialize(Git.schema)
         #expect(actual == Self.expectedTopLevel)
     }

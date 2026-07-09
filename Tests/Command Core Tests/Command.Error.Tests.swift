@@ -16,8 +16,8 @@ import Testing
 @Suite("Command.Error")
 struct CommandErrorTests {
 
-    @Test("Cases are distinct")
-    func casesDistinct() {
+    @Test
+    func `Cases are distinct`() {
         let position = Argument.Position(argvIndex: 0, byteOffset: 0)
         let helpRequested: Command.Error = .helpRequested
         let unknownLong: Command.Error = .unknownLongOption(
@@ -31,8 +31,8 @@ struct CommandErrorTests {
         #expect(missingPos != validation)
     }
 
-    @Test("Equatable conformance")
-    func equatable() {
+    @Test
+    func `Equatable conformance`() {
         let position = Argument.Position(argvIndex: 1, byteOffset: 2)
         let a: Command.Error = .invalidValue(name: "--count", value: "x", position: position)
         let b: Command.Error = .invalidValue(name: "--count", value: "x", position: position)
@@ -43,8 +43,8 @@ struct CommandErrorTests {
 
     // MARK: - D17 exit case
 
-    @Test("exit case carries code without message")
-    func exitWithoutMessage() {
+    @Test
+    func `exit case carries code without message`() {
         let error: Command.Error = .exit(code: 2)
         switch error {
         case .exit(let code, let message):
@@ -56,8 +56,8 @@ struct CommandErrorTests {
         }
     }
 
-    @Test("exit case carries code and optional message")
-    func exitWithMessage() {
+    @Test
+    func `exit case carries code and optional message`() {
         let error: Command.Error = .exit(code: 3, message: "Custom diagnostic")
         switch error {
         case .exit(let code, let message):
@@ -69,8 +69,8 @@ struct CommandErrorTests {
         }
     }
 
-    @Test("exit case is throwable and Equatable")
-    func exitThrowableEquatable() {
+    @Test
+    func `exit case is throwable and Equatable`() {
         let a: Command.Error = .exit(code: 1, message: "msg")
         let b: Command.Error = .exit(code: 1, message: "msg")
         let c: Command.Error = .exit(code: 2, message: "msg")
@@ -80,8 +80,8 @@ struct CommandErrorTests {
         #expect(a != d)
     }
 
-    @Test("exit case usable from run() bodies via typed throws")
-    func exitFromRunBody() {
+    @Test
+    func `exit case usable from run() bodies via typed throws`() {
         // Models a consumer's `run()` body raising an exit:
         // the structural carrier survives the typed-throws path so
         // tests can `catch` and assert without unwrapping any
@@ -90,7 +90,7 @@ struct CommandErrorTests {
             throw .exit(code: 64, message: "EX_USAGE")
         }
 
-        do {
+        do throws(Command.Error) {
             try runBody()
             Issue.record("Expected exit, runBody returned normally")
         } catch {

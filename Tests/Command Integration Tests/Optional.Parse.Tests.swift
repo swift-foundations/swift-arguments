@@ -23,8 +23,8 @@ import Testing
 @Suite("OptionalSchema — end-to-end parse")
 struct OptionalSchemaParseTests {
 
-    @Test("Both options absent: retain nil defaults")
-    func bothAbsent() throws(Command.Error) {
+    @Test
+    func `Both options absent: retain nil defaults`() throws(Command.Error) {
         let parsed = try Command.parse(
             OptionalSchema.self,
             from: [],
@@ -33,8 +33,8 @@ struct OptionalSchemaParseTests {
         #expect(parsed == OptionalSchema(label: nil, count: nil))
     }
 
-    @Test("--label populates Optional<String> to .some")
-    func labelPresent() throws(Command.Error) {
+    @Test
+    func `--label populates Optional<String> to .some`() throws(Command.Error) {
         let parsed = try Command.parse(
             OptionalSchema.self,
             from: ["--label", "hello"],
@@ -43,8 +43,8 @@ struct OptionalSchemaParseTests {
         #expect(parsed == OptionalSchema(label: "hello", count: nil))
     }
 
-    @Test("--count populates Optional<Int> to .some")
-    func countPresent() throws(Command.Error) {
+    @Test
+    func `--count populates Optional<Int> to .some`() throws(Command.Error) {
         let parsed = try Command.parse(
             OptionalSchema.self,
             from: ["--count", "42"],
@@ -53,8 +53,8 @@ struct OptionalSchemaParseTests {
         #expect(parsed == OptionalSchema(label: nil, count: 42))
     }
 
-    @Test("Both options present")
-    func bothPresent() throws(Command.Error) {
+    @Test
+    func `Both options present`() throws(Command.Error) {
         let parsed = try Command.parse(
             OptionalSchema.self,
             from: ["--label", "x", "--count", "7"],
@@ -63,8 +63,8 @@ struct OptionalSchemaParseTests {
         #expect(parsed == OptionalSchema(label: "x", count: 7))
     }
 
-    @Test("--label= empty argv produces .some(\"\")")
-    func labelEmptyArgv() throws(Command.Error) {
+    @Test
+    func `--label= empty argv produces .some("")`() throws(Command.Error) {
         // The Optional<String> conformance delegates to String's
         // never-nil-returning init?(argument:), so an empty argv string
         // yields .some("") — distinguishable from .none (absence).
@@ -76,9 +76,9 @@ struct OptionalSchemaParseTests {
         #expect(parsed == OptionalSchema(label: "", count: nil))
     }
 
-    @Test("Invalid Int argv surfaces .invalidValue")
-    func invalidIntValue() {
-        do {
+    @Test
+    func `Invalid Int argv surfaces .invalidValue`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 OptionalSchema.self,
                 from: ["--count", "not-num"],
@@ -96,8 +96,8 @@ struct OptionalSchemaParseTests {
         }
     }
 
-    @Test("--count=value form populates Optional<Int>")
-    func countEqualsForm() throws(Command.Error) {
+    @Test
+    func `--count=value form populates Optional<Int>`() throws(Command.Error) {
         let parsed = try Command.parse(
             OptionalSchema.self,
             from: ["--count=99"],

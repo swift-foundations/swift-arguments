@@ -18,22 +18,22 @@ struct ArgumentTokenizerDefaultTests {
 
     // MARK: - GNU long options (handled inline at L3)
 
-    @Test("--long emits .long(name)")
-    func longOptionBare() throws(Command.Error) {
+    @Test
+    func `--long emits .long(name)`() throws(Command.Error) {
         let argv = ["--verbose"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         #expect(tokens.map(\.kind) == [.long("verbose")])
     }
 
-    @Test("--name=value emits .long(name) + .value(v)")
-    func longOptionEqualValue() throws(Command.Error) {
+    @Test
+    func `--name=value emits .long(name) + .value(v)`() throws(Command.Error) {
         let argv = ["--count=3"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         #expect(tokens.map(\.kind) == [.long("count"), .value("3")])
     }
 
-    @Test("--name value emits .long(name) then operand → .positional(value)")
-    func longOptionSpaceValue() throws(Command.Error) {
+    @Test
+    func `--name value emits .long(name) then operand → .positional(value)`() throws(Command.Error) {
         let argv = ["--count", "3"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         // The L2 tokenizer classifies '3' as .operand since it's not option-shaped;
@@ -43,16 +43,16 @@ struct ArgumentTokenizerDefaultTests {
 
     // MARK: - POSIX short options (delegated to L2)
 
-    @Test("-f emits .shortCluster('f')")
-    func shortFlagSingleChar() throws(Command.Error) {
+    @Test
+    func `-f emits .shortCluster('f')`() throws(Command.Error) {
         let argv = ["-f"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         // L2 emits .shortFlag('f'); L3 mapping normalizes to .shortCluster("f").
         #expect(tokens.map(\.kind) == [.shortCluster("f")])
     }
 
-    @Test("-fvalue emits .shortCluster('f') + .value('value') (Guideline 6)")
-    func shortFlagWithConcatenatedValue() throws(Command.Error) {
+    @Test
+    func `-fvalue emits .shortCluster('f') + .value('value') (Guideline 6)`() throws(Command.Error) {
         let argv = ["-fvalue"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         // L2 emits .shortFlag('f') + .shortValue('value');
@@ -62,15 +62,15 @@ struct ArgumentTokenizerDefaultTests {
 
     // MARK: - Positionals + end-of-options
 
-    @Test("Bare operand emits .positional")
-    func operandIsPositional() throws(Command.Error) {
+    @Test
+    func `Bare operand emits .positional`() throws(Command.Error) {
         let argv = ["hello"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         #expect(tokens.map(\.kind) == [.positional("hello")])
     }
 
-    @Test("-- emits .endOfOptions; subsequent argv emit .positional")
-    func endOfOptionsSeparator() throws(Command.Error) {
+    @Test
+    func `-- emits .endOfOptions; subsequent argv emit .positional`() throws(Command.Error) {
         let argv = ["--", "--still-positional"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         #expect(tokens.map(\.kind) == [.endOfOptions, .positional("--still-positional")])
@@ -78,8 +78,8 @@ struct ArgumentTokenizerDefaultTests {
 
     // MARK: - Mixed canonical argv
 
-    @Test("Mixed long-option + positional + flag argv")
-    func mixedArgv() throws(Command.Error) {
+    @Test
+    func `Mixed long-option + positional + flag argv`() throws(Command.Error) {
         let argv = ["--count", "3", "--verbose", "hello"]
         let tokens = try Argument.Tokenizer.Default().tokenize(argv)
         #expect(

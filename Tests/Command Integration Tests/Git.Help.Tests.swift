@@ -16,8 +16,8 @@ import Testing
 @Suite("Git — help-text emission for subcommand schemas")
 struct GitHelpTests {
 
-    @Test("Top-level help lists the SUBCOMMANDS section")
-    func helpListsSubcommands() {
+    @Test
+    func `Top-level help lists the SUBCOMMANDS section`() {
         let help = Command.Help<Git>().serialize(Git.schema)
         #expect(help.contains("SUBCOMMANDS:"))
         #expect(help.contains("clone"))
@@ -26,28 +26,28 @@ struct GitHelpTests {
         #expect(help.contains("Show working-tree status."))
     }
 
-    @Test("Top-level USAGE includes <subcommand> placeholder")
-    func helpUsageSubcommand() {
+    @Test
+    func `Top-level USAGE includes <subcommand> placeholder`() {
         let help = Command.Help<Git>().serialize(Git.schema)
         #expect(help.contains("USAGE: git"))
         #expect(help.contains("<subcommand>"))
     }
 
-    @Test("Top-level OVERVIEW renders the configured abstract")
-    func helpOverview() {
+    @Test
+    func `Top-level OVERVIEW renders the configured abstract`() {
         let help = Command.Help<Git>().serialize(Git.schema)
         #expect(help.contains("OVERVIEW: Distributed version control."))
     }
 
-    @Test("Top-level help suggests subcommand help shorthand")
-    func helpSuggestsSubHelp() {
+    @Test
+    func `Top-level help suggests subcommand help shorthand`() {
         let help = Command.Help<Git>().serialize(Git.schema)
         #expect(help.contains("See 'git help <subcommand>' for detailed help."))
     }
 
-    @Test("Sub-help for 'clone' renders Clone's own ARGUMENTS section")
-    func subHelpCloneRendersArguments() {
-        do {
+    @Test
+    func `Sub-help for 'clone' renders Clone's own ARGUMENTS section`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["clone", "--help"],
@@ -67,9 +67,9 @@ struct GitHelpTests {
         }
     }
 
-    @Test("Sub-help for 'status' renders Status's --short flag")
-    func subHelpStatusRendersFlag() {
-        do {
+    @Test
+    func `Sub-help for 'status' renders Status's --short flag`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["status", "--help"],

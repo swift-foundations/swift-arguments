@@ -16,8 +16,8 @@ import Testing
 @Suite("Command.Subcommand.Case — .default modifier")
 struct DefaultSubcommandParseTests {
 
-    @Test("Empty argv dispatches the default subcommand")
-    func emptyArgvDispatchesDefault() throws(Command.Error) {
+    @Test
+    func `Empty argv dispatches the default subcommand`() throws(Command.Error) {
         let parsed = try Command.parse(
             RouterWithDefault.self,
             from: [],
@@ -26,8 +26,8 @@ struct DefaultSubcommandParseTests {
         #expect(parsed == .list(DefaultList()))
     }
 
-    @Test("Explicit subcommand overrides the default")
-    func explicitOverridesDefault() throws(Command.Error) {
+    @Test
+    func `Explicit subcommand overrides the default`() throws(Command.Error) {
         let parsed = try Command.parse(
             RouterWithDefault.self,
             from: ["clone", "https://example.com"],
@@ -36,8 +36,8 @@ struct DefaultSubcommandParseTests {
         #expect(parsed == .clone(DefaultClone(url: "https://example.com")))
     }
 
-    @Test("Empty argv without a default throws .missingSubcommand")
-    func emptyArgvNoDefaultThrows() {
+    @Test
+    func `Empty argv without a default throws .missingSubcommand`() {
         do throws(Command.Error) {
             _ = try Command.parse(
                 RouterWithoutDefault.self,

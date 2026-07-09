@@ -16,8 +16,8 @@ import Testing
 @Suite("Git — subcommand dispatch")
 struct GitParseTests {
 
-    @Test("Parse 'clone <url>' dispatches to .clone case")
-    func cloneDispatch() throws(Command.Error) {
+    @Test
+    func `Parse 'clone <url>' dispatches to .clone case`() throws(Command.Error) {
         let parsed = try Command.parse(
             Git.self,
             from: ["clone", "https://example.com"],
@@ -26,8 +26,8 @@ struct GitParseTests {
         #expect(parsed == .clone(Clone(url: "https://example.com")))
     }
 
-    @Test("Parse 'status --short' dispatches to .status case")
-    func statusDispatch() throws(Command.Error) {
+    @Test
+    func `Parse 'status --short' dispatches to .status case`() throws(Command.Error) {
         let parsed = try Command.parse(
             Git.self,
             from: ["status", "--short"],
@@ -36,8 +36,8 @@ struct GitParseTests {
         #expect(parsed == .status(Status(short: true)))
     }
 
-    @Test("Parse 'status' (no flag) yields default Status")
-    func statusDefault() throws(Command.Error) {
+    @Test
+    func `Parse 'status' (no flag) yields default Status`() throws(Command.Error) {
         let parsed = try Command.parse(
             Git.self,
             from: ["status"],
@@ -46,9 +46,9 @@ struct GitParseTests {
         #expect(parsed == .status(Status(short: false)))
     }
 
-    @Test("Unknown subcommand throws .unknownSubcommand")
-    func unknownSubcommand() {
-        do {
+    @Test
+    func `Unknown subcommand throws .unknownSubcommand`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["unknown"],
@@ -66,9 +66,9 @@ struct GitParseTests {
         }
     }
 
-    @Test("Empty argv with subcommand schema throws .missingSubcommand")
-    func missingSubcommand() {
-        do {
+    @Test
+    func `Empty argv with subcommand schema throws .missingSubcommand`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: [],
@@ -87,9 +87,9 @@ struct GitParseTests {
         }
     }
 
-    @Test("Top-level --help raises .helpRequested")
-    func topLevelHelp() {
-        do {
+    @Test
+    func `Top-level --help raises .helpRequested`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["--help"],
@@ -107,9 +107,9 @@ struct GitParseTests {
         }
     }
 
-    @Test("Sub-help: 'clone --help' raises .helpRequestedForSubcommand")
-    func subHelpClone() {
-        do {
+    @Test
+    func `Sub-help: 'clone --help' raises .helpRequestedForSubcommand`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["clone", "--help"],
@@ -129,9 +129,9 @@ struct GitParseTests {
         }
     }
 
-    @Test("Invalid sub-positional reports through .invalidValue")
-    func cloneMissingURL() {
-        do {
+    @Test
+    func `Invalid sub-positional reports through .invalidValue`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 Git.self,
                 from: ["clone"],

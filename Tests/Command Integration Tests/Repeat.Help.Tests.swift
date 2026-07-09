@@ -16,28 +16,28 @@ import Testing
 @Suite("Repeat — help-text emission")
 struct RepeatHelpTests {
 
-    @Test("Command.Help renders USAGE line with command name")
-    func helpUsageLine() {
+    @Test
+    func `Command.Help renders USAGE line with command name`() {
         let help = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(help.contains("USAGE: repeat"))
     }
 
-    @Test("Command.Help includes OVERVIEW from configuration abstract")
-    func helpOverview() {
+    @Test
+    func `Command.Help includes OVERVIEW from configuration abstract`() {
         let help = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(help.contains("OVERVIEW: Repeats your input phrase."))
     }
 
-    @Test("Command.Help includes ARGUMENTS section with positional")
-    func helpArgumentsSection() {
+    @Test
+    func `Command.Help includes ARGUMENTS section with positional`() {
         let help = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(help.contains("ARGUMENTS:"))
         #expect(help.contains("<phrase>"))
         #expect(help.contains("The phrase to repeat."))
     }
 
-    @Test("Command.Help includes OPTIONS section with --count and --counter")
-    func helpOptionsSection() {
+    @Test
+    func `Command.Help includes OPTIONS section with --count and --counter`() {
         let help = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(help.contains("OPTIONS:"))
         #expect(help.contains("--count"))
@@ -46,8 +46,8 @@ struct RepeatHelpTests {
         #expect(help.contains("Include a counter with each repetition."))
     }
 
-    @Test("Command.Help includes the built-in --help row")
-    func helpIncludesHelpRow() {
+    @Test
+    func `Command.Help includes the built-in --help row`() {
         let help = Command.Help<Repeat>().serialize(Repeat.schema)
         #expect(help.contains("-h, --help"))
         #expect(help.contains("Show help information."))

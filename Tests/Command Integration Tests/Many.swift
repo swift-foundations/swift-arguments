@@ -19,7 +19,9 @@ struct ManyPositional: Command.`Protocol`, Equatable {
     init(files: [String] = []) {
         self.files = files
     }
+}
 
+extension ManyPositional {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "many-positional", abstract: "Accept any number of file values.")
     }
@@ -44,7 +46,9 @@ struct ManyOption: Command.`Protocol`, Equatable {
     init(tags: [String] = []) {
         self.tags = tags
     }
+}
 
+extension ManyOption {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "many-option", abstract: "Accept repeated tag values.")
     }
@@ -73,7 +77,9 @@ struct MixedPositionals: Command.`Protocol`, Equatable {
         self.command = command
         self.arguments = arguments
     }
+}
 
+extension MixedPositionals {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "mixed", abstract: "First fixed, rest variadic.")
     }

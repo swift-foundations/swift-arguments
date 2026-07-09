@@ -16,7 +16,9 @@ import Testing
 /// A minimal Command.`Protocol` fixture used for visitor-only testing.
 private struct MinimalCommand: Command.`Protocol`, Equatable {
     var verbose: Bool = false
+}
 
+extension MinimalCommand {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "minimal", abstract: "Minimal test command.")
     }
@@ -37,14 +39,14 @@ private struct MinimalCommand: Command.`Protocol`, Equatable {
 @Suite("Command.Help.Visitor")
 struct CommandHelpVisitorTests {
 
-    @Test("Renders USAGE line including the command name")
-    func usageLine() {
+    @Test
+    func `Renders USAGE line including the command name`() {
         let help = Command.Help<MinimalCommand>().serialize(MinimalCommand.schema)
         #expect(help.contains("USAGE: minimal"))
     }
 
-    @Test("Hidden visibility excludes from rendered output")
-    func hiddenVisibility() {
+    @Test
+    func `Hidden visibility excludes from rendered output`() {
         struct HiddenCommand: Command.`Protocol` {
             var verbose: Bool = false
             static var configuration: Command.Configuration { .init(name: "hidden") }

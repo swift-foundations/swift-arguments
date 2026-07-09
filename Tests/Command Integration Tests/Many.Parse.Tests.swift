@@ -18,14 +18,14 @@ struct ManyParseTests {
 
     // MARK: - Positional.Many
 
-    @Test("Empty argv → empty array (default atLeast(0))")
-    func positionalManyEmptyArgv() throws(Command.Error) {
+    @Test
+    func `Empty argv → empty array (default atLeast(0))`() throws(Command.Error) {
         let parsed = try Command.parse(ManyPositional.self, from: [], initial: ManyPositional())
         #expect(parsed.files == [])
     }
 
-    @Test("Single value → single-element array")
-    func positionalManySingle() throws(Command.Error) {
+    @Test
+    func `Single value → single-element array`() throws(Command.Error) {
         let parsed = try Command.parse(
             ManyPositional.self,
             from: ["foo.txt"],
@@ -34,8 +34,8 @@ struct ManyParseTests {
         #expect(parsed.files == ["foo.txt"])
     }
 
-    @Test("Multiple values → multi-element array in argv order")
-    func positionalManyMultiple() throws(Command.Error) {
+    @Test
+    func `Multiple values → multi-element array in argv order`() throws(Command.Error) {
         let parsed = try Command.parse(
             ManyPositional.self,
             from: ["a", "b", "c", "d"],
@@ -46,14 +46,14 @@ struct ManyParseTests {
 
     // MARK: - Option.Many
 
-    @Test("Zero occurrences → empty array (default atLeast(0))")
-    func optionManyZero() throws(Command.Error) {
+    @Test
+    func `Zero occurrences → empty array (default atLeast(0))`() throws(Command.Error) {
         let parsed = try Command.parse(ManyOption.self, from: [], initial: ManyOption())
         #expect(parsed.tags == [])
     }
 
-    @Test("Single occurrence")
-    func optionManySingle() throws(Command.Error) {
+    @Test
+    func `Single occurrence`() throws(Command.Error) {
         let parsed = try Command.parse(
             ManyOption.self,
             from: ["--tag", "alpha"],
@@ -62,8 +62,8 @@ struct ManyParseTests {
         #expect(parsed.tags == ["alpha"])
     }
 
-    @Test("Multiple occurrences in argv order")
-    func optionManyMultiple() throws(Command.Error) {
+    @Test
+    func `Multiple occurrences in argv order`() throws(Command.Error) {
         let parsed = try Command.parse(
             ManyOption.self,
             from: ["--tag", "alpha", "--tag", "beta", "--tag", "gamma"],
@@ -74,8 +74,8 @@ struct ManyParseTests {
 
     // MARK: - Mixed fixed + rest positional
 
-    @Test("Fixed positional consumed first, rest stream into array")
-    func mixedPositionals() throws(Command.Error) {
+    @Test
+    func `Fixed positional consumed first, rest stream into array`() throws(Command.Error) {
         let parsed = try Command.parse(
             MixedPositionals.self,
             from: ["build", "src", "tests", "docs"],
@@ -85,8 +85,8 @@ struct ManyParseTests {
         #expect(parsed.arguments == ["src", "tests", "docs"])
     }
 
-    @Test("Fixed positional alone — rest is empty")
-    func mixedPositionalsOnlyFixed() throws(Command.Error) {
+    @Test
+    func `Fixed positional alone — rest is empty`() throws(Command.Error) {
         let parsed = try Command.parse(
             MixedPositionals.self,
             from: ["run"],

@@ -21,24 +21,24 @@ import Testing
 @Suite("Command.OptionGroup — help-text emission")
 struct CommandOptionGroupHelpTests {
 
-    @Test("Flat OptionGroup renders --root in OPTIONS section")
-    func flatRendersRoot() {
+    @Test
+    func `Flat OptionGroup renders --root in OPTIONS section`() {
         let help = Command.Help<OGFlat>().serialize(OGFlat.schema)
         #expect(help.contains("--root"))
         #expect(help.contains("Repository root directory."))
     }
 
-    @Test("Flat OptionGroup keeps positional in ARGUMENTS section")
-    func flatRendersPositional() {
+    @Test
+    func `Flat OptionGroup keeps positional in ARGUMENTS section`() {
         let help = Command.Help<OGFlat>().serialize(OGFlat.schema)
         #expect(help.contains("ARGUMENTS:"))
         #expect(help.contains("<name>"))
         #expect(help.contains("A name."))
     }
 
-    @Test("Subcommand 'build' --help inlines shared --root row")
-    func subcommandBuildHelpInlinesRoot() {
-        do {
+    @Test
+    func `Subcommand 'build' --help inlines shared --root row`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 OGCLI.self,
                 from: ["build", "--help"],
@@ -59,9 +59,9 @@ struct CommandOptionGroupHelpTests {
         }
     }
 
-    @Test("Subcommand 'test' --help also inlines shared --root row")
-    func subcommandTestHelpInlinesRoot() {
-        do {
+    @Test
+    func `Subcommand 'test' --help also inlines shared --root row`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 OGCLI.self,
                 from: ["test", "--help"],
@@ -82,8 +82,8 @@ struct CommandOptionGroupHelpTests {
         }
     }
 
-    @Test("Hidden OptionGroup omits its options from help")
-    func hiddenGroupOmitsRows() {
+    @Test
+    func `Hidden OptionGroup omits its options from help`() {
         // Inline schema with a hidden group — assert the group's rows
         // do NOT appear in --help.
         struct HiddenOG: Command.`Protocol`, Equatable {

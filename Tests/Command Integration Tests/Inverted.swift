@@ -18,7 +18,9 @@ struct FeatureToggle: Command.`Protocol`, Equatable {
     init(feature: Bool = false) {
         self.feature = feature
     }
+}
 
+extension FeatureToggle {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "feature-toggle", abstract: "Inverted-flag demo.")
     }
@@ -44,7 +46,9 @@ struct ServiceToggle: Command.`Protocol`, Equatable {
     init(service: Bool = false) {
         self.service = service
     }
+}
 
+extension ServiceToggle {
     static var configuration: Command.Configuration {
         Command.Configuration(name: "service-toggle", abstract: "Inverted-flag with explicit verbs.")
     }

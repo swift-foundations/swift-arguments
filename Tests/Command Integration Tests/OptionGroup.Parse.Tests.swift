@@ -26,8 +26,8 @@ struct CommandOptionGroupParseTests {
 
     // MARK: - Flat schema (root-level OptionGroup)
 
-    @Test("Flat schema parses --root option through OptionGroup")
-    func flatRoot() throws(Command.Error) {
+    @Test
+    func `Flat schema parses --root option through OptionGroup`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGFlat.self,
             from: ["--root", "/tmp", "myname"],
@@ -37,8 +37,8 @@ struct CommandOptionGroupParseTests {
         #expect(parsed.name == "myname")
     }
 
-    @Test("Flat schema retains default when --root is absent")
-    func flatDefault() throws(Command.Error) {
+    @Test
+    func `Flat schema retains default when --root is absent`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGFlat.self,
             from: ["myname"],
@@ -48,8 +48,8 @@ struct CommandOptionGroupParseTests {
         #expect(parsed.name == "myname")
     }
 
-    @Test("Flat schema honors --root=value form via OptionGroup")
-    func flatEqualsForm() throws(Command.Error) {
+    @Test
+    func `Flat schema honors --root=value form via OptionGroup`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGFlat.self,
             from: ["--root=/usr/src", "x"],
@@ -60,8 +60,8 @@ struct CommandOptionGroupParseTests {
 
     // MARK: - Subcommand dispatch (per-subcommand OptionGroup)
 
-    @Test("Build subcommand parses shared --root via OptionGroup")
-    func buildSubcommandRoot() throws(Command.Error) {
+    @Test
+    func `Build subcommand parses shared --root via OptionGroup`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGCLI.self,
             from: ["build", "--root", "/tmp/proj", "MyTarget"],
@@ -75,8 +75,8 @@ struct CommandOptionGroupParseTests {
         #expect(build.target == "MyTarget")
     }
 
-    @Test("Test subcommand parses same shared --root via OptionGroup")
-    func testSubcommandRoot() throws(Command.Error) {
+    @Test
+    func `Test subcommand parses same shared --root via OptionGroup`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGCLI.self,
             from: ["test", "--root", "/tmp/proj", "MyFilter"],
@@ -90,8 +90,8 @@ struct CommandOptionGroupParseTests {
         #expect(test.filter == "MyFilter")
     }
 
-    @Test("Build subcommand without --root retains shared default")
-    func buildSubcommandDefault() throws(Command.Error) {
+    @Test
+    func `Build subcommand without --root retains shared default`() throws(Command.Error) {
         let parsed = try Command.parse(
             OGCLI.self,
             from: ["build", "TargetX"],
@@ -107,9 +107,9 @@ struct CommandOptionGroupParseTests {
 
     // MARK: - Error paths
 
-    @Test("Unknown option through OptionGroup surfaces .unknownLongOption")
-    func unknownOption() {
-        do {
+    @Test
+    func `Unknown option through OptionGroup surfaces .unknownLongOption`() {
+        do throws(Command.Error) {
             _ = try Command.parse(
                 OGFlat.self,
                 from: ["--unknown", "x", "myname"],

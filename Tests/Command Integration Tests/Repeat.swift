@@ -29,7 +29,9 @@ struct Repeat: Command.`Protocol`, Equatable {
         self.count = count
         self.counter = counter
     }
+}
 
+extension Repeat {
     static var configuration: Command.Configuration {
         Command.Configuration(
             name: "repeat",

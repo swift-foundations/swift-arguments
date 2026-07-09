@@ -18,14 +18,14 @@ struct InvertedParseTests {
 
     // MARK: - prefixedNo strategy
 
-    @Test("No occurrence → initial value preserved")
-    func prefixedNoNoOccurrence() throws(Command.Error) {
+    @Test
+    func `No occurrence → initial value preserved`() throws(Command.Error) {
         let parsed = try Command.parse(FeatureToggle.self, from: [], initial: FeatureToggle())
         #expect(parsed.feature == false)
     }
 
-    @Test("--feature writes true")
-    func prefixedNoTrue() throws(Command.Error) {
+    @Test
+    func `--feature writes true`() throws(Command.Error) {
         let parsed = try Command.parse(
             FeatureToggle.self,
             from: ["--feature"],
@@ -34,8 +34,8 @@ struct InvertedParseTests {
         #expect(parsed.feature == true)
     }
 
-    @Test("--no-feature writes false")
-    func prefixedNoFalse() throws(Command.Error) {
+    @Test
+    func `--no-feature writes false`() throws(Command.Error) {
         let parsed = try Command.parse(
             FeatureToggle.self,
             from: ["--no-feature"],
@@ -44,8 +44,8 @@ struct InvertedParseTests {
         #expect(parsed.feature == false)
     }
 
-    @Test("Last occurrence wins (--feature then --no-feature)")
-    func prefixedNoLastWins() throws(Command.Error) {
+    @Test
+    func `Last occurrence wins (--feature then --no-feature)`() throws(Command.Error) {
         let parsed = try Command.parse(
             FeatureToggle.self,
             from: ["--feature", "--no-feature"],
@@ -54,8 +54,8 @@ struct InvertedParseTests {
         #expect(parsed.feature == false)
     }
 
-    @Test("Last occurrence wins (--no-feature then --feature)")
-    func prefixedNoLastWinsTrue() throws(Command.Error) {
+    @Test
+    func `Last occurrence wins (--no-feature then --feature)`() throws(Command.Error) {
         let parsed = try Command.parse(
             FeatureToggle.self,
             from: ["--no-feature", "--feature"],
@@ -66,8 +66,8 @@ struct InvertedParseTests {
 
     // MARK: - prefixedEnableDisable strategy
 
-    @Test("--enable-service writes true")
-    func enableServiceTrue() throws(Command.Error) {
+    @Test
+    func `--enable-service writes true`() throws(Command.Error) {
         let parsed = try Command.parse(
             ServiceToggle.self,
             from: ["--enable-service"],
@@ -76,8 +76,8 @@ struct InvertedParseTests {
         #expect(parsed.service == true)
     }
 
-    @Test("--disable-service writes false")
-    func disableServiceFalse() throws(Command.Error) {
+    @Test
+    func `--disable-service writes false`() throws(Command.Error) {
         let parsed = try Command.parse(
             ServiceToggle.self,
             from: ["--disable-service"],
