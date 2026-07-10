@@ -94,67 +94,67 @@ extension Command.Diagnostic.Suggestion {
     @Suite("B4 Gap 3 — Did-you-mean suggestions on unknown name throws")
     struct Test {
 
-    @Test
-    func `Unknown long option --buld suggests 'build'`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(
-                BuildOptionCommand.self,
-                from: ["--buld"],
-                initial: .init()
-            )
-            Issue.record("Expected unknownLongOption throw")
-        } catch {
-            switch error {
-            case .unknownLongOption(let name, _, let suggestion):
-                #expect(name == "--buld")
-                #expect(suggestion == "build")
+        @Test
+        func `Unknown long option --buld suggests 'build'`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(
+                    BuildOptionCommand.self,
+                    from: ["--buld"],
+                    initial: .init()
+                )
+                Issue.record("Expected unknownLongOption throw")
+            } catch {
+                switch error {
+                case .unknownLongOption(let name, _, let suggestion):
+                    #expect(name == "--buld")
+                    #expect(suggestion == "build")
 
-            default:
-                Issue.record("Expected unknownLongOption, got \(error)")
+                default:
+                    Issue.record("Expected unknownLongOption, got \(error)")
+                }
             }
         }
-    }
 
-    @Test
-    func `Unknown subcommand 'clne' suggests 'clone'`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(
-                GitSuggest.self,
-                from: ["clne"],
-                initial: .clone(.init())
-            )
-            Issue.record("Expected unknownSubcommand throw")
-        } catch {
-            switch error {
-            case .unknownSubcommand(let name, _, let suggestion):
-                #expect(name == "clne")
-                #expect(suggestion == "clone")
+        @Test
+        func `Unknown subcommand 'clne' suggests 'clone'`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(
+                    GitSuggest.self,
+                    from: ["clne"],
+                    initial: .clone(.init())
+                )
+                Issue.record("Expected unknownSubcommand throw")
+            } catch {
+                switch error {
+                case .unknownSubcommand(let name, _, let suggestion):
+                    #expect(name == "clne")
+                    #expect(suggestion == "clone")
 
-            default:
-                Issue.record("Expected unknownSubcommand, got \(error)")
+                default:
+                    Issue.record("Expected unknownSubcommand, got \(error)")
+                }
             }
         }
-    }
 
-    @Test
-    func `Far-from-any-declared-name '--xyz' carries nil suggestion`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(
-                BuildOptionCommand.self,
-                from: ["--xyz"],
-                initial: .init()
-            )
-            Issue.record("Expected unknownLongOption throw")
-        } catch {
-            switch error {
-            case .unknownLongOption(let name, _, let suggestion):
-                #expect(name == "--xyz")
-                #expect(suggestion == nil)
+        @Test
+        func `Far-from-any-declared-name '--xyz' carries nil suggestion`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(
+                    BuildOptionCommand.self,
+                    from: ["--xyz"],
+                    initial: .init()
+                )
+                Issue.record("Expected unknownLongOption throw")
+            } catch {
+                switch error {
+                case .unknownLongOption(let name, _, let suggestion):
+                    #expect(name == "--xyz")
+                    #expect(suggestion == nil)
 
-            default:
-                Issue.record("Expected unknownLongOption, got \(error)")
+                default:
+                    Issue.record("Expected unknownLongOption, got \(error)")
+                }
             }
         }
-    }
     }
 }
