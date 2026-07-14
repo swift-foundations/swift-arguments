@@ -59,7 +59,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-ordinal-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-standards/swift-ieee-1003.git", branch: "main"),
+        .package(url: "https://github.com/swift-ieee/swift-ieee-1003.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-serializer-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-foundations/swift-environment.git", branch: "main"),
