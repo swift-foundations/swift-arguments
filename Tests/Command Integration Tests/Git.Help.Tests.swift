@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Git — help-text emission for subcommand schemas")
-struct GitHelpTests {
+@Suite
+struct Test {
 
     @Test
     func `Top-level help lists the SUBCOMMANDS section`() {

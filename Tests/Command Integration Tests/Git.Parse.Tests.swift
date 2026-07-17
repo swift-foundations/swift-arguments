@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Git — subcommand dispatch")
-struct GitParseTests {
+@Suite
+struct Test {
 
     @Test
     func `Parse 'clone <url>' dispatches to .clone case`() throws(Command.Error) {

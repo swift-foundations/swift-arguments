@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Repeat — help-text full snapshot")
-struct RepeatHelpSnapshotTests {
+@Suite
+struct Test {
 
     /// The exact help-text shape expected for `Repeat`.
     ///

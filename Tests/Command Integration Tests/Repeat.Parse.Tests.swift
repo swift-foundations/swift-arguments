@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Repeat — end-to-end parse")
-struct RepeatParseTests {
+@Suite
+struct Test {
 
     @Test
     func `Parse positional only: ['hello']`() throws(Command.Error) {

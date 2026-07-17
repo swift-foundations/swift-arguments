@@ -23,8 +23,8 @@ import Testing
 /// drop-the-Codable-constraint init overload across
 /// ``Command/Positional``, ``Command/Option``,
 /// ``Command/Positional/Many``, and ``Command/Option/Many``.
-@Suite("Transform-closure escape hatch — parse")
-struct TransformParseTests {
+@Suite
+struct Test {
 
     @Test
     func `Command.Positional + transform: parses non-Codable value`() throws(Command.Error) {

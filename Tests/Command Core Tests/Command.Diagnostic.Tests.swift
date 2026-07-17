@@ -14,7 +14,7 @@ import Testing
 @testable import Command_Test_Support
 
 extension Command.Diagnostic {
-    @Suite("Command.Diagnostic — message rendering")
+    @Suite
     struct Test {
         @Test
         func `Unknown long option renders Error: prefix + option name`() {

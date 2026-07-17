@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Repeat — help-text emission")
-struct RepeatHelpTests {
+@Suite
+struct Test {
 
     @Test
     func `Command.Help renders USAGE line with command name`() {

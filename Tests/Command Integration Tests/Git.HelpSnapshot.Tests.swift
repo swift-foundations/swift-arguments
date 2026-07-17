@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Git — top-level help snapshot")
-struct GitHelpSnapshotTests {
+@Suite
+struct Test {
 
     /// The exact help-text shape expected for `Git`.
     ///

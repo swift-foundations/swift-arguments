@@ -23,8 +23,8 @@ import Testing
 // Environment` so the `String_Primitives` `String` shadow does not
 // leak into test bodies.
 
-@Suite("Environment-variable fallback")
-struct EnvironmentVariableParseTests {
+@Suite
+struct Test {
 
     // Why these tests exist:
     //

@@ -15,8 +15,8 @@ import Testing
 
 // MARK: - Gap 1 — Glued short-option value (POSIX 12.2 Guideline 6)
 
-@Suite("B4 Gap 1 — Glued short-option value (POSIX 12.2 G6)")
-struct GluedShortOptionParseTests {
+@Suite
+struct Test {
 
     @Test
     func `-Dfoo=bar binds 'foo=bar' to the short option -D`() throws(Command.Error) {
@@ -51,8 +51,8 @@ struct GluedShortOptionParseTests {
 
 // MARK: - Gap 2 — Negative-number positional
 
-@Suite("B4 Gap 2 — Negative-number positional heuristic")
-struct NegativeNumberPositionalParseTests {
+@Suite
+struct Test {
 
     @Test
     func `-5 with a single Int positional binds value == -5`() throws(Command.Error) {
@@ -91,7 +91,7 @@ struct NegativeNumberPositionalParseTests {
 // MARK: - Gap 3 — Did-you-mean suggestions
 
 extension Command.Diagnostic.Suggestion {
-    @Suite("B4 Gap 3 — Did-you-mean suggestions on unknown name throws")
+    @Suite
     struct Test {
 
         @Test

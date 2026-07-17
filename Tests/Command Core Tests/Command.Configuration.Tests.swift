@@ -14,7 +14,7 @@ import Testing
 @testable import Command_Test_Support
 
 extension Command.Configuration {
-    @Suite("Command.Configuration")
+    @Suite
     struct Test {
 
         @Test
@@ -46,7 +46,7 @@ extension Command.Configuration {
 }
 
 extension Command.Exit {
-    @Suite("Command.Exit")
+    @Suite
     struct Test {
 
         @Test

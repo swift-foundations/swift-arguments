@@ -107,8 +107,8 @@ extension VersionedParent {
     mutating func run() async throws(Command.Error) {}
 }
 
-@Suite("--version flag handling")
-struct VersionParseTests {
+@Suite
+struct Test {
 
     // Why these tests exist:
     //

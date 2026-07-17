@@ -14,7 +14,7 @@ import Testing
 @testable import Command_Test_Support
 
 extension Argument.Tokenizer.Default {
-    @Suite("Argument.Tokenizer.Default")
+    @Suite
     struct Test {
 
         // MARK: - GNU long options (handled inline at L3)

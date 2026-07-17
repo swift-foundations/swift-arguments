@@ -13,8 +13,8 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite("Array-typed (.Many) positional and option parse")
-struct ManyParseTests {
+@Suite
+struct Test {
 
     // MARK: - Positional.Many
 

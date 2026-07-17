@@ -20,8 +20,8 @@ import Testing
 /// 2. Carry `.some(value)` when present and the wrapped parse succeeds.
 /// 3. Surface `Command.Error.invalidValue` when present with an invalid
 ///    argv value (matching the per-argument-decode failure model).
-@Suite("OptionalSchema — end-to-end parse")
-struct OptionalSchemaParseTests {
+@Suite
+struct Test {
 
     @Test
     func `Both options absent: retain nil defaults`() throws(Command.Error) {

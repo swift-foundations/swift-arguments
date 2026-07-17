@@ -14,7 +14,7 @@ import Testing
 @testable import Command_Test_Support
 
 extension Command.Error {
-    @Suite("Command.Error")
+    @Suite
     struct Test {
 
         @Test
