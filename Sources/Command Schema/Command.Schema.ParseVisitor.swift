@@ -545,11 +545,47 @@ extension Command.Schema.ParseVisitor {
         // matched binding's `parse(subArgv:)` (which itself runs a full
         // sub-parse pass against the sub-command's schema).
         //
-        // v1 simplification: the root-level Group precludes root-level
-        // positionals. Root-level flags/options are still permitted
-        // before the subcommand name, and `--help` / `-h` at the root
-        // raises ``Command/Error/helpRequested`` for top-level help.
+        // v1 restriction (F-001 closeout): a schema declaring a
+        // ``Command/Subcommand/Group`` may NOT also declare any
+        // KeyPath-bound root-level node (positional, positional-many,
+        // option, option-many, flag, count-flag, inverted-flag, or
+        // enumerable-flag). ``dispatchSubcommand(group:)`` replaces
+        // `root` wholesale — `root = try binding.parse(subArgv:)` — with
+        // the sub-parse's wrapped result, because
+        // ``Command/Subcommand/Binding/parse(subArgv:)`` has no
+        // parameter through which the pre-dispatch `root` could be
+        // threaded forward. Before this restriction, a schema that
+        // combined the two shapes would have any root-level KeyPath
+        // writes silently discarded the moment the subcommand's parse
+        // result overwrote `root` — real user-facing data loss with no
+        // diagnostic. Rejecting the combination here trades that silent
+        // loss for a loud, immediate ``Command/Error/validationFailed(reason:)``
+        // at parse time. Root-level `--help` / `-h` / `--version` remain
+        // supported unconditionally — they are intercepted by literal
+        // string comparison inside ``dispatchSubcommand(group:)``, not
+        // via the KeyPath-bound entry lists this check inspects.
         if let group = subcommandGroup {
+            guard
+                positionals.isEmpty,
+                positionalMany == nil,
+                options.isEmpty,
+                optionManies.isEmpty,
+                flags.isEmpty,
+                flagCounts.isEmpty,
+                flagInverteds.isEmpty,
+                flagEnumerables.isEmpty
+            else {
+                throw .validationFailed(
+                    reason: "Schema declares a Command.Subcommand.Group together with "
+                        + "root-level KeyPath-bound positional/option/flag declarations. "
+                        + "Root-level values would be silently discarded when the matched "
+                        + "subcommand's parse(subArgv:) replaces the root instance wholesale — "
+                        + "Command.Subcommand.Binding.parse(subArgv:) has no way to thread the "
+                        + "pre-dispatch root forward. Remove the root-level declarations, or "
+                        + "move them into each subcommand's own schema, until a future Binding "
+                        + "API revision can merge root-level state across dispatch."
+                )
+            }
             try dispatchSubcommand(group: group)
             return
         }
@@ -1184,15 +1220,25 @@ extension Command.Schema.ParseVisitor {
     ///
     /// v1 dispatch model: the first non-flag argv element is the
     /// subcommand name; everything after is sub-argv handed to the
-    /// matched binding's `parse(subArgv:)`. Root-level flags / options
-    /// before the subcommand name are honoured (consumed against the
-    /// accumulated `flags` / `options` entries); a root-level `--help`
-    /// / `-h` raises ``Command/Error/helpRequested``.
+    /// matched binding's `parse(subArgv:)`. A root-level `--help` / `-h`
+    /// raises ``Command/Error/helpRequested``; a root-level `--version`
+    /// (when `rootVersion` is non-empty) raises
+    /// ``Command/Error/versionRequested(version:)``. Both are intercepted
+    /// by literal string comparison ahead of any KeyPath-bound dispatch.
     ///
-    /// Per the v1 simplification documented in
-    /// ``Command/Schema/ParseVisitor/finalize()``, a schema declaring a
-    /// subcommand group has no root-level positionals — the first
-    /// "positional"-shaped argv element IS the subcommand name.
+    /// The token walk below still contains the option/flag-cluster
+    /// matching arms against `options` / `flags` / etc. for defensive
+    /// symmetry with the non-subcommand ``finalize()`` path, but per
+    /// ``Command/Schema/ParseVisitor/finalize()``'s F-001 guard, those
+    /// accumulators are always empty by the time this method runs — a
+    /// schema pairing a ``Command/Subcommand/Group`` with any root-level
+    /// KeyPath-bound node is rejected with
+    /// ``Command/Error/validationFailed(reason:)`` before dispatch is
+    /// attempted, precisely because `root = try binding.parse(subArgv:)`
+    /// below replaces `root` wholesale and cannot preserve prior
+    /// root-level writes. Root-level positionals are precluded the same
+    /// way — the first "positional"-shaped argv element IS the
+    /// subcommand name.
     @usableFromInline
     internal mutating func dispatchSubcommand(
         group: SubcommandGroupEntry
