@@ -23,87 +23,89 @@ import Testing
 // Environment` so the `String_Primitives` `String` shadow does not
 // leak into test bodies.
 
-@Suite
-struct Test {
+extension Command {
+    @Suite
+    struct `Environment Variable` {
 
-    // Why these tests exist:
-    //
-    // Before B1 closure, `Argument.Option.environment` was
-    // declared at the L1 layer
-    // (swift-argument-primitives/Sources/Argument Option
-    // Primitives/Argument.Option.swift:44) and plumbed through the L3
-    // binding (Command.Option.swift:59 constructor param), but the
-    // ParseVisitor never consulted the process environment for any
-    // un-supplied option. The fix below reads via
-    // `Environment.task.read(_:)` so each option declared with an
-    // `environment:` and not provided by argv receives its
-    // value from the (TaskLocal-overlay-aware) process environment;
-    // argv-supplied values take precedence.
+        // Why these tests exist:
+        //
+        // Before B1 closure, `Argument.Option.environment` was
+        // declared at the L1 layer
+        // (swift-argument-primitives/Sources/Argument Option
+        // Primitives/Argument.Option.swift:44) and plumbed through the L3
+        // binding (Command.Option.swift:59 constructor param), but the
+        // ParseVisitor never consulted the process environment for any
+        // un-supplied option. The fix below reads via
+        // `Environment.task.read(_:)` so each option declared with an
+        // `environment:` and not provided by argv receives its
+        // value from the (TaskLocal-overlay-aware) process environment;
+        // argv-supplied values take precedence.
 
-    @Test
-    func `Env-var supplies value when option is absent from argv`() throws(Command.Error) {
-        let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
-            () throws(Command.Error) -> EnvCounted in
-            try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
-        }
-        #expect(parsed.count == 7)
-        #expect(parsed.phrase == "hello")
-    }
-
-    @Test
-    func `argv value takes precedence over env-var value`() throws(Command.Error) {
-        let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
-            () throws(Command.Error) -> EnvCounted in
-            try Command.parse(
-                EnvCounted.self,
-                from: ["--count", "3", "hello"],
-                initial: EnvCounted()
-            )
-        }
-        #expect(parsed.count == 3)
-    }
-
-    @Test
-    func `Unset env-var leaves the initial default in place`() throws(Command.Error) {
-        // No overlay supplied; ENVCOUNTED_COUNT_TEST is not set by the
-        // process either, so the default field value persists.
-        let parsed = try Command.parse(
-            EnvCounted.self,
-            from: ["hello"],
-            initial: EnvCounted()
-        )
-        #expect(parsed.count == 2)
-    }
-
-    @Test
-    func `Env-var value that fails Argument.Codable throws .invalidEnvironmentValue`() {
-        do throws(Command.Error) {
-            _ = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "not-an-int"]) {
+        @Test
+        func `Env-var supplies value when option is absent from argv`() throws(Command.Error) {
+            let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
                 () throws(Command.Error) -> EnvCounted in
                 try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
             }
-            Issue.record("Expected .invalidEnvironmentValue, parse succeeded")
-        } catch {
-            switch error {
-            case .invalidEnvironmentValue(let name, let envVar, let value):
-                #expect(name == "--count")
-                #expect(envVar == "ENVCOUNTED_COUNT_TEST")
-                #expect(value == "not-an-int")
+            #expect(parsed.count == 7)
+            #expect(parsed.phrase == "hello")
+        }
 
-            default:
-                Issue.record("Expected .invalidEnvironmentValue, got \(error)")
+        @Test
+        func `argv value takes precedence over env-var value`() throws(Command.Error) {
+            let parsed = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "7"]) {
+                () throws(Command.Error) -> EnvCounted in
+                try Command.parse(
+                    EnvCounted.self,
+                    from: ["--count", "3", "hello"],
+                    initial: EnvCounted()
+                )
+            }
+            #expect(parsed.count == 3)
+        }
+
+        @Test
+        func `Unset env-var leaves the initial default in place`() throws(Command.Error) {
+            // No overlay supplied; ENVCOUNTED_COUNT_TEST is not set by the
+            // process either, so the default field value persists.
+            let parsed = try Command.parse(
+                EnvCounted.self,
+                from: ["hello"],
+                initial: EnvCounted()
+            )
+            #expect(parsed.count == 2)
+        }
+
+        @Test
+        func `Env-var value that fails Argument.Codable throws .invalidEnvironmentValue`() {
+            do throws(Command.Error) {
+                _ = try Argument.Environment.withOverlay(["ENVCOUNTED_COUNT_TEST": "not-an-int"]) {
+                    () throws(Command.Error) -> EnvCounted in
+                    try Command.parse(EnvCounted.self, from: ["hello"], initial: EnvCounted())
+                }
+                Issue.record("Expected .invalidEnvironmentValue, parse succeeded")
+            } catch {
+                switch error {
+                case .invalidEnvironmentValue(let name, let envVar, let value):
+                    #expect(name == "--count")
+                    #expect(envVar == "ENVCOUNTED_COUNT_TEST")
+                    #expect(value == "not-an-int")
+
+                default:
+                    Issue.record("Expected .invalidEnvironmentValue, got \(error)")
+                }
             }
         }
-    }
 
-    @Test
-    func `Env-var fallback works for options inside an OptionGroup`() throws(Command.Error) {
-        let parsed = try Argument.Environment.withOverlay(["ENVGROUP_OUTPUT_TEST": "/tmp/result"]) {
-            () throws(Command.Error) -> EnvGrouped in
-            try Command.parse(EnvGrouped.self, from: ["mytarget"], initial: EnvGrouped())
+        @Test
+        func `Env-var fallback works for options inside an OptionGroup`() throws(Command.Error) {
+            let parsed = try Argument.Environment.withOverlay(["ENVGROUP_OUTPUT_TEST": "/tmp/result"]) {
+                () throws(Command.Error) -> EnvGrouped in
+                try Command.parse(EnvGrouped.self, from: ["mytarget"], initial: EnvGrouped())
+            }
+            #expect(parsed.options.output == "/tmp/result")
+            #expect(parsed.target == "mytarget")
         }
-        #expect(parsed.options.output == "/tmp/result")
-        #expect(parsed.target == "mytarget")
     }
 }
 

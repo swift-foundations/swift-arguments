@@ -13,34 +13,36 @@ import Testing
 
 @testable import Command_Test_Support
 
-@Suite
-struct Test {
+extension Git {
+    @Suite
+    struct HelpSnapshot {
 
-    /// The exact help-text shape expected for `Git`.
-    ///
-    /// This is the canonical evidence cited in the P4 closeout report:
-    /// the schema-driven help serializer produces a
-    /// swift-argument-parser-shaped layout for a sum-type command
-    /// declaring a ``Command/Subcommand/Group``.
-    private static let expectedTopLevel: String = """
-        USAGE: git <subcommand>
+        /// The exact help-text shape expected for `Git`.
+        ///
+        /// This is the canonical evidence cited in the P4 closeout report:
+        /// the schema-driven help serializer produces a
+        /// swift-argument-parser-shaped layout for a sum-type command
+        /// declaring a ``Command/Subcommand/Group``.
+        private static let expectedTopLevel: String = """
+            USAGE: git <subcommand>
 
-        OVERVIEW: Distributed version control.
+            OVERVIEW: Distributed version control.
 
-        OPTIONS:
-          -h, --help                Show help information.
+            OPTIONS:
+              -h, --help                Show help information.
 
-        SUBCOMMANDS:
-          clone                     Clone a repository.
-          status                    Show working-tree status.
+            SUBCOMMANDS:
+              clone                     Clone a repository.
+              status                    Show working-tree status.
 
-          See 'git help <subcommand>' for detailed help.
+              See 'git help <subcommand>' for detailed help.
 
-        """
+            """
 
-    @Test
-    func `Top-level help-text matches the expected snapshot exactly`() {
-        let actual = Command.Help<Git>().serialize(Git.schema)
-        #expect(actual == Self.expectedTopLevel)
+        @Test
+        func `Top-level help-text matches the expected snapshot exactly`() {
+            let actual = Command.Help<Git>().serialize(Git.schema)
+            #expect(actual == Self.expectedTopLevel)
+        }
     }
 }

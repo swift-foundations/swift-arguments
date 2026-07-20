@@ -107,81 +107,83 @@ extension VersionedParent {
     mutating func run() async throws(Command.Error) {}
 }
 
-@Suite
-struct Test {
+extension Command.Configuration {
+    @Suite
+    struct Version {
 
-    // Why these tests exist:
-    //
-    // Before B1 closure, `Command.Configuration.version` was declared at
-    // Command.Configuration.swift:46 and propagated through the
-    // subcommand-binding render path
-    // (Command.Subcommand.Case+Command.Subcommand.Binding.swift:37), but
-    // the ParseVisitor never intercepted `--version` — only `--help` /
-    // `-h` were handled at ParseVisitor.swift:408,479. The field was
-    // therefore declared-but-inert: setting `version:` had no observable
-    // effect at parse time. The fixes below close that gap.
+        // Why these tests exist:
+        //
+        // Before B1 closure, `Command.Configuration.version` was declared at
+        // Command.Configuration.swift:46 and propagated through the
+        // subcommand-binding render path
+        // (Command.Subcommand.Case+Command.Subcommand.Binding.swift:37), but
+        // the ParseVisitor never intercepted `--version` — only `--help` /
+        // `-h` were handled at ParseVisitor.swift:408,479. The field was
+        // therefore declared-but-inert: setting `version:` had no observable
+        // effect at parse time. The fixes below close that gap.
 
-    @Test
-    func `--version on a versioned command throws .versionRequested`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(Versioned.self, from: ["--version"], initial: Versioned())
-            Issue.record("Expected .versionRequested, parse succeeded")
-        } catch {
+        @Test
+        func `--version on a versioned command throws .versionRequested`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(Versioned.self, from: ["--version"], initial: Versioned())
+                Issue.record("Expected .versionRequested, parse succeeded")
+            } catch {
+                switch error {
+                case .versionRequested(let version):
+                    #expect(version == "1.2.3")
+
+                default:
+                    Issue.record("Expected .versionRequested, got \(error)")
+                }
+            }
+        }
+
+        @Test
+        func `--version on an unversioned command throws .unknownLongOption`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(Unversioned.self, from: ["--version"], initial: Unversioned())
+                Issue.record("Expected .unknownLongOption, parse succeeded")
+            } catch {
+                switch error {
+                case .unknownLongOption:
+                    break  // expected — matches Apple's behaviour
+
+                default:
+                    Issue.record("Expected .unknownLongOption, got \(error)")
+                }
+            }
+        }
+
+        @Test
+        func `--version on a parent with subcommand group is intercepted before dispatch`() {
+            do throws(Command.Error) {
+                _ = try Command.parse(
+                    VersionedParent.self,
+                    from: ["--version"],
+                    initial: VersionedParent.child(.init())
+                )
+                Issue.record("Expected .versionRequested, parse succeeded")
+            } catch {
+                switch error {
+                case .versionRequested(let version):
+                    #expect(version == "4.5.6")
+
+                default:
+                    Issue.record("Expected .versionRequested, got \(error)")
+                }
+            }
+        }
+
+        @Test
+        func `.versionRequested case carries the version string`() {
+            let error: Command.Error = .versionRequested(version: "9.8.7")
             switch error {
             case .versionRequested(let version):
-                #expect(version == "1.2.3")
+                #expect(version == "9.8.7")
 
             default:
                 Issue.record("Expected .versionRequested, got \(error)")
             }
-        }
-    }
-
-    @Test
-    func `--version on an unversioned command throws .unknownLongOption`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(Unversioned.self, from: ["--version"], initial: Unversioned())
-            Issue.record("Expected .unknownLongOption, parse succeeded")
-        } catch {
-            switch error {
-            case .unknownLongOption:
-                break  // expected — matches Apple's behaviour
-
-            default:
-                Issue.record("Expected .unknownLongOption, got \(error)")
-            }
-        }
-    }
-
-    @Test
-    func `--version on a parent with subcommand group is intercepted before dispatch`() {
-        do throws(Command.Error) {
-            _ = try Command.parse(
-                VersionedParent.self,
-                from: ["--version"],
-                initial: VersionedParent.child(.init())
-            )
-            Issue.record("Expected .versionRequested, parse succeeded")
-        } catch {
-            switch error {
-            case .versionRequested(let version):
-                #expect(version == "4.5.6")
-
-            default:
-                Issue.record("Expected .versionRequested, got \(error)")
-            }
-        }
-    }
-
-    @Test
-    func `.versionRequested case carries the version string`() {
-        let error: Command.Error = .versionRequested(version: "9.8.7")
-        switch error {
-        case .versionRequested(let version):
-            #expect(version == "9.8.7")
-
-        default:
-            Issue.record("Expected .versionRequested, got \(error)")
         }
     }
 }
