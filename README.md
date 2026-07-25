@@ -104,10 +104,15 @@ dependencies: [
 
 > Pre-1.0: no version tags yet. APIs may change; pin a commit for reproducible builds.
 
-Product import:
+Add the umbrella product to your target:
 
 ```swift
-.product(name: "Command", package: "swift-arguments")
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "Command", package: "swift-arguments")
+    ]
+)
 ```
 
 The umbrella `Command` product re-exports every sub-target. Consumers wanting fine-grained imports (e.g., help-text emission without the schema-driven parser) can depend on individual products:
