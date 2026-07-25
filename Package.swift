@@ -167,7 +167,21 @@ let package = Package(
                 .product(name: "IEEE_1003 Test Support", package: "swift-ieee-1003"),
                 .product(name: "Environment", package: "swift-environment"),
             ],
-            path: "Tests/Support"
+            path: "Tests/Support",
+            exclude: ["Runner Helper"]
+        ),
+
+        // MARK: - Test Helper Executable
+        // A real `Command.main(_:initial:)` consumer. `Command.main`
+        // returns `Never`, so its termination behaviour is only
+        // observable by spawning it as a child process and capturing
+        // its output through a pipe — see
+        // `Command.Main.Redirection.Tests.swift`. Precedent:
+        // swift-iso-9945's `Tests/Support/Lock Helper`.
+        .executableTarget(
+            name: "command-runner-helper",
+            dependencies: ["Command"],
+            path: "Tests/Support/Runner Helper"
         ),
 
         // MARK: - Tests
@@ -185,7 +199,10 @@ let package = Package(
         ),
         .testTarget(
             name: "Command Integration Tests",
-            dependencies: ["Command Test Support"]
+            dependencies: [
+                "Command Test Support",
+                .product(name: "Process", package: "swift-process"),
+            ]
         ),
         .testTarget(
             name: "Argument Standard Library Integration Tests",

@@ -75,8 +75,20 @@ extension Command {
     ///     reads `Swift.CommandLine.arguments` and drops argv[0]
     ///     (executable name). Pass an explicit list for testing or for
     ///     consumers that pre-process argv.
+    /// ## Termination
+    ///
+    /// Every exit path terminates via ``Process/Exit/normal(_:)``
+    /// (`exit(3)`), never ``Process/Exit/now(_:)`` (`_exit(2)`).
+    /// This is load-bearing, not incidental: the runner `print`s its
+    /// output immediately before terminating, and `_exit(2)` discards
+    /// unflushed stdio. On a terminal that is invisible — stdout is
+    /// line-buffered, so each `print` has already flushed — but the
+    /// moment stdout is a pipe or a file it becomes block-buffered and
+    /// the process exits with the correct status having written zero
+    /// bytes. Any future exit path added here must use the same call.
+    ///
     /// - Returns: Never — the process is terminated by
-    ///   ``Process/exit(_:)``.
+    ///   ``Process/Exit/normal(_:)``.
     public static func main<C: `Protocol`>(
         _ commandType: C.Type,
         initial: C,
@@ -103,9 +115,9 @@ extension Command {
                 // narrowing Failure can wrap their own diagnostics inside
                 // run(); the runner stays generic.
                 print("Error: \(Swift.String(describing: error))")
-                Process.exit(1)
+                Process.Exit.normal(1)
             }
-            Process.exit(0)
+            Process.Exit.normal(0)
         } catch let error as Self.Error {
             // Help is the only diagnostic path that renders the full
             // help text. The parse-time .helpRequested error carries no
@@ -119,10 +131,10 @@ extension Command {
             } else {
                 print(Self.Diagnostic.message(for: error))
             }
-            Process.exit(Self.Diagnostic.exitCode(for: error))
+            Process.Exit.normal(Self.Diagnostic.exitCode(for: error))
         } catch {
             print("Error: \(Swift.String(describing: error))")
-            Process.exit(1)
+            Process.Exit.normal(1)
         }
     }
 }
