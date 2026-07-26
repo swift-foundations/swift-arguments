@@ -13,7 +13,7 @@ import Testing
 
 @testable import Command_Test_Support
 
-/// A minimal Command.`Protocol` fixture used for visitor-only testing.
+/// A minimal conforming fixture used for visitor-only testing.
 private struct MinimalCommand: Command.`Protocol`, Equatable {
     var verbose: Bool = false
 }

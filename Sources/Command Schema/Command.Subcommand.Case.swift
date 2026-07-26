@@ -74,8 +74,10 @@ extension Command.Subcommand {
         /// ```
         public let isDefault: Bool
 
-        /// Produces a seed `Sub` value for the sub-parse pass. Defaults
-        /// in `Sub`'s memberwise init supply the unwritten fields.
+        /// Produces a seed `Sub` value for the sub-parse pass.
+        ///
+        /// Defaults in `Sub`'s memberwise init supply the unwritten
+        /// fields.
         public let initial: @Sendable () -> Sub
 
         /// Wraps a parsed `Sub` value into the matching `Root` enum case

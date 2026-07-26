@@ -29,7 +29,9 @@ extension Command {
         /// Public re-export of the outer `Root` generic param under
         /// a different identifier so nested types (``Flag/Enumerable``)
         /// can express their Schema.Node `Root` associated-type binding
-        /// without tripping Swift's circular-typealias detection. The
+        /// without tripping Swift's circular-typealias detection.
+        ///
+        /// The
         /// alternative — renaming `Flag`'s generic param to a non-`Root`
         /// identifier — would require every consumer-visible signature
         /// to change. Consumers should NOT reference this typealias

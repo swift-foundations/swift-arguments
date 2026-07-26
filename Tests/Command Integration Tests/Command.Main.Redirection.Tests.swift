@@ -14,6 +14,12 @@ import Testing
 
 @testable import Command_Test_Support
 
+#if canImport(Darwin)
+    import Darwin  // dladdr, Dl_info, getenv, access, X_OK
+#elseif canImport(Glibc)
+    import Glibc  // getenv, access, X_OK, readlink
+#endif
+
 // MARK: - Helper-process harness
 
 /// Spawns the `command-runner-helper` executable with its stdout on a
@@ -47,51 +53,146 @@ import Testing
 private enum HelperProcess {}
 
 extension HelperProcess {
-    /// Candidate locations for the built helper binary.
+    /// The name of the helper executable target.
+    static let helperName = "command-runner-helper"
+
+    /// Environment variable that overrides the helper's location, so CI
+    /// can point at a prebuilt binary without relying on any layout.
+    static let helperOverride = "COMMAND_RUNNER_HELPER"
+
+    /// Decodes a NUL-terminated `CChar` buffer via the pointer overload
+    /// of `String.init(cString:)`.
     ///
-    /// `#filePath` is `<package>/Tests/Command Integration Tests/<this
-    /// file>`; three path components up is the package root. Both the
-    /// `.build/debug` symlink and the triple-qualified directory are
-    /// tried, since which one exists depends on the build driver.
-    static func candidatePaths(filePath: StaticString = #filePath) -> [Swift.String] {
-        let name = "command-runner-helper"
-        var root = filePath.description
-        for _ in 0..<3 {
-            guard let slash = root.lastIndex(of: "/") else { break }
-            root = Swift.String(root[..<slash])
+    /// The `[CChar]` overload is deprecated in favour of
+    /// `String(decoding:as:)`, which would mean truncating the NUL and
+    /// rebinding to `UInt8` by hand. This encapsulates its own
+    /// unsafety, so call sites must NOT mark it `unsafe`.
+    static func string(fromNulTerminated buffer: [CChar]) -> Swift.String {
+        unsafe buffer.withUnsafeBufferPointer { pointer in
+            unsafe Swift.String(cString: pointer.baseAddress!)
         }
-        return [
-            "\(root)/.build/debug/\(name)",
-            "\(root)/.build/arm64-apple-macosx/debug/\(name)",
-            "\(root)/.build/x86_64-apple-macosx/debug/\(name)",
-        ]
+    }
+
+    #if canImport(Darwin)
+        /// Address-only marker identifying the image containing this
+        /// code. Never called; only its address is taken.
+        static let imageMarker: @convention(c) () -> Void = {}
+    #endif
+
+    /// The absolute path of the image containing this test code.
+    ///
+    /// The platform split is load-bearing, not incidental:
+    ///
+    /// - **Darwin** asks `dladdr` which image contains our own code.
+    ///   Under `swift test` the *main executable* is the `xctest` tool
+    ///   and the test binary is a **loaded bundle**, so any
+    ///   main-executable query — `argv[0]`, `_NSGetExecutablePath` —
+    ///   returns the runner and the search finds nothing.
+    /// - **Linux** uses `/proc/self/exe`, because there is no bundle
+    ///   indirection: the test binary *is* the main executable. And
+    ///   `dladdr`/`Dl_info` are not exposed by the `Glibc` module at
+    ///   all, so the Darwin form is unavailable here regardless.
+    ///
+    /// Anchoring to our own image also pins resolution to the current
+    /// configuration's products directory, so it cannot pick up a
+    /// stale sibling built under a different configuration.
+    static func runningImagePath() -> Swift.String? {
+        #if canImport(Darwin)
+            var info = unsafe Dl_info()
+            let address: UnsafeRawPointer = unsafe unsafeBitCast(
+                Self.imageMarker,
+                to: UnsafeRawPointer.self
+            )
+            guard unsafe dladdr(address, &info) != 0 else { return nil }
+            guard let name = unsafe info.dli_fname else { return nil }
+            return unsafe Swift.String(cString: name)
+        #elseif canImport(Glibc)
+            var buffer = [CChar](repeating: 0, count: 4096)
+            let written = unsafe readlink("/proc/self/exe", &buffer, buffer.count - 1)
+            guard written > 0 else { return nil }
+            buffer[written] = 0
+            return Self.string(fromNulTerminated: buffer)
+        #else
+            return nil
+        #endif
+    }
+
+    /// Whether `path` names an executable file.
+    static func isExecutable(_ path: Swift.String) -> Swift.Bool {
+        unsafe path.withCString { unsafe access($0, X_OK) == 0 }
+    }
+
+    /// Locates the helper by ascending from the running test binary's
+    /// own directory, rather than by enumerating build layouts.
+    ///
+    /// Enumerating layouts is what the previous version did, and it
+    /// encoded three assumptions that were each false somewhere: that
+    /// the configuration is `debug`, that the triple is `apple-macosx`,
+    /// and that the layout is SwiftPM's. It passed only on macOS debug
+    /// and failed on every release leg and every Linux leg.
+    ///
+    /// Ascending is layout-independent because the helper is a
+    /// **sibling** of the test binary under SwiftPM
+    /// (`.build/<triple>/<config>/`) and under xcodebuild
+    /// (`.build/out/Products/<Config>-<platform>-<arch>/`), but sits
+    /// three levels above it inside a macOS test bundle
+    /// (`<Pkg>PackageTests.xctest/Contents/MacOS/`). Walking up covers
+    /// all three, and any future layout, without naming one.
+    ///
+    /// - Returns: an absolute path, or `nil`. Never a bare name:
+    ///   `posix_spawn` does not search `PATH` (that is `posix_spawnp`),
+    ///   and the configuration below passes no environment, so a bare
+    ///   name would surface as an anonymous `ENOENT` naming nothing.
+    static func helperPath() -> Swift.String? {
+        if let value = unsafe getenv(helperOverride) {
+            let candidate = unsafe Swift.String(cString: value)
+            if isExecutable(candidate) { return candidate }
+        }
+        guard let executable = runningImagePath(),
+            let separator = executable.lastIndex(of: "/")
+        else { return nil }
+        var directory = Swift.String(executable[..<separator])
+        // 3 covers the deepest known layout (the macOS bundle); 5 is headroom.
+        for _ in 0..<5 {
+            let candidate = "\(directory)/\(helperName)"
+            if isExecutable(candidate) { return candidate }
+            guard let sep = directory.lastIndex(of: "/"), sep != directory.startIndex
+            else { break }
+            directory = Swift.String(directory[..<sep])
+        }
+        return nil
     }
 
     /// Runs the helper with `arguments`, stdout and stderr on pipes.
     ///
-    /// - Returns: the captured output, or `nil` if no candidate path
-    ///   produced a runnable binary.
+    /// - Returns: the captured output, or `nil` if the helper could not
+    ///   be located or failed to spawn.
     static func run(_ arguments: [Swift.String]) -> Process.Output? {
-        for path in candidatePaths() {
-            let configuration = Process.Spawn.Configuration(
-                executable: path,
-                arguments: arguments,
-                stdout: .pipe,
-                stderr: .pipe
-            )
-            do throws(Process.Error) {
-                return try Process.Spawn.run(configuration)
-            } catch {
-                // A candidate path that does not exist fails at spawn
-                // time (ENOENT). That is expected while probing the
-                // build-layout candidates, so move to the next one. If
-                // every candidate fails, the `nil` return surfaces as a
-                // `#require` failure at the call site rather than a
-                // silently-passing test.
-                continue
-            }
+        guard let path = helperPath() else { return nil }
+        let configuration = Process.Spawn.Configuration(
+            executable: path,
+            arguments: arguments,
+            stdout: .pipe,
+            stderr: .pipe
+        )
+        do throws(Process.Error) {
+            return try Process.Spawn.run(configuration)
+        } catch {
+            return nil
         }
-        return nil
+    }
+
+    /// A diagnostic naming what was looked for and how to override it.
+    ///
+    /// "Helper not found" otherwise surfaces as a bare `nil` that names
+    /// neither the executable nor the escape hatch, which is a long hunt
+    /// from a short message.
+    static var notFoundMessage: Swift.String {
+        """
+        helper executable '\(helperName)' not found by ascending from \
+        \(runningImagePath() ?? "<running image path unavailable>"). \
+        Build the package first, or set \(helperOverride) to its absolute path.
+        """
     }
 
     /// The child's captured stdout decoded as UTF-8.
@@ -131,17 +232,14 @@ struct `Command.main redirected-output Tests` {
 
     @Test
     func `Successful run writes its output when stdout is a pipe`() throws {
-        let output = try #require(
-            HelperProcess.run(["hello"]),
-            "helper executable not found — is the package built?"
-        )
+        let output = try #require(HelperProcess.run(["hello"]), "\(HelperProcess.notFoundMessage)")
         #expect(output.status == .exited(code: 0))
         #expect(HelperProcess.stdoutText(output).contains("HELPER-BEGIN hello HELPER-END"))
     }
 
     @Test
     func `Help output is not discarded when stdout is a pipe`() throws {
-        let output = try #require(HelperProcess.run(["--help"]))
+        let output = try #require(HelperProcess.run(["--help"]), "\(HelperProcess.notFoundMessage)")
         #expect(output.status == .exited(code: 0))
         let text = HelperProcess.stdoutText(output)
         #expect(!text.isEmpty)
@@ -151,14 +249,14 @@ struct `Command.main redirected-output Tests` {
 
     @Test
     func `Unknown-option diagnostic is not discarded when stdout is a pipe`() throws {
-        let output = try #require(HelperProcess.run(["--bogusflag"]))
+        let output = try #require(HelperProcess.run(["--bogusflag"]), "\(HelperProcess.notFoundMessage)")
         #expect(output.status == .exited(code: 64))
         #expect(HelperProcess.stdoutText(output).contains("--bogusflag"))
     }
 
     @Test
     func `Missing-argument diagnostic is not discarded when stdout is a pipe`() throws {
-        let output = try #require(HelperProcess.run([]))
+        let output = try #require(HelperProcess.run([]), "\(HelperProcess.notFoundMessage)")
         #expect(output.status == .exited(code: 64))
         #expect(HelperProcess.stdoutText(output).contains("phrase"))
     }
@@ -171,10 +269,7 @@ struct `Command.main redirected-output Tests` {
         // it. The byte-count assertion is the invariant that the
         // original defect violated on all four paths at once.
         for arguments in [["hello"], ["--help"], ["--bogusflag"], []] {
-            let output = try #require(
-                HelperProcess.run(arguments),
-                "helper executable not found for argv \(arguments)"
-            )
+            let output = try #require(HelperProcess.run(arguments), "argv \(arguments): \(HelperProcess.notFoundMessage)")
             #expect(
                 !(output.stdout ?? []).isEmpty,
                 "argv \(arguments) wrote zero bytes to a piped stdout"

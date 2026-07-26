@@ -10,7 +10,9 @@
 // ===----------------------------------------------------------------------===//
 
 extension Command.Flag.Enumerable: Command.Schema.Node {
-    /// The Schema.Node associated-type binding. References
+    /// The Schema.Node associated-type binding.
+    ///
+    /// References
     /// ``Command/Flag/BoundRoot`` so Swift can match the outer
     /// `Command.Flag<Root>`'s `Root` parameter without tripping the
     /// circular-typealias detection that would fire if we wrote

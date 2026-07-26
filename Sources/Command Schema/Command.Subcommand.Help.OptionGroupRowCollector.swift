@@ -24,8 +24,10 @@ extension Command.Subcommand.Help {
         @usableFromInline
         internal typealias Failure = Never
 
-        /// Optional seed value for the option-group fragment. Mirrors
-        /// ``Command/HelpOptionGroupRowCollector``'s `initial` slot.
+        /// Optional seed value for the option-group fragment.
+        ///
+        /// Mirrors ``Command/HelpOptionGroupRowCollector``'s `initial`
+        /// slot.
         @usableFromInline
         internal let initial: G?
 

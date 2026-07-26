@@ -29,7 +29,9 @@ extension Command.Subcommand.Help {
         internal let configuration: Command.Configuration
 
         /// Optional seed instance from which auto-derived defaults are
-        /// extracted at visit-time. Mirrors ``Command/Help/Visitor``'s
+        /// extracted at visit-time.
+        ///
+        /// Mirrors ``Command/Help/Visitor``'s
         /// `initial` slot — same semantics, same per-binding rules. See
         /// ``Command/Subcommand/HelpDefault`` for the rendering helpers.
         @usableFromInline
