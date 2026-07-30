@@ -69,13 +69,15 @@ extension HelperProcess {
     /// unsafety, so call sites must NOT mark it `unsafe`.
     static func string(fromNulTerminated buffer: [CChar]) -> Swift.String {
         unsafe buffer.withUnsafeBufferPointer { pointer in
-            unsafe Swift.String(cString: pointer.baseAddress!)
+            guard let baseAddress = pointer.baseAddress else { return "" }
+            unsafe return Swift.String(cString: baseAddress)
         }
     }
 
     #if canImport(Darwin)
-        /// Address-only marker identifying the image containing this
-        /// code. Never called; only its address is taken.
+        /// Address-only marker identifying the image containing this code.
+        ///
+        /// Never called; only its address is taken.
         static let imageMarker: @convention(c) () -> Void = {}
     #endif
 
