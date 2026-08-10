@@ -70,7 +70,7 @@ extension HelperProcess {
     static func string(fromNulTerminated buffer: [CChar]) -> Swift.String {
         unsafe buffer.withUnsafeBufferPointer { pointer in
             guard let baseAddress = pointer.baseAddress else { return "" }
-            unsafe return Swift.String(cString: baseAddress)
+            return unsafe Swift.String(cString: baseAddress)
         }
     }
 
