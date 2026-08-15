@@ -814,7 +814,12 @@ extension Command.Schema.ParseVisitor {
     internal mutating func validatePositionalManyArity() throws(Command.Error) {
         guard let many = positionalMany else { return }
         let count = many.count(root)
-        try Self.checkArityBounds(arity: many.arity, count: count, name: many.name, kind: "positional")
+        try Self.checkArityBounds(
+            arity: many.arity,
+            count: count,
+            name: many.name,
+            kind: "positional"
+        )
     }
 
     /// Validates each repeatable-option entry's arity bounds.
@@ -848,21 +853,24 @@ extension Command.Schema.ParseVisitor {
         case .exactly(let target):
             guard count == target else {
                 throw .validationFailed(
-                    reason: "Expected exactly \(target) value(s) for \(kind) '\(name)', got \(count)."
+                    reason:
+                        "Expected exactly \(target) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
 
         case .atMost(let maximum):
             guard count <= maximum else {
                 throw .validationFailed(
-                    reason: "Expected at most \(maximum) value(s) for \(kind) '\(name)', got \(count)."
+                    reason:
+                        "Expected at most \(maximum) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
 
         case .atLeast(let minimum):
             guard count >= minimum else {
                 throw .validationFailed(
-                    reason: "Expected at least \(minimum) value(s) for \(kind) '\(name)', got \(count)."
+                    reason:
+                        "Expected at least \(minimum) value(s) for \(kind) '\(name)', got \(count)."
                 )
             }
 
@@ -1268,7 +1276,9 @@ extension Command.Schema.ParseVisitor {
                 let trimmed = String(element.dropFirst(2))
                 let (name, inlineValue): (String, String?) = {
                     if let eq = trimmed.firstIndex(of: "=") {
-                        return (String(trimmed[..<eq]), String(trimmed[trimmed.index(after: eq)...]))
+                        return (
+                            String(trimmed[..<eq]), String(trimmed[trimmed.index(after: eq)...])
+                        )
                     }
                     return (trimmed, nil)
                 }()
@@ -1284,14 +1294,18 @@ extension Command.Schema.ParseVisitor {
                         throw .invalidValue(
                             name: "--\(name)",
                             value: valueString,
-                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                            position: .init(
+                                argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                byteOffset: .zero
+                            )
                         )
                     }
                     filledOptionIndices.insert(optionIndex)
                     continue
                 }
 
-                if let manyIndex = optionManies.firstIndex(where: { $0.name.long?.string == name }) {
+                if let manyIndex = optionManies.firstIndex(where: { $0.name.long?.string == name })
+                {
                     let many = optionManies[manyIndex]
                     let valueString = try rootConsumeLongOptionValue(
                         name: "--\(name)",
@@ -1302,7 +1316,10 @@ extension Command.Schema.ParseVisitor {
                         throw .invalidValue(
                             name: "--\(name)",
                             value: valueString,
-                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                            position: .init(
+                                argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                byteOffset: .zero
+                            )
                         )
                     }
                     continue
@@ -1348,7 +1365,10 @@ extension Command.Schema.ParseVisitor {
                 )
                 throw .unknownLongOption(
                     name: "--\(name)",
-                    position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero),
+                    position: .init(
+                        argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                        byteOffset: .zero
+                    ),
                     suggestion: suggestion
                 )
             }
@@ -1369,7 +1389,10 @@ extension Command.Schema.ParseVisitor {
                         guard argvIndex + 1 < argv.count else {
                             throw .missingOptionValue(
                                 name: "-\(firstChar)",
-                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                                position: .init(
+                                    argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                    byteOffset: .zero
+                                )
                             )
                         }
                         let valueString = argv[argvIndex + 1]
@@ -1377,7 +1400,10 @@ extension Command.Schema.ParseVisitor {
                             throw .invalidValue(
                                 name: "-\(firstChar)",
                                 value: valueString,
-                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                                position: .init(
+                                    argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                    byteOffset: .zero
+                                )
                             )
                         }
                         filledOptionIndices.insert(optionIndex)
@@ -1391,7 +1417,10 @@ extension Command.Schema.ParseVisitor {
                         guard argvIndex + 1 < argv.count else {
                             throw .missingOptionValue(
                                 name: "-\(firstChar)",
-                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                                position: .init(
+                                    argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                    byteOffset: .zero
+                                )
                             )
                         }
                         let valueString = argv[argvIndex + 1]
@@ -1399,7 +1428,10 @@ extension Command.Schema.ParseVisitor {
                             throw .invalidValue(
                                 name: "-\(firstChar)",
                                 value: valueString,
-                                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                                position: .init(
+                                    argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                    byteOffset: .zero
+                                )
                             )
                         }
                         argvIndex += 2
@@ -1421,7 +1453,10 @@ extension Command.Schema.ParseVisitor {
                     }
                     throw .unknownShortOption(
                         name: firstChar,
-                        position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                        position: .init(
+                            argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                            byteOffset: .zero
+                        )
                     )
                 }
                 // Multi-character cluster at root: every char must be a
@@ -1439,7 +1474,10 @@ extension Command.Schema.ParseVisitor {
                     } else {
                         throw .unknownShortOption(
                             name: character,
-                            position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                            position: .init(
+                                argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                                byteOffset: .zero
+                            )
                         )
                     }
                 }
@@ -1468,7 +1506,10 @@ extension Command.Schema.ParseVisitor {
                 )
                 throw .unknownSubcommand(
                     name: subcommandName,
-                    position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero),
+                    position: .init(
+                        argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                        byteOffset: .zero
+                    ),
                     suggestion: suggestion
                 )
             }
@@ -1551,7 +1592,10 @@ extension Command.Schema.ParseVisitor {
         guard argvIndex + 1 < argv.count else {
             throw .missingOptionValue(
                 name: name,
-                position: .init(argvIndex: Index<String>(Ordinal(UInt(argvIndex))), byteOffset: .zero)
+                position: .init(
+                    argvIndex: Index<String>(Ordinal(UInt(argvIndex))),
+                    byteOffset: .zero
+                )
             )
         }
         let value = argv[argvIndex + 1]

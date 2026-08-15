@@ -70,7 +70,9 @@ extension Command {
         }
 
         @Test
-        func `Command.Positional.Many + transform: parses multiple non-Codable values`() throws(Command.Error) {
+        func `Command.Positional.Many + transform: parses multiple non-Codable values`()
+            throws(Command.Error)
+        {
             let parsed = try Command.parse(
                 TransformedPositionalMany.self,
                 from: ["https://a.com", "http://b.org", "ftp://c.net"],
@@ -86,7 +88,8 @@ extension Command {
         }
 
         @Test
-        func `Command.Positional.Many + transform: empty argv → empty array`() throws(Command.Error) {
+        func `Command.Positional.Many + transform: empty argv → empty array`() throws(Command.Error)
+        {
             let parsed = try Command.parse(
                 TransformedPositionalMany.self,
                 from: [],
@@ -96,7 +99,9 @@ extension Command {
         }
 
         @Test
-        func `Command.Option.Many + transform: parses multiple non-Codable values`() throws(Command.Error) {
+        func `Command.Option.Many + transform: parses multiple non-Codable values`() throws(Command
+            .Error)
+        {
             let parsed = try Command.parse(
                 TransformedOptionMany.self,
                 from: [
@@ -116,7 +121,9 @@ extension Command {
         }
 
         @Test
-        func `Command.Option.Many + transform: zero occurrences → empty array`() throws(Command.Error) {
+        func `Command.Option.Many + transform: zero occurrences → empty array`() throws(Command
+            .Error)
+        {
             let parsed = try Command.parse(
                 TransformedOptionMany.self,
                 from: [],

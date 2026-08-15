@@ -99,7 +99,9 @@ extension Command {
 
         @Test
         func `Env-var fallback works for options inside an OptionGroup`() throws(Command.Error) {
-            let parsed = try Argument.Environment.withOverlay(["ENVGROUP_OUTPUT_TEST": "/tmp/result"]) {
+            let parsed = try Argument.Environment.withOverlay([
+                "ENVGROUP_OUTPUT_TEST": "/tmp/result"
+            ]) {
                 () throws(Command.Error) -> EnvGrouped in
                 try Command.parse(EnvGrouped.self, from: ["mytarget"], initial: EnvGrouped())
             }

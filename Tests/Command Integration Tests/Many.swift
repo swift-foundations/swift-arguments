@@ -23,7 +23,10 @@ struct ManyPositional: Command.`Protocol`, Equatable {
 
 extension ManyPositional {
     static var configuration: Command.Configuration {
-        Command.Configuration(name: "many-positional", abstract: "Accept any number of file values.")
+        Command.Configuration(
+            name: "many-positional",
+            abstract: "Accept any number of file values."
+        )
     }
 
     static var schema: Command.Schema.Definition<Self> {

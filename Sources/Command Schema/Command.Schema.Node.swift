@@ -34,6 +34,7 @@ extension Command.Schema {
         ///
         /// - Parameter visitor: The visitor receiving the typed dispatch.
         /// - Throws: Any error the visitor surfaces (`V.Failure`).
-        func accept<V: Command.Schema.Visitor>(_ visitor: inout V) throws(V.Failure) where V.Root == Root
+        func accept<V: Command.Schema.Visitor>(_ visitor: inout V) throws(V.Failure)
+        where V.Root == Root
     }
 }

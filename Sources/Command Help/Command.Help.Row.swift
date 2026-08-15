@@ -28,27 +28,56 @@ extension Command {
     /// bind here.
     @usableFromInline
     internal enum HelpRow: Sendable {
-        case positional(name: String, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
+        case positional(
+            name: String,
+            placeholder: String,
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
         /// An array-positional ("Many") row — distinguished from a
         /// single ``positional`` so the USAGE / ARGUMENTS layouts can
         /// emit a trailing `...` ellipsis.
-        case positionalMany(name: String, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
-        case option(name: Argument.Name, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
+        case positionalMany(
+            name: String,
+            placeholder: String,
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
+        case option(
+            name: Argument.Name,
+            placeholder: String,
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
         /// A repeatable-option ("Many") row — distinguished from a
         /// single ``option`` so the USAGE layout can emit `[--name <v>]...`
         /// with the trailing `...` marker.
-        case optionMany(name: Argument.Name, placeholder: String, help: Argument.Help, visibility: Argument.Visibility)
+        case optionMany(
+            name: Argument.Name,
+            placeholder: String,
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
         case flag(name: Argument.Name, help: Argument.Help, visibility: Argument.Visibility)
         /// A count-flag row — rendered as `-vvv` / `--verbose` style hint
         /// so help text signals the repeatable counter semantics.
         case flagCount(name: Argument.Name, help: Argument.Help, visibility: Argument.Visibility)
         /// An inverted-flag row — carries both derived long forms
         /// (true/false) so help text shows both names as one entry.
-        case flagInverted(trueName: String, falseName: String, help: Argument.Help, visibility: Argument.Visibility)
+        case flagInverted(
+            trueName: String,
+            falseName: String,
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
         /// An enumerable-flag row — carries the per-case long-name +
         /// help pairs so help text emits one row per case under a
         /// shared group header.
-        case flagEnumerable(cases: [Command.HelpEnumerableCase], help: Argument.Help, visibility: Argument.Visibility)
+        case flagEnumerable(
+            cases: [Command.HelpEnumerableCase],
+            help: Argument.Help,
+            visibility: Argument.Visibility
+        )
         case subcommand(name: String, help: Argument.Help, visibility: Argument.Visibility)
     }
 }

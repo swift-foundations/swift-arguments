@@ -40,7 +40,8 @@ extension Command {
         }
 
         @Test
-        func `-fvalue regression check — single-char glued form still works`() throws(Command.Error) {
+        func `-fvalue regression check — single-char glued form still works`() throws(Command.Error)
+        {
             let parsed = try Command.parse(
                 GluedShortOptionF.self,
                 from: ["-fvalue"],
@@ -78,7 +79,9 @@ extension Command {
         }
 
         @Test
-        func `Schema-explicit -5 flag wins over numeric-positional heuristic`() throws(Command.Error) {
+        func `Schema-explicit -5 flag wins over numeric-positional heuristic`() throws(Command
+            .Error)
+        {
             // Schema declares `-5` as a Bool flag AND an Int positional.
             // Argv `["-5", "7"]`: the heuristic suppresses because `-5` IS a
             // schema-declared short flag → flag fires; positional reads "7".
