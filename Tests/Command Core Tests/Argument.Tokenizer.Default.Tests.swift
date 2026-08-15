@@ -34,7 +34,9 @@ extension Argument.Tokenizer.Default {
         }
 
         @Test
-        func `--name value emits .long(name) then operand → .positional(value)`() throws(Command.Error) {
+        func `--name value emits .long(name) then operand → .positional(value)`() throws(Command
+            .Error)
+        {
             let argv = ["--count", "3"]
             let tokens = try Argument.Tokenizer.Default().tokenize(argv)
             // The L2 tokenizer classifies '3' as .operand since it's not option-shaped;
@@ -53,7 +55,9 @@ extension Argument.Tokenizer.Default {
         }
 
         @Test
-        func `-fvalue emits .shortCluster('f') + .value('value') (Guideline 6)`() throws(Command.Error) {
+        func `-fvalue emits .shortCluster('f') + .value('value') (Guideline 6)`() throws(Command
+            .Error)
+        {
             let argv = ["-fvalue"]
             let tokens = try Argument.Tokenizer.Default().tokenize(argv)
             // L2 emits .shortFlag('f') + .shortValue('value');

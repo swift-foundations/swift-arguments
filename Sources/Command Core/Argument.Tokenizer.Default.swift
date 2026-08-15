@@ -107,7 +107,9 @@ extension Argument.Tokenizer.Default {
                 let afterDoubleDash = element.dropFirst(2)
                 if let equalsIndex = afterDoubleDash.firstIndex(of: "=") {
                     let name = Swift.String(afterDoubleDash[..<equalsIndex])
-                    let value = Swift.String(afterDoubleDash[afterDoubleDash.index(after: equalsIndex)...])
+                    let value = Swift.String(
+                        afterDoubleDash[afterDoubleDash.index(after: equalsIndex)...]
+                    )
                     // Two L1 tokens: .long(name) + .value(value), each sharing
                     // the source range (cheaper than computing sub-ranges; consumers
                     // distinguish via .kind, not by range).

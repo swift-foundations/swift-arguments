@@ -58,7 +58,11 @@ extension RootFlagWithGroup {
 
     static var schema: Command.Schema.Definition<Self> {
         Command.Schema.Definition<Self> {
-            Command.Flag(\.verbose, name: .longLiteral("verbose"), help: .init(abstract: "Verbose."))
+            Command.Flag(
+                \.verbose,
+                name: .longLiteral("verbose"),
+                help: .init(abstract: "Verbose.")
+            )
             Command.Subcommand.Group {
                 Command.Subcommand.Case(
                     "child",

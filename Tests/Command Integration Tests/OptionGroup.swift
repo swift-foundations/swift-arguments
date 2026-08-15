@@ -98,7 +98,10 @@ enum OGCLI: Command.`Protocol`, Equatable {
 
 extension OGCLI {
     static var configuration: Command.Configuration {
-        Command.Configuration(name: "og", abstract: "Demonstrates option groups across subcommands.")
+        Command.Configuration(
+            name: "og",
+            abstract: "Demonstrates option groups across subcommands."
+        )
     }
 
     static var schema: Command.Schema.Definition<Self> {

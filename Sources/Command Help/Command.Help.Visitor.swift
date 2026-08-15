@@ -461,7 +461,9 @@ extension Command.Help {
                     }
                     for caseEntry in cases {
                         let left = "--" + caseEntry.name
-                        output += "  " + pad(left, to: Self.padWidth) + "  " + caseEntry.help.abstract + "\n"
+                        output +=
+                            "  " + pad(left, to: Self.padWidth) + "  " + caseEntry.help.abstract
+                            + "\n"
                     }
                 }
             }

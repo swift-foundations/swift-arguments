@@ -50,7 +50,10 @@ struct ServiceToggle: Command.`Protocol`, Equatable {
 
 extension ServiceToggle {
     static var configuration: Command.Configuration {
-        Command.Configuration(name: "service-toggle", abstract: "Inverted-flag with explicit verbs.")
+        Command.Configuration(
+            name: "service-toggle",
+            abstract: "Inverted-flag with explicit verbs."
+        )
     }
 
     static var schema: Command.Schema.Definition<Self> {

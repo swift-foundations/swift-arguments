@@ -30,7 +30,9 @@ extension Command.Schema {
     /// This avoids a `WritableKeyPath` chain construction and works
     /// uniformly across positionals, options, and flags.
     @usableFromInline
-    internal struct OptionGroupForwarder<Root: Sendable, G: Sendable & Equatable>: Command.Schema.Visitor {
+    internal struct OptionGroupForwarder<Root: Sendable, G: Sendable & Equatable>: Command.Schema
+            .Visitor
+    {
         @usableFromInline
         internal typealias Failure = Command.Error
 

@@ -25,7 +25,8 @@ extension DocumentedCommand {
         Command.Configuration(
             name: "documented",
             abstract: "A well-documented command.",
-            discussion: "This command demonstrates the discussion section.\nMultiple lines are rendered indented.",
+            discussion:
+                "This command demonstrates the discussion section.\nMultiple lines are rendered indented.",
             aliases: ["doc", "docu"]
         )
     }
