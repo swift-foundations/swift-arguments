@@ -18,6 +18,8 @@ import Testing
     import Darwin  // dladdr, Dl_info, getenv, access, X_OK
 #elseif canImport(Glibc)
     import Glibc  // getenv, access, X_OK, readlink
+#elseif canImport(WinSDK)
+    import WinSDK  // GetModuleFileNameW, GetEnvironmentVariableW, GetFileAttributesW
 #endif
 
 // MARK: - Helper-process harness
@@ -55,6 +57,26 @@ private enum HelperProcess {}
 extension HelperProcess {
     /// The name of the helper executable target.
     static let helperName = "command-runner-helper"
+
+    /// The helper's on-disk file name, which carries the platform's
+    /// executable extension.
+    #if os(Windows)
+        static let helperFileName = "\(helperName).exe"
+    #else
+        static let helperFileName = helperName
+    #endif
+
+    /// The directory separator the platform puts in its own image paths.
+    ///
+    /// Windows accepts `/` in a path it is *given*, but the paths this
+    /// harness *reads back* — from `GetModuleFileNameW` — are spelled
+    /// with `\`, and the ascent below works by trimming the image path
+    /// it was handed.
+    #if os(Windows)
+        static let pathSeparator: Swift.Character = "\\"
+    #else
+        static let pathSeparator: Swift.Character = "/"
+    #endif
 
     /// Environment variable that overrides the helper's location, so CI
     /// can point at a prebuilt binary without relying on any layout.
@@ -114,14 +136,59 @@ extension HelperProcess {
             guard written > 0 else { return nil }
             buffer[written] = 0
             return Self.string(fromNulTerminated: buffer)
+        #elseif os(Windows)
+            // There is no bundle indirection on Windows either: the test
+            // binary is the main executable, so the module handle `nil`
+            // names our own image. The buffer is sized for a long path
+            // rather than `MAX_PATH`, because a package checkout nested
+            // under a SwiftPM build directory routinely exceeds 260
+            // characters and a short buffer would truncate silently.
+            var buffer = [WCHAR](repeating: 0, count: 32768)
+            let written = unsafe GetModuleFileNameW(nil, &buffer, DWORD(buffer.count))
+            guard written > 0, written < DWORD(buffer.count) else { return nil }
+            return Swift.String(decoding: buffer[..<Swift.Int(written)], as: UTF16.self)
         #else
             return nil
         #endif
     }
 
-    /// Whether `path` names an executable file.
+    /// Whether `path` names a file that can be spawned.
+    ///
+    /// Windows has no execute permission bit to consult: executability
+    /// is carried by the `.exe` extension, which `helperFileName`
+    /// already supplies. The meaningful question there is whether the
+    /// candidate exists and is a file rather than a directory.
     static func isExecutable(_ path: Swift.String) -> Swift.Bool {
-        unsafe path.withCString { unsafe access($0, X_OK) == 0 }
+        #if os(Windows)
+            return path.withCString(encodedAs: UTF16.self) { wide in
+                let attributes = unsafe GetFileAttributesW(wide)
+                guard attributes != DWORD.max else { return false }
+                return attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY) == 0
+            }
+        #else
+            return unsafe path.withCString { unsafe access($0, X_OK) == 0 }
+        #endif
+    }
+
+    /// The value of the environment variable `name`, or `nil` if it is
+    /// unset or empty.
+    static func environmentValue(_ name: Swift.String) -> Swift.String? {
+        #if os(Windows)
+            return name.withCString(encodedAs: UTF16.self) { wide -> Swift.String? in
+                // The first call sizes the value (including its NUL);
+                // the second fills a buffer of exactly that size, so the
+                // returned length is one shorter.
+                let capacity = unsafe GetEnvironmentVariableW(wide, nil, 0)
+                guard capacity > 0 else { return nil }
+                var buffer = [WCHAR](repeating: 0, count: Swift.Int(capacity))
+                let written = unsafe GetEnvironmentVariableW(wide, &buffer, capacity)
+                guard written > 0, written < capacity else { return nil }
+                return Swift.String(decoding: buffer[..<Swift.Int(written)], as: UTF16.self)
+            }
+        #else
+            guard let value = unsafe getenv(name) else { return nil }
+            return unsafe Swift.String(cString: value)
+        #endif
     }
 
     /// Locates the helper by ascending from the running test binary's
@@ -146,19 +213,18 @@ extension HelperProcess {
     ///   and the configuration below passes no environment, so a bare
     ///   name would surface as an anonymous `ENOENT` naming nothing.
     static func helperPath() -> Swift.String? {
-        if let value = unsafe getenv(helperOverride) {
-            let candidate = unsafe Swift.String(cString: value)
-            if isExecutable(candidate) { return candidate }
+        if let candidate = environmentValue(helperOverride), isExecutable(candidate) {
+            return candidate
         }
         guard let executable = runningImagePath(),
-            let separator = executable.lastIndex(of: "/")
+            let separator = executable.lastIndex(of: pathSeparator)
         else { return nil }
         var directory = Swift.String(executable[..<separator])
         // 3 covers the deepest known layout (the macOS bundle); 5 is headroom.
         for _ in 0..<5 {
-            let candidate = "\(directory)/\(helperName)"
+            let candidate = "\(directory)\(pathSeparator)\(helperFileName)"
             if isExecutable(candidate) { return candidate }
-            guard let sep = directory.lastIndex(of: "/"), sep != directory.startIndex
+            guard let sep = directory.lastIndex(of: pathSeparator), sep != directory.startIndex
             else { break }
             directory = Swift.String(directory[..<sep])
         }
