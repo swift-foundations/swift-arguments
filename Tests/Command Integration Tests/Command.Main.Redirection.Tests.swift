@@ -58,12 +58,16 @@ extension HelperProcess {
     /// The name of the helper executable target.
     static let helperName = "command-runner-helper"
 
-    /// The helper's on-disk file name, which carries the platform's
-    /// executable extension.
+    /// The helper's candidate on-disk file names, most likely first.
+    ///
+    /// Windows carries executability in the extension, so `.exe` is the
+    /// name to expect there — but SwiftPM has emitted the bare target
+    /// name on Windows too, so both are tried rather than betting on
+    /// one and reporting "not found" when the other is sitting there.
     #if os(Windows)
-        static let helperFileName = "\(helperName).exe"
+        static let helperFileNames = ["\(helperName).exe", helperName]
     #else
-        static let helperFileName = helperName
+        static let helperFileNames = [helperName]
     #endif
 
     /// The directory separator the platform puts in its own image paths.
@@ -216,19 +220,32 @@ extension HelperProcess {
         if let candidate = environmentValue(helperOverride), isExecutable(candidate) {
             return candidate
         }
+        for candidate in searchedCandidates() where isExecutable(candidate) {
+            return candidate
+        }
+        return nil
+    }
+
+    /// Every path the ascent looks at, in the order it looks at them.
+    ///
+    /// Shared with the diagnostic below so a failure reports the paths
+    /// that were actually tried rather than a reconstruction of them.
+    static func searchedCandidates() -> [Swift.String] {
         guard let executable = runningImagePath(),
             let separator = executable.lastIndex(of: pathSeparator)
-        else { return nil }
+        else { return [] }
         var directory = Swift.String(executable[..<separator])
+        var candidates: [Swift.String] = []
         // 3 covers the deepest known layout (the macOS bundle); 5 is headroom.
         for _ in 0..<5 {
-            let candidate = "\(directory)\(pathSeparator)\(helperFileName)"
-            if isExecutable(candidate) { return candidate }
+            for name in helperFileNames {
+                candidates.append("\(directory)\(pathSeparator)\(name)")
+            }
             guard let sep = directory.lastIndex(of: pathSeparator), sep != directory.startIndex
             else { break }
             directory = Swift.String(directory[..<sep])
         }
-        return nil
+        return candidates
     }
 
     /// Runs the helper with `arguments`, stdout and stderr on pipes.
@@ -256,11 +273,16 @@ extension HelperProcess {
     /// neither the executable nor the escape hatch, which is a long hunt
     /// from a short message.
     static var notFoundMessage: Swift.String {
-        """
-        helper executable '\(helperName)' not found by ascending from \
-        \(runningImagePath() ?? "<running image path unavailable>"). \
-        Build the package first, or set \(helperOverride) to its absolute path.
-        """
+        let tried = searchedCandidates()
+            .map { "  \($0)" }
+            .joined(separator: "\n")
+        return """
+            helper executable '\(helperName)' not found by ascending from \
+            \(runningImagePath() ?? "<running image path unavailable>"). \
+            Build the package first, or set \(helperOverride) to its absolute path.
+            Paths tried, in order:
+            \(tried.isEmpty ? "  <none: running image path unavailable>" : tried)
+            """
     }
 
     /// The child's captured stdout decoded as UTF-8.
