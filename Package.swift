@@ -201,6 +201,11 @@ let package = Package(
             name: "Command Integration Tests",
             dependencies: [
                 "Command Test Support",
+                // The suite spawns this helper, so it must exist before the
+                // suite runs. Without the dependency SwiftPM has no reason
+                // to build it for `swift test`, and the suite passed only on
+                // legs that happened to run a separate `swift build` first.
+                "command-runner-helper",
                 .product(name: "Process", package: "swift-process"),
             ]
         ),
