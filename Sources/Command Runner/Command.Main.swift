@@ -9,11 +9,11 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Command_Core
-public import Command_Help
+import Command_Core
+import Command_Help
 public import Command_Primitive
 public import Command_Schema
-public import Process
+import Process
 
 extension Command {
     /// Parses argv, runs the conforming command, renders any error
