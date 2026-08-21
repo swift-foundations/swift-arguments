@@ -132,9 +132,6 @@ extension Command {
                 print(Self.Diagnostic.message(for: error))
             }
             Process.Exit.normal(Self.Diagnostic.exitCode(for: error))
-        } catch {
-            print("Error: \(Swift.String(describing: error))")
-            Process.Exit.normal(1)
         }
     }
 }
