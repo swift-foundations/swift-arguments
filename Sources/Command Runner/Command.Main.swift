@@ -118,7 +118,7 @@ extension Command {
                 Process.Exit.normal(1)
             }
             Process.Exit.normal(0)
-        } catch let error as Self.Error {
+        } catch {
             // Help is the only diagnostic path that renders the full
             // help text. The parse-time .helpRequested error carries no
             // pre-rendered text (vs. .helpRequestedForSubcommand which
