@@ -74,7 +74,7 @@ extension Command {
     public struct OptionGroup<Root, G>: Sendable
     where Root: Sendable, G: Sendable & Equatable {
         /// The KeyPath into `Root` where the group's nested fragment lives.
-        public let keyPath: WritableKeyPath<Root, G> & Sendable
+        public let keyPath: any WritableKeyPath<Root, G> & Sendable
 
         /// The sub-schema describing the fragment's option / flag / positional
         /// declarations rooted on `G`.
@@ -99,7 +99,7 @@ extension Command {
         ///     Defaults to ``Argument/Visibility/visible``.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, G> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, G> & Sendable,
             schema: Command.Schema.Definition<G>,
             visibility: Argument.Visibility = .visible
         ) {

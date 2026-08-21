@@ -38,7 +38,7 @@ extension Command.Schema {
 
         /// The outer keyPath from `Root` to the group's fragment value.
         @usableFromInline
-        internal let outerKeyPath: WritableKeyPath<Root, G> & Sendable
+        internal let outerKeyPath: any WritableKeyPath<Root, G> & Sendable
 
         /// Positional entries accumulated during the sub-schema walk.
         @usableFromInline
@@ -78,7 +78,7 @@ extension Command.Schema {
         internal var flagEnumerables: [Command.Schema.ParseVisitor<Root>.FlagEnumerableEntry] = []
 
         @usableFromInline
-        internal init(outerKeyPath: WritableKeyPath<Root, G> & Sendable) {
+        internal init(outerKeyPath: any WritableKeyPath<Root, G> & Sendable) {
             self.outerKeyPath = outerKeyPath
         }
 

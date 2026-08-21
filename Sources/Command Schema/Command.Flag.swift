@@ -41,7 +41,7 @@ extension Command {
         public typealias BoundRoot = Root
 
         /// The KeyPath into `Root` where presence of the flag writes `true`.
-        public let keyPath: WritableKeyPath<Root, Bool> & Sendable
+        public let keyPath: any WritableKeyPath<Root, Bool> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         public let declaration: Argument.Flag
@@ -57,7 +57,7 @@ extension Command {
         ///   - help: Documentation. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, Bool> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, Bool> & Sendable,
             name: Argument.Name,
             arity: Argument.Arity = .atMost(1),
             visibility: Argument.Visibility = .visible,

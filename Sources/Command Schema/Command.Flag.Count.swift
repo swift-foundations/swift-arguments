@@ -41,7 +41,7 @@ extension Command.Flag {
     public struct Count: Sendable where Root: Sendable {
         /// The KeyPath into `Root` where the counter increments on each
         /// occurrence of the flag.
-        public let keyPath: WritableKeyPath<Root, Int> & Sendable
+        public let keyPath: any WritableKeyPath<Root, Int> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         ///
@@ -60,7 +60,7 @@ extension Command.Flag {
         ///   - help: Documentation. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, Int> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, Int> & Sendable,
             name: Argument.Name,
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init()

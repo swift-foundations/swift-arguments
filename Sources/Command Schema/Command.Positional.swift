@@ -60,7 +60,7 @@ extension Command {
     public struct Positional<Root, V>: Sendable
     where Root: Sendable, V: Sendable & Equatable {
         /// The KeyPath into `Root` where the parsed value is written.
-        public let keyPath: WritableKeyPath<Root, V> & Sendable
+        public let keyPath: any WritableKeyPath<Root, V> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         public let declaration: Argument.Positional<V>
@@ -93,7 +93,7 @@ extension Command {
         ///   - help: Documentation. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, V> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, V> & Sendable,
             name: String? = nil,
             placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),
@@ -139,7 +139,7 @@ extension Command {
         ///     a `V`; throws ``Command/Error`` on parse failure.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, V> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, V> & Sendable,
             name: String? = nil,
             placeholder: String? = nil,
             arity: Argument.Arity = .exactly(1),

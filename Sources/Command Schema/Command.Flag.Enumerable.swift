@@ -59,7 +59,7 @@ extension Command.Flag {
     where Root: Sendable {
         /// The KeyPath into `Root` where the matched enum case is
         /// written on argv match.
-        public let keyPath: WritableKeyPath<Root, E> & Sendable
+        public let keyPath: any WritableKeyPath<Root, E> & Sendable
 
         /// Whether the cases' long options appear in help.
         public let visibility: Argument.Visibility
@@ -77,7 +77,7 @@ extension Command.Flag {
         ///     per-case rows. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, E> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, E> & Sendable,
             visibility: Argument.Visibility = .visible,
             help: Argument.Help = .init()
         ) {

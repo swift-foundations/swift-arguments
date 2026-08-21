@@ -42,7 +42,7 @@ extension Command.Flag {
     public struct Inverted: Sendable where Root: Sendable {
         /// The KeyPath into `Root` where the resolved `Bool` value is
         /// written when either form appears on argv.
-        public let keyPath: WritableKeyPath<Root, Bool> & Sendable
+        public let keyPath: any WritableKeyPath<Root, Bool> & Sendable
 
         /// The base long name from which both the "true" and "false"
         /// forms are derived (such as `"feature"` →
@@ -72,7 +72,7 @@ extension Command.Flag {
         ///   - help: Documentation. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, Bool> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, Bool> & Sendable,
             base: Argument.Name.Long,
             inversion: Inversion = .prefixedNo,
             visibility: Argument.Visibility = .visible,

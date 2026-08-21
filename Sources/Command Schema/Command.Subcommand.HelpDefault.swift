@@ -33,7 +33,7 @@ extension Command.Subcommand.HelpDefault {
     internal static func inject<Root, V>(
         _ help: Argument.Help,
         initial: Root?,
-        keyPath: WritableKeyPath<Root, V> & Sendable
+        keyPath: any WritableKeyPath<Root, V> & Sendable
     ) -> Argument.Help {
         if help.defaults != nil { return help }
         guard let initial else { return help }

@@ -54,7 +54,7 @@ extension Command.Positional {
     where Root: Sendable, V: Sendable & Equatable {
         /// The KeyPath into the array field on `Root` where parsed values
         /// are appended in argv order.
-        public let keyPath: WritableKeyPath<Root, [V]> & Sendable
+        public let keyPath: any WritableKeyPath<Root, [V]> & Sendable
 
         /// The L1 declaration carrying name / arity / visibility / help.
         public let declaration: Argument.Positional<V>
@@ -82,7 +82,7 @@ extension Command.Positional {
         ///   - help: Documentation. Defaults to empty.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, [V]> & Sendable,
             name: String? = nil,
             placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
@@ -122,7 +122,7 @@ extension Command.Positional {
         ///     a `V`; throws ``Command/Error`` on parse failure.
         @inlinable
         public init(
-            _ keyPath: WritableKeyPath<Root, [V]> & Sendable,
+            _ keyPath: any WritableKeyPath<Root, [V]> & Sendable,
             name: String? = nil,
             placeholder: String? = nil,
             arity: Argument.Arity = .atLeast(0),
