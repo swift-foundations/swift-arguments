@@ -1,18 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// Fixture for Command.Positional.Many — rest-positional shape:
-/// `mycli file1 file2 file3 …`.
 struct ManyPositional: Command.`Protocol`, Equatable {
     var files: [String]
 
@@ -42,7 +29,6 @@ extension ManyPositional {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture for Command.Option.Many — `mycli --tag a --tag b --tag c`.
 struct ManyOption: Command.`Protocol`, Equatable {
     var tags: [String]
 
@@ -69,9 +55,6 @@ extension ManyOption {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture for `Command.Positional` (one fixed) + `Command.Positional.Many`
-/// (rest) — ensures the cursor consumes fixed slots first then streams
-/// remainder into the array.
 struct MixedPositionals: Command.`Protocol`, Equatable {
     var command: String
     var arguments: [String]

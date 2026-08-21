@@ -1,22 +1,9 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
 @Suite
 struct `Command.Flag.Inverted Tests` {
-
-    // MARK: - prefixedNo strategy
 
     @Test
     func `No occurrence → initial value preserved`() throws(Command.Error) {
@@ -63,8 +50,6 @@ struct `Command.Flag.Inverted Tests` {
         )
         #expect(parsed.feature == true)
     }
-
-    // MARK: - prefixedEnableDisable strategy
 
     @Test
     func `--enable-service writes true`() throws(Command.Error) {

@@ -1,28 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-/// End-to-end parse tests for the `transform:` closure escape hatch on
-/// the four KeyPath-bound schema-node types.
-///
-/// Each test parses an argv stream against a fixture whose value type
-/// (``TransformedHost``) does NOT conform to ``Argument/Codable``. The
-/// schema's binding is created with a `transform:` closure that converts
-/// the argv-element string into the bound value type — exercising the
-/// drop-the-Codable-constraint init overload across
-/// ``Command/Positional``, ``Command/Option``,
-/// ``Command/Positional/Many``, and ``Command/Option/Many``.
 extension Command {
     @Suite
     struct Transform {

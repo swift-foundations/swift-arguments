@@ -1,45 +1,10 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-// MARK: - Test-only overlay bridge
-//
-// The ParseVisitor consults `Environment.task.read(_:)` so consumers
-// and tests can use `Environment.withOverlay` for scoped, parallel-safe
-// env-var values without mutating process state. The
-// `Argument.Environment.withOverlay` shim (in `Command Test
-// Support`) is a `Swift.String`-typed bridge that isolates the `import
-// Environment` so the `String_Primitives` `String` shadow does not
-// leak into test bodies.
-
 extension Command {
     @Suite
     struct `Environment Variable` {
-
-        // Why these tests exist:
-        //
-        // Before B1 closure, `Argument.Option.environment` was
-        // declared at the L1 layer
-        // (swift-argument-primitives/Sources/Argument Option
-        // Primitives/Argument.Option.swift:44) and plumbed through the L3
-        // binding (Command.Option.swift:59 constructor param), but the
-        // ParseVisitor never consulted the process environment for any
-        // un-supplied option. The fix below reads via
-        // `Environment.task.read(_:)` so each option declared with an
-        // `environment:` and not provided by argv receives its
-        // value from the (TaskLocal-overlay-aware) process environment;
-        // argv-supplied values take precedence.
 
         @Test
         func `Env-var supplies value when option is absent from argv`() throws(Command.Error) {
@@ -66,8 +31,7 @@ extension Command {
 
         @Test
         func `Unset env-var leaves the initial default in place`() throws(Command.Error) {
-            // No overlay supplied; ENVCOUNTED_COUNT_TEST is not set by the
-            // process either, so the default field value persists.
+
             let parsed = try Command.parse(
                 EnvCounted.self,
                 from: ["hello"],
@@ -111,9 +75,6 @@ extension Command {
     }
 }
 
-// MARK: - Fixtures
-
-/// A command with an environment-variable-backed `--count` option.
 struct EnvCounted: Command.`Protocol`, Equatable {
     var phrase: String = ""
     var count: Int = 2
@@ -142,7 +103,6 @@ extension EnvCounted {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// A command whose env-var-backed option is in an OptionGroup.
 struct EnvGroupFragment: Sendable, Equatable {
     var verbose: Bool = false
     var output: String = "default"

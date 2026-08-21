@@ -1,28 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// Subcommand-dispatch fixture: a minimal Git-shaped sum-type command.
-///
-/// `Git` mirrors the swift-argument-parser Git example from the design
-/// doc §3.5 — a parent command with two subcommands (`clone`, `status`)
-/// that dispatch via `Parser.OneOf`-shaped sum-type selection.
-///
-/// The fixture serves as the load-bearing P4 acceptance test for the
-/// subcommand-dispatch surface: a successful parse routes argv to the
-/// matching `Sub` command schema and lifts the parsed value into the
-/// `Git` enum's matching case.
-
-/// A `clone`-shaped sub-command with one positional URL.
 struct Clone: Command.`Protocol`, Equatable {
     var url: String
 
@@ -50,11 +27,10 @@ extension Clone {
     }
 
     mutating func run() async throws(Command.Error) {
-        // No-op for tests.
+
     }
 }
 
-/// A `status`-shaped sub-command with one boolean flag.
 struct Status: Command.`Protocol`, Equatable {
     var short: Bool
 
@@ -82,11 +58,10 @@ extension Status {
     }
 
     mutating func run() async throws(Command.Error) {
-        // No-op for tests.
+
     }
 }
 
-/// A `git`-shaped parent command: a sum type with two subcommand cases.
 enum Git: Command.`Protocol`, Equatable {
     case clone(Clone)
     case status(Status)

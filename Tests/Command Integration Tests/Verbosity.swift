@@ -1,17 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// Fixture for Command.Flag.Count — `mycli -vvv` increments verbosity.
 struct Verbosity: Command.`Protocol`, Equatable {
     var level: Int
 

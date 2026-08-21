@@ -1,25 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-/// End-to-end parse tests for D15 — `Optional<T>: Argument.Codable`.
-///
-/// Validates that schema-bound optional properties:
-/// 1. Default to `nil` when the option is absent from argv.
-/// 2. Carry `.some(value)` when present and the wrapped parse succeeds.
-/// 3. Surface `Command.Error.invalidValue` when present with an invalid
-///    argv value (matching the per-argument-decode failure model).
 extension Command {
     @Suite
     struct `Optional Argument` {
@@ -66,9 +48,7 @@ extension Command {
 
         @Test
         func `--label= empty argv produces .some("")`() throws(Command.Error) {
-            // The Optional<String> conformance delegates to String's
-            // never-nil-returning init?(argument:), so an empty argv string
-            // yields .some("") — distinguishable from .none (absence).
+
             let parsed = try Command.parse(
                 OptionalSchema.self,
                 from: ["--label", ""],
@@ -89,7 +69,7 @@ extension Command {
             } catch {
                 switch error {
                 case .invalidValue:
-                    break  // expected: Optional<Int>.init?(argument: "not-num") returns nil
+                    break
 
                 default:
                     Issue.record("Expected invalidValue, got \(error)")

@@ -1,23 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// Integration-test fixture covering D15 — `Optional<T>: Argument.Codable`.
-///
-/// `OptionalSchema` declares both `String?` and `Int?` properties so the
-/// schema parser exercises the optional-binding path end-to-end. A
-/// well-formed argv populates `.some(value)`; absent options leave the
-/// property at its declared `nil` default. Invalid argv values surface
-/// `Command.Error.invalidValue` per the standard parse-failure model.
 struct OptionalSchema: Command.`Protocol`, Equatable {
     var label: String?
     var count: Int?
@@ -52,6 +34,6 @@ extension OptionalSchema {
     }
 
     mutating func run() async throws(Command.Error) {
-        // No-op for tests.
+
     }
 }

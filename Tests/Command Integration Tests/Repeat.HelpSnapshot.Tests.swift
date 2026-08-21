@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -17,11 +6,6 @@ extension Repeat {
     @Suite
     struct HelpSnapshot {
 
-        /// The exact help-text shape expected for `Repeat`.
-        ///
-        /// This is the canonical evidence cited in the closeout report:
-        /// the schema-driven help serializer produces a readable
-        /// swift-argument-parser-shaped layout for the canonical fixture.
         private static let expected: String = """
             USAGE: repeat [--count <count>] [--counter] <phrase>
 

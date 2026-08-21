@@ -1,19 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// Fixture: a sub-command that takes no arguments.
-///
-/// Used as the default for `RouterWithDefault`.
 struct DefaultList: Command.`Protocol`, Equatable {
 }
 
@@ -29,9 +15,6 @@ extension DefaultList {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture: a sub-command with one positional.
-///
-/// The explicit-only case in `RouterWithDefault`.
 struct DefaultClone: Command.`Protocol`, Equatable {
     var url: String
 
@@ -54,8 +37,6 @@ extension DefaultClone {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Sum-type parent with a default subcommand: empty argv dispatches to
-/// `.list` because that Case is marked `.default`.
 enum RouterWithDefault: Command.`Protocol`, Equatable {
     case list(DefaultList)
     case clone(DefaultClone)
@@ -96,7 +77,6 @@ extension RouterWithDefault {
     }
 }
 
-/// Sum-type parent WITHOUT a default — empty argv yields `.missingSubcommand`.
 enum RouterWithoutDefault: Command.`Protocol`, Equatable {
     case list(DefaultList)
     case clone(DefaultClone)

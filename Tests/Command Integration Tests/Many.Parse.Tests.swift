@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -16,8 +5,6 @@ import Testing
 extension Command {
     @Suite
     struct Many {
-
-        // MARK: - Positional.Many
 
         @Test
         func `Empty argv → empty array (default atLeast(0))`() throws(Command.Error) {
@@ -45,8 +32,6 @@ extension Command {
             #expect(parsed.files == ["a", "b", "c", "d"])
         }
 
-        // MARK: - Option.Many
-
         @Test
         func `Zero occurrences → empty array (default atLeast(0))`() throws(Command.Error) {
             let parsed = try Command.parse(ManyOption.self, from: [], initial: ManyOption())
@@ -72,8 +57,6 @@ extension Command {
             )
             #expect(parsed.tags == ["alpha", "beta", "gamma"])
         }
-
-        // MARK: - Mixed fixed + rest positional
 
         @Test
         func `Fixed positional consumed first, rest stream into array`() throws(Command.Error) {

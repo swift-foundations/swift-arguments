@@ -12,13 +12,12 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        // MARK: - Namespace
+
         .library(
             name: "Command Primitive",
             targets: ["Command Primitive"]
         ),
 
-        // MARK: - Core + Variants
         .library(
             name: "Command Core",
             targets: ["Command Core"]
@@ -40,13 +39,11 @@ let package = Package(
             targets: ["Argument Standard Library Integration"]
         ),
 
-        // MARK: - Umbrella
         .library(
             name: "Command",
             targets: ["Command"]
         ),
 
-        // MARK: - Test Support
         .library(
             name: "Command Test Support",
             targets: ["Command Test Support"]
@@ -90,16 +87,12 @@ let package = Package(
         .package(url: "https://github.com/swift-foundations/swift-process.git", branch: "main"),
     ],
     targets: [
-        // MARK: - Namespace
+
         .target(
             name: "Command Primitive",
             dependencies: []
         ),
 
-        // MARK: - Argument Standard Library Integration
-        // Per [FAM-009] hybrid placement rule: Argument.Codable / Parseable /
-        // Serializable sibling protocols + stdlib conformances live at L3
-        // (relocated from L1 due to [PRIM-FOUND-004] substrate-friction).
         .target(
             name: "Argument Standard Library Integration",
             dependencies: [
@@ -107,10 +100,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Core
-        // Owns Command.`Protocol`, Configuration, Error, Context, Exit, plus
-        // the L3 argv-tokenizer composition (IEEE_1003 + inline GNU long
-        // options per §3.4 v1.0.7).
         .target(
             name: "Command Core",
             dependencies: [
@@ -126,7 +115,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Schema (L3 binding-aware schema with KeyPath value-writers)
         .target(
             name: "Command Schema",
             dependencies: [
@@ -144,7 +132,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Help (Serializer.`Protocol` over Command.Schema.Definition)
         .target(
             name: "Command Help",
             dependencies: [
@@ -153,12 +140,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Runner
-        // Hosts `Command.main(_:initial:arguments:)` — the opt-in
-        // convenience runner that composes parse + run + diagnostic
-        // rendering + `Process.exit(_:)`. Isolated from Core / Schema /
-        // Help so consumers using only the parsing surface do not
-        // transitively pull in swift-process.
         .target(
             name: "Command Runner",
             dependencies: [
@@ -169,7 +150,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Umbrella per [MOD-005]
         .target(
             name: "Command",
             dependencies: [
@@ -182,7 +162,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Test Support per [MOD-011] / [MOD-024] spine
         .target(
             name: "Command Test Support",
             dependencies: [
@@ -198,20 +177,12 @@ let package = Package(
             exclude: ["Runner Helper"]
         ),
 
-        // MARK: - Test Helper Executable
-        // A real `Command.main(_:initial:)` consumer. `Command.main`
-        // returns `Never`, so its termination behaviour is only
-        // observable by spawning it as a child process and capturing
-        // its output through a pipe — see
-        // `Command.Main.Redirection.Tests.swift`. Precedent:
-        // swift-iso-9945's `Tests/Support/Lock Helper`.
         .executableTarget(
             name: "command-runner-helper",
             dependencies: ["Command"],
             path: "Tests/Support/Runner Helper"
         ),
 
-        // MARK: - Tests
         .testTarget(
             name: "Command Core Tests",
             dependencies: ["Command Test Support"]
@@ -228,10 +199,7 @@ let package = Package(
             name: "Command Integration Tests",
             dependencies: [
                 "Command Test Support",
-                // The suite spawns this helper, so it must exist before the
-                // suite runs. Without the dependency SwiftPM has no reason
-                // to build it for `swift test`, and the suite passed only on
-                // legs that happened to run a separate `swift build` first.
+
                 "command-runner-helper",
                 .product(name: "Process", package: "swift-process"),
             ]

@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -41,8 +30,6 @@ extension Command.Error {
             #expect(a == b)
             #expect(a != c)
         }
-
-        // MARK: - D17 exit case
 
         @Test
         func `exit case carries code without message`() {
@@ -83,10 +70,7 @@ extension Command.Error {
 
         @Test
         func `exit case usable from run() bodies via typed throws`() {
-            // Models a consumer's `run()` body raising an exit:
-            // the structural carrier survives the typed-throws path so
-            // tests can `catch` and assert without unwrapping any
-            // platform-level intrinsic.
+
             func runBody() throws(Command.Error) {
                 throw .exit(code: 64, message: "EX_USAGE")
             }

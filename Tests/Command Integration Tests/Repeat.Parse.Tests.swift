@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -63,8 +52,6 @@ extension Repeat {
             #expect(parsed == Repeat(phrase: "world", count: 4, counter: true))
         }
 
-        // MARK: - Error paths
-
         @Test
         func `Missing positional throws .missingPositional`() {
             do throws(Command.Error) {
@@ -73,7 +60,7 @@ extension Repeat {
             } catch {
                 switch error {
                 case .missingPositional:
-                    break  // expected
+                    break
 
                 default:
                     Issue.record("Expected missingPositional, got \(error)")
@@ -93,7 +80,7 @@ extension Repeat {
             } catch {
                 switch error {
                 case .invalidValue:
-                    break  // expected
+                    break
 
                 default:
                     Issue.record("Expected invalidValue, got \(error)")
@@ -113,7 +100,7 @@ extension Repeat {
             } catch {
                 switch error {
                 case .unknownLongOption:
-                    break  // expected
+                    break
 
                 default:
                     Issue.record("Expected unknownLongOption, got \(error)")
@@ -129,7 +116,7 @@ extension Repeat {
             } catch {
                 switch error {
                 case .helpRequested:
-                    break  // expected
+                    break
 
                 default:
                     Issue.record("Expected .helpRequested, got \(error)")

@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -54,8 +43,6 @@ struct `Command.Schema.Definition Tests` {
         #expect(definition.nodes.count == 2)
     }
 
-    // MARK: - D16 OptionGroup
-
     fileprivate struct Fragment: Sendable, Equatable {
         var name: String = ""
     }
@@ -67,8 +54,7 @@ struct `Command.Schema.Definition Tests` {
 
     @Test
     func `OptionGroup is a Schema.Node`() {
-        // Witnesses Command.OptionGroup: Command.Schema.Node — the
-        // builder grammar's `buildExpression` accepts it.
+
         let definition = Command.Schema.Definition<CompositeRoot> {
             Command.OptionGroup(\.fragment, schema: Fragment.schema)
             Command.Option(\.count, name: .longLiteral("count"))

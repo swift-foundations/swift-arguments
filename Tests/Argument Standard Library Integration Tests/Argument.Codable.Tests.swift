@@ -1,22 +1,9 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
 @Suite
 struct `Argument.Codable Tests` {
-
-    // MARK: - Int
 
     @Test
     func `Int parses valid decimal`() {
@@ -37,8 +24,6 @@ struct `Argument.Codable Tests` {
         #expect(Int(argument: value.argumentDescription) == 123)
     }
 
-    // MARK: - UInt / Int32 / Int64
-
     @Test
     func `UInt parses non-negative`() {
         #expect(UInt(argument: "42") == 42)
@@ -56,8 +41,6 @@ struct `Argument.Codable Tests` {
         #expect(Int64(argument: "9223372036854775000") == 9_223_372_036_854_775_000)
     }
 
-    // MARK: - Bool
-
     @Test
     func `Bool parses true/false`() {
         #expect(Bool(argument: "true") == true)
@@ -70,8 +53,6 @@ struct `Argument.Codable Tests` {
         #expect(Bool(argument: "TRUE") == nil)
     }
 
-    // MARK: - String
-
     @Test
     func `String adopts argv element as-is`() {
         #expect(String(argument: "hello") == "hello")
@@ -83,8 +64,6 @@ struct `Argument.Codable Tests` {
         let s = "hello world"
         #expect(s.argumentDescription == "hello world")
     }
-
-    // MARK: - Double / Float
 
     @Test
     func `Double parses`() {
@@ -99,23 +78,16 @@ struct `Argument.Codable Tests` {
         #expect(Float(argument: "bad") == nil)
     }
 
-    // MARK: - D15 Optional conformance
-
     @Test
     func `Optional<String> parses non-empty string into .some`() {
-        // Optional<String>.init?(argument:) returns String??: the outer
-        // optional is the protocol's failure-signalling Self?; the inner
-        // is the Wrapped value.
+
         let value: String?? = String?.init(argument: "hello")
         #expect(value == .some(.some("hello")))
     }
 
     @Test
     func `Optional<String> parses empty string into .some("")`() {
-        // Optional<String>.init(argument: "") delegates to
-        // String.init(argument:) which never returns nil — even empty
-        // strings adopt as-is — so the outer Optional sees .some(""),
-        // yielding .some(.some("")) at the schema layer.
+
         let value: String?? = String?.init(argument: "")
         #expect(value == .some(.some("")))
     }
@@ -128,8 +100,7 @@ struct `Argument.Codable Tests` {
 
     @Test
     func `Optional<Int> returns nil for invalid argv`() {
-        // Wrapped Int rejects "not-num" → Optional init? returns nil
-        // → schema parser surfaces .invalidValue at consumer call site.
+
         let value: Int?? = Int?.init(argument: "not-num")
         #expect(value == .none)
     }
@@ -174,8 +145,7 @@ struct `Argument.Codable Tests` {
 
     @Test
     func `Optional<Int> conforms to Argument.Codable`() {
-        // Witness that Optional<Wrapped: Codable>: Codable composes —
-        // a function generic on Codable must accept Optional<Int>.
+
         func acceptsCodable<T: Argument.Codable>(_ type: T.Type) -> String {
             "\(type)"
         }

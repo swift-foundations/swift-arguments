@@ -1,24 +1,5 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// The canonical end-to-end test fixture.
-///
-/// `Repeat` mirrors the swift-argument-parser introductory example: a
-/// CLI that repeats an input phrase a configurable number of times,
-/// optionally with a per-iteration counter prefix.
-///
-/// See the design doc §3.5 surface example. Used by the integration
-/// tests as the load-bearing acceptance test for the full L3 stack.
 struct Repeat: Command.`Protocol`, Equatable {
     var phrase: String
     var count: Int
@@ -60,6 +41,6 @@ extension Repeat {
     }
 
     mutating func run() async throws(Command.Error) {
-        // No-op for tests; the production `run()` would print phrases.
+
     }
 }

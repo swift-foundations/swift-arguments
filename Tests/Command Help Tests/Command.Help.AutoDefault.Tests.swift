@@ -1,20 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-/// Fixture command with one Int option whose default we expect to be
-/// auto-derived from the seed instance's field value.
 private struct AutoDefaultFixture: Command.`Protocol`, Equatable {
     var phrase: String
     var count: Int
@@ -43,8 +30,6 @@ extension AutoDefaultFixture {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture with an Optional<Int> option: nil-default suppresses,
-/// some(v) renders.
 private struct OptionalIntFixture: Command.`Protocol`, Equatable {
     var port: Int?
 
@@ -90,7 +75,7 @@ struct `Command.Help AutoDefault Tests` {
             into: &buffer,
             initial: AutoDefaultFixture(phrase: "hello")
         )
-        // The positional ARGUMENTS section should carry the default.
+
         #expect(buffer.contains("<phrase>"))
         #expect(buffer.contains("(default: hello)"))
     }
@@ -103,7 +88,7 @@ struct `Command.Help AutoDefault Tests` {
             into: &buffer,
             initial: AutoDefaultFixture(counter: true)
         )
-        // Flag line is present, but no '(default: true)' suffix.
+
         #expect(buffer.contains("--counter"))
         #expect(!buffer.contains("(default: true)"))
         #expect(!buffer.contains("(default: false)"))
@@ -140,8 +125,7 @@ struct `Command.Help AutoDefault Tests` {
             AutoDefaultFixture.schema,
             into: &buffer
         )
-        // No initial → no auto-default suffix, even though the seed
-        // would have `count = 7`.
+
         #expect(buffer.contains("--count <count>"))
         #expect(!buffer.contains("(default: 7)"))
     }

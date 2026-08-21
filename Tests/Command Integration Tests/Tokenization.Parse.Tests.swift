@@ -1,19 +1,6 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
-
-// MARK: - Gap 1 — Glued short-option value (POSIX 12.2 Guideline 6)
 
 extension Command {
     @Suite
@@ -52,8 +39,6 @@ extension Command {
     }
 }
 
-// MARK: - Gap 2 — Negative-number positional
-
 extension Command {
     @Suite
     struct `Negative Number Positional` {
@@ -82,9 +67,7 @@ extension Command {
         func `Schema-explicit -5 flag wins over numeric-positional heuristic`() throws(Command
             .Error)
         {
-            // Schema declares `-5` as a Bool flag AND an Int positional.
-            // Argv `["-5", "7"]`: the heuristic suppresses because `-5` IS a
-            // schema-declared short flag → flag fires; positional reads "7".
+
             let parsed = try Command.parse(
                 NegativeNumberWithFiveFlag.self,
                 from: ["-5", "7"],
@@ -94,8 +77,6 @@ extension Command {
         }
     }
 }
-
-// MARK: - Gap 3 — Did-you-mean suggestions
 
 extension Command.Diagnostic.Suggestion {
     @Suite

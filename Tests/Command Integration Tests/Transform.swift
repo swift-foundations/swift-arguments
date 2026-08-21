@@ -1,38 +1,12 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 
-/// A value type used to exercise the `transform:` escape hatch on
-/// schema-node binding inits.
-///
-/// Critically, this type does NOT conform to ``Argument/Codable``. It
-/// stands in for value types the consumer does not own (such as
-/// `Foundation.URL`, third-party value types) where the only path to a
-/// schema-bound value is a custom argv-string parse closure supplied at
-/// the call site.
 struct TransformedHost: Sendable, Equatable {
     let scheme: String
     let host: String
 }
 
 extension TransformedHost {
-    /// Parses `"scheme://host"` into a `TransformedHost`.
-    ///
-    /// Returns `nil` when the input doesn't contain `"://"` or either
-    /// side is empty.
-    ///
-    /// Implemented via manual character scanning to avoid pulling in
-    /// `Standard_Library_Extensions` (the `String.range(of:)` family
-    /// requires it under the `#MemberImportVisibility` Swift 6 rule).
+
     static func parse(_ string: String) -> Self? {
         var schemeChars: [Character] = []
         var hostChars: [Character] = []
@@ -69,8 +43,6 @@ extension TransformedHost {
     }
 }
 
-/// Fixture: `Command.Positional` bound to a non-Codable type via
-/// `transform:` closure.
 struct TransformedPositional: Command.`Protocol`, Equatable {
     var endpoint: TransformedHost
 
@@ -110,8 +82,6 @@ extension TransformedPositional {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture: `Command.Option` bound to a non-Codable type via
-/// `transform:` closure.
 struct TransformedOption: Command.`Protocol`, Equatable {
     var endpoint: TransformedHost
 
@@ -151,8 +121,6 @@ extension TransformedOption {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture: `Command.Positional.Many` bound to a non-Codable element
-/// type via `transform:` closure.
 struct TransformedPositionalMany: Command.`Protocol`, Equatable {
     var endpoints: [TransformedHost]
 
@@ -192,8 +160,6 @@ extension TransformedPositionalMany {
     mutating func run() async throws(Command.Error) {}
 }
 
-/// Fixture: `Command.Option.Many` bound to a non-Codable element type
-/// via `transform:` closure.
 struct TransformedOptionMany: Command.`Protocol`, Equatable {
     var endpoints: [TransformedHost]
 

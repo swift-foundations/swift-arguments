@@ -1,23 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-/// Help-text emission tests for D16 — `Command.OptionGroup<Root, G>`.
-///
-/// Validates that an option-group declaration inlines the fragment
-/// schema's options into the parent command's `--help` output, matching
-/// the rendered shape that a flat (non-grouped) schema would produce.
 @Suite
 struct `Command.OptionGroup Help Tests` {
 
@@ -84,8 +68,7 @@ struct `Command.OptionGroup Help Tests` {
 
     @Test
     func `Hidden OptionGroup omits its options from help`() {
-        // Inline schema with a hidden group — assert the group's rows
-        // do NOT appear in --help.
+
         struct HiddenOG: Command.`Protocol`, Equatable {
             var options: SharedRootOptions = .init()
             var name: String = ""
@@ -111,7 +94,7 @@ struct `Command.OptionGroup Help Tests` {
         let help = Command.Help<HiddenOG>().serialize(HiddenOG.schema)
         #expect(!help.contains("--root"))
         #expect(!help.contains("Repository root directory."))
-        // Positional still rendered.
+
         #expect(help.contains("<name>"))
     }
 }

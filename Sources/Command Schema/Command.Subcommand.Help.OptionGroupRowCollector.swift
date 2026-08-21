@@ -1,37 +1,13 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 extension Command.Subcommand.Help {
-    /// A help-text row collector for ``Command/OptionGroup`` sub-schemas
-    /// in subcommand help rendering.
-    ///
-    /// Mirrors ``Command/Help/OptionGroupRowCollector`` exactly in shape;
-    /// the two collectors duplicate because the `Command Schema` target
-    /// cannot depend on `Command Help` (and vice-versa is fine but not
-    /// needed). Schema authors interact with neither directly — the
-    /// parent visitor invokes the appropriate collector via
-    /// ``Command/Schema/Visitor/visit(optionGroup:)``.
+
     @usableFromInline
     internal struct OptionGroupRowCollector<G: Sendable & Equatable>: Command.Schema.Visitor {
         @usableFromInline
         internal typealias Failure = Never
 
-        /// Optional seed value for the option-group fragment.
-        ///
-        /// Mirrors ``Command/HelpOptionGroupRowCollector``'s `initial`
-        /// slot.
         @usableFromInline
         internal let initial: G?
 
-        /// Accumulated rows in declaration order.
         @usableFromInline
         internal var rows: [Command.Subcommand.Help.Row] = []
 
@@ -204,18 +180,14 @@ extension Command.Subcommand.Help {
         internal mutating func visit(
             subcommandGroup: Command.Subcommand.Group<G>
         ) throws(Never) {
-            // Subcommand groups inside an option group are rejected at
-            // parse time; skip silently at render time.
+
         }
 
         @usableFromInline
         internal mutating func visit<H: Sendable & Equatable>(
             optionGroup nested: Command.OptionGroup<G, H>
         ) throws(Never) {
-            // Nested option groups: recurse into the nested group's
-            // sub-schema with a fresh row collector rooted on H. Rows
-            // are appended in declaration order; visibility on the
-            // nested group acts as an AND-mask.
+
             if nested.visibility == .hidden {
                 return
             }

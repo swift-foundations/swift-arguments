@@ -1,18 +1,6 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Command_Test_Support
 import Finite_Primitives
 
-/// Mutually exclusive operation enum mapping each case to a long-option name.
 enum Operation: Argument.Flag.Enumerable {
     case add
     case multiply
@@ -37,7 +25,6 @@ extension Operation {
     }
 }
 
-/// Fixture for Command.Flag.Enumerable.
 struct Calculator: Command.`Protocol`, Equatable {
     var operation: Operation
 

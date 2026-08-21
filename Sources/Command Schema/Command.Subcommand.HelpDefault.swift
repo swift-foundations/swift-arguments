@@ -1,34 +1,11 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 extension Command.Subcommand {
-    /// Default-value-derivation helpers shared by
-    /// ``Command/Subcommand/Help/Visitor`` and
-    /// ``Command/Subcommand/Help/OptionGroupRowCollector``.
-    ///
-    /// Mirrors the structure of ``Command/HelpDefault`` (in the
-    /// `Command Help` target) so the sub-help rendering path emits
-    /// identical default-line content as the top-level help path. The
-    /// duplication is intentional per the v1 layering note documented on
-    /// ``Command/Subcommand/Help/Visitor`` — the Schema target must
-    /// remain dependency-free of the help-text formatter.
+
     @usableFromInline
     internal enum HelpDefault {}
 }
 
 extension Command.Subcommand.HelpDefault {
-    /// Derives a default-value description from `initial` against
-    /// the supplied `keyPath`, swapping it into
-    /// `help.defaults` only when (a) the user did not
-    /// declare one explicitly AND (b) initial is non-`nil`.
+
     @usableFromInline
     internal static func inject<Root, V>(
         _ help: Argument.Help,
@@ -48,17 +25,12 @@ extension Command.Subcommand.HelpDefault {
         )
     }
 
-    /// Renders a typed default value to its display string per the
-    /// per-binding-type rules in §3.13.
     @usableFromInline
     internal static func render<V>(_ value: V) -> String? {
         if let optional = value as? (any _SubcommandOptionalConvertible) {
             return optional._unwrapped.map { Swift.String(describing: $0) }
         }
-        // `V` is an unconstrained generic parameter here — an existential
-        // cast is the only way to probe for Collection conformance at
-        // runtime for an arbitrary binding type.
-        // swiftlint:disable:next no_any_protocol_existential
+
         if let collection = value as? (any Collection), collection.isEmpty {
             return nil
         }
@@ -70,12 +42,6 @@ extension Command.Subcommand.HelpDefault {
     }
 }
 
-/// Internal Optional-unwrap helper for the Schema target.
-///
-/// Mirrors the top-level helper in
-/// `Command Help/Command.Help.Default.swift`; the duplication is
-/// intentional per the v1 layering note (Schema must remain
-/// dependency-free of Help).
 @usableFromInline
 internal protocol _SubcommandOptionalConvertible {
     var _unwrapped: Any? { get }

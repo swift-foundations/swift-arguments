@@ -1,78 +1,30 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 extension Command.Help {
-    /// The visitor that walks a ``Command/Schema/Definition`` and
-    /// accumulates the entries needed to render help text.
-    ///
-    /// `Visitor` collects rows during the schema walk; ``render()`` then
-    /// composes the formatted help text in the canonical
-    /// swift-argument-parser layout. The two-pass shape lets the USAGE
-    /// line cite every option / flag / positional listed in the schema.
-    ///
-    /// Inherits the `Root` generic from the enclosing
-    /// ``Command/Help`` struct.
+
     public struct Visitor: Command.Schema.Visitor {
-        /// Pure-text row accumulation — cannot fail.
+
         public typealias Failure = Never
 
-        /// The configuration carried for USAGE-line and ABSTRACT
-        /// emission.
         @usableFromInline
         internal let configuration: Command.Configuration
 
-        /// Optional seed instance from which auto-derived defaults are
-        /// extracted at visit-time.
-        ///
-        /// When non-`nil`, each visit method
-        /// reads the bound field via the declaration's `keyPath` and
-        /// fills in `Argument.Help.defaults` per the per-binding
-        /// rules documented in ``Command/HelpDefault``. When `nil`, no
-        /// defaults are auto-derived (the v1.0.15 behavior preserved for
-        /// the no-initial overload of ``Command/Help/serialize(_:into:)``).
         @usableFromInline
         internal let initial: Root?
 
-        /// Accumulated rows in declaration order.
         @usableFromInline
         internal var rows: [Command.HelpRow] = []
 
-        /// Creates a visitor capturing `configuration` for the eventual
-        /// `render()` call.
-        ///
-        /// No `initial` value — auto-derived defaults are skipped.
         @inlinable
         public init(configuration: Command.Configuration) {
             self.configuration = configuration
             self.initial = nil
         }
 
-        /// Creates a visitor capturing `configuration` and `initial`
-        /// for the eventual `render()` call.
-        ///
-        /// When `initial` is non-`nil`,
-        /// each visit method auto-derives a default-value description
-        /// from `initial[keyPath: keyPath]` for any declaration that
-        /// did not specify one explicitly.
         @inlinable
         public init(configuration: Command.Configuration, initial: Root) {
             self.configuration = configuration
             self.initial = initial
         }
 
-        /// Appends a ``Command/HelpRow/positional`` row.
-        ///
-        /// Derived from `positional`'s declaration, auto-deriving a
-        /// default-value description from `initial` when the
-        /// declaration's help does not already specify one.
         public mutating func visit<V: Sendable & Equatable>(
             positional: Command.Positional<Root, V>
         ) throws(Never) {
@@ -91,11 +43,6 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/positionalMany`` row.
-        ///
-        /// Derived from `positionalMany`'s declaration, auto-deriving a
-        /// default-value description from `initial` only when the
-        /// initial array is non-empty.
         public mutating func visit<V: Sendable & Equatable>(
             positionalMany: Command.Positional<Root, V>.Many
         ) throws(Never) {
@@ -114,11 +61,6 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/option`` row.
-        ///
-        /// Derived from `option`'s declaration, auto-deriving a
-        /// default-value description from `initial` when the
-        /// declaration's help does not already specify one.
         public mutating func visit<V: Sendable & Equatable>(
             option: Command.Option<Root, V>
         ) throws(Never) {
@@ -137,11 +79,6 @@ extension Command.Help {
             )
         }
 
-        /// Appends an ``Command/HelpRow/optionMany`` row.
-        ///
-        /// Derived from `optionMany`'s declaration, auto-deriving a
-        /// default-value description from `initial` only when the
-        /// initial array is non-empty.
         public mutating func visit<V: Sendable & Equatable>(
             optionMany: Command.Option<Root, V>.Many
         ) throws(Never) {
@@ -160,13 +97,8 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/flag`` row derived from the `flag` declaration.
         public mutating func visit(flag: Command.Flag<Root>) throws(Never) {
-            // Plain Bool flags do NOT auto-derive a default — the
-            // present/absent semantics is what `Flag` models, and
-            // rendering `(default: false)` on every flag would be noisy.
-            // `HelpDefault.render` already suppresses `Bool` values; we
-            // omit the inject call entirely for symmetry.
+
             rows.append(
                 .flag(
                     name: flag.declaration.name,
@@ -176,11 +108,6 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/flagCount`` row.
-        ///
-        /// Derived from `flagCount`'s declaration, auto-deriving a
-        /// default-value description from `initial` only when the
-        /// initial counter is non-zero.
         public mutating func visit(
             flagCount: Command.Flag<Root>.Count
         ) throws(Never) {
@@ -198,20 +125,10 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/flagInverted`` row.
-        ///
-        /// Derived from `flagInverted`'s declaration, deriving the
-        /// rendered default-line name directly from `initial`'s bound
-        /// `Bool` value when the declaration's help does not already
-        /// specify one.
         public mutating func visit(
             flagInverted: Command.Flag<Root>.Inverted
         ) throws(Never) {
-            // `Flag.Inverted` is special: the default-line shape is
-            // `(default: --no-feature)` / `(default: --feature)` keyed
-            // on the bound `Bool`'s initial value. The shared
-            // `HelpDefault.inject` path suppresses `Bool` values, so we
-            // derive the rendered side here directly.
+
             var help = flagInverted.help
             if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagInverted.keyPath]
@@ -233,17 +150,10 @@ extension Command.Help {
             )
         }
 
-        /// Appends a ``Command/HelpRow/flagEnumerable`` row.
-        ///
-        /// Derived from `flagEnumerable`'s declaration and its full case
-        /// list, deriving the rendered default-line name from
-        /// `initial`'s bound case when the declaration's help does not
-        /// already specify one.
         public mutating func visit<E: Argument.Flag.Enumerable>(
             flagEnumerable: Command.Flag<Root>.Enumerable<E>
         ) throws(Never) {
-            // `Flag.Enumerable` is keyed on `initial[keyPath:]`'s case;
-            // the default-line shape is the case's flag name.
+
             var help = flagEnumerable.help
             if help.defaults == nil, let initial {
                 let value = initial[keyPath: flagEnumerable.keyPath]
@@ -270,8 +180,6 @@ extension Command.Help {
             )
         }
 
-        /// Appends one ``Command/HelpRow/subcommand`` row per binding in
-        /// `group`, in declaration order.
         public mutating func visit(
             subcommandGroup group: Command.Subcommand.Group<Root>
         ) throws(Never) {
@@ -286,41 +194,20 @@ extension Command.Help {
             }
         }
 
-        /// Splices the rendered rows of `optionGroup` into this visitor.
-        ///
-        /// Walks `optionGroup`'s sub-schema via a fragment visitor and
-        /// splices the accumulated rows into this visitor's `rows`,
-        /// chaining `initial` through the group's `keyPath` so
-        /// sub-fields also pick up auto-derived defaults.
         public mutating func visit<G: Sendable & Equatable>(
             optionGroup: Command.OptionGroup<Root, G>
         ) throws(Never) {
-            // Inline the group's sub-schema rows into this visitor's row
-            // list. A fragment-visitor walks the sub-schema and accumulates
-            // `Command.HelpRow` entries in declaration order, which we
-            // splice into this visitor's `rows`. The shared Row type
-            // (non-generic over Root) means no per-Root re-wrapping is
-            // needed.
-            //
-            // When the group is `.hidden`, the rows are dropped entirely
-            // (the parent's USAGE / OPTIONS sections show no trace of the
-            // group). When `.visible`, per-sub-node visibility on the
-            // fragment's own schema still applies — the parent's
-            // visibility is an AND-mask, not an override.
+
             if optionGroup.visibility == .hidden {
                 return
             }
-            // Propagate the parent's `initial[keyPath: outerKeyPath]: G`
-            // into the fragment collector so OptionGroup sub-fields also
-            // pick up auto-derived defaults from their `initial` slice.
+
             let innerInitial: G? = initial.map { $0[keyPath: optionGroup.keyPath] }
             var fragment = Command.HelpOptionGroupRowCollector<G>(initial: innerInitial)
             optionGroup.schema.accept(&fragment)
             rows.append(contentsOf: fragment.rows)
         }
 
-        /// Renders the accumulated rows into the canonical help-text
-        /// format.
         public func render() -> String {
             var output = ""
             output += renderUsage() + "\n"
@@ -329,16 +216,10 @@ extension Command.Help {
                 output += "\nOVERVIEW: " + configuration.abstract + "\n"
             }
 
-            // Aliases section — mirrors swift-argument-parser's
-            // "Aliases:" line which appears after OVERVIEW. Rendered only
-            // when the configuration declares one or more aliases.
             if !configuration.aliases.isEmpty {
                 output += "\nALIASES: " + configuration.aliases.joined(separator: ", ") + "\n"
             }
 
-            // Discussion section — multi-paragraph extended description.
-            // Apple's swift-argument-parser emits this between OVERVIEW
-            // and ARGUMENTS; matches that placement.
             if !configuration.discussion.isEmpty {
                 output += "\nDISCUSSION:\n"
                 for line in configuration.discussion.split(
@@ -400,8 +281,6 @@ extension Command.Help {
                 }
             }
 
-            // OPTIONS section emitted unconditionally — at minimum --help
-            // appears.
             output += "\nOPTIONS:\n"
             for row in visibleRows {
                 switch row {
@@ -450,9 +329,7 @@ extension Command.Help {
 
                 case .flagEnumerable(let cases, let groupHelp, _):
                     if !groupHelp.abstract.isEmpty || groupHelp.defaults != nil {
-                        // Group header row first (carrying any
-                        // auto-derived default), then per-case rows
-                        // indented under it.
+
                         var right = groupHelp.abstract
                         if let def = groupHelp.defaults, !def.isEmpty {
                             right += " (default: \(def))"
@@ -469,8 +346,6 @@ extension Command.Help {
             }
             output += "  " + pad("-h, --help", to: Self.padWidth) + "  Show help information.\n"
 
-            // SUBCOMMANDS section: emitted when the schema declares any
-            // visible subcommand binding.
             let subcommandRows: [Command.HelpRow] = visibleRows.compactMap { row in
                 if case .subcommand = row { return row }
                 return nil
@@ -485,8 +360,6 @@ extension Command.Help {
             }
             return output
         }
-
-        // MARK: - Helpers
 
         @usableFromInline
         internal static var padWidth: Int { 24 }
@@ -524,11 +397,7 @@ extension Command.Help {
                     parts.append("[\(caseList)]")
                 }
             }
-            // If the schema declares any subcommand, render the
-            // `<subcommand>` placeholder before positionals (positionals
-            // are exclusive of subcommand groups in v1 per the
-            // dispatch model documented at
-            // ``Command/Schema/ParseVisitor/finalize()``).
+
             let hasSubcommands = rows.contains { row in
                 if case .subcommand = row { return true }
                 return false

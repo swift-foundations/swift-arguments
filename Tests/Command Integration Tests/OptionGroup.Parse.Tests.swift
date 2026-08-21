@@ -1,30 +1,9 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
 
-/// End-to-end parse tests for D16 — `Command.OptionGroup<Root, G>`.
-///
-/// Validates that an option-group declaration:
-/// 1. Splats the fragment schema's nodes into the parent at parse time.
-/// 2. Lands values in the fragment's own fields via chained keyPaths.
-/// 3. Works at both the flat root level AND inside subcommand-dispatch
-///    bodies.
-/// 4. Surfaces validation errors uniformly with non-grouped options.
 @Suite
 struct `Command.OptionGroup Parse Tests` {
-
-    // MARK: - Flat schema (root-level OptionGroup)
 
     @Test
     func `Flat schema parses --root option through OptionGroup`() throws(Command.Error) {
@@ -57,8 +36,6 @@ struct `Command.OptionGroup Parse Tests` {
         )
         #expect(parsed.options.root == "/usr/src")
     }
-
-    // MARK: - Subcommand dispatch (per-subcommand OptionGroup)
 
     @Test
     func `Build subcommand parses shared --root via OptionGroup`() throws(Command.Error) {
@@ -105,8 +82,6 @@ struct `Command.OptionGroup Parse Tests` {
         #expect(build.target == "TargetX")
     }
 
-    // MARK: - Error paths
-
     @Test
     func `Unknown option through OptionGroup surfaces .unknownLongOption`() {
         do throws(Command.Error) {
@@ -119,7 +94,7 @@ struct `Command.OptionGroup Parse Tests` {
         } catch {
             switch error {
             case .unknownLongOption:
-                break  // expected
+                break
 
             default:
                 Issue.record("Expected unknownLongOption, got \(error)")

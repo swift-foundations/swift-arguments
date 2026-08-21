@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-arguments open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-arguments project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import Command_Test_Support
@@ -17,12 +6,6 @@ extension Git {
     @Suite
     struct HelpSnapshot {
 
-        /// The exact help-text shape expected for `Git`.
-        ///
-        /// This is the canonical evidence cited in the P4 closeout report:
-        /// the schema-driven help serializer produces a
-        /// swift-argument-parser-shaped layout for a sum-type command
-        /// declaring a ``Command/Subcommand/Group``.
         private static let expectedTopLevel: String = """
             USAGE: git <subcommand>
 
